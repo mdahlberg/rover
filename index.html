@@ -74,32 +74,33 @@
 
     <!-- Right Column -->
     <div class="column">
-      <div class="card">
+      <div class="card core-stats">
         <h2>Core Stats</h2>
-
-        <label for="body">Body:</label>
-        <input type="number" id="body" value="0" min="0" />
-        <div class="sub-stat">Strength: <input type="number" id="strength" value="0" /></div>
-        <div class="sub-stat">Health: <input type="number" id="health" value="0" /></div>
-        <div class="sub-stat">Armor: <input type="number" id="armor" value="0" /></div>
-
-        <label for="mind">Mind:</label>
-        <input type="number" id="mind" value="0" min="0" />
-        <div class="sub-stat">Lores: <input type="number" id="lores" value="0" /></div>
-        <div class="sub-stat">Tracking: <input type="number" id="tracking" value="0" /></div>
-
-        <label for="spirit">Spirit:</label>
-        <input type="number" id="spirit" value="0" min="0" />
-        <div class="sub-stat">Gather Essence Uses: <input type="number" id="gather" value="0" /></div>
+      
+        <div class="stat-block">
+          <label class="stat-main">Body: <input type="number" id="body" min="0" /></label>
+          <div class="substats">
+            <label>Strength: <input type="number" id="strength" min="0" /></label>
+            <label>Health: <input type="number" id="health" min="0" /></label>
+            <label>Armor: <input type="number" id="armor" min="0" /></label>
+          </div>
+        </div>
+      
+        <div class="stat-block">
+          <label class="stat-main">Mind: <input type="number" id="mind" min="0" /></label>
+          <div class="substats">
+            <label>Lores: <input type="number" id="lores" min="0" /></label>
+            <label>Tracking: <input type="number" id="tracking" min="0" /></label>
+          </div>
+        </div>
+      
+        <div class="stat-block">
+          <label class="stat-main">Spirit: <input type="number" id="spirit" min="0" /></label>
+          <div class="substats">
+            <label>Gather Essence Uses: <input type="number" id="gather" min="0" /></label>
+          </div>
+        </div>
       </div>
-
-      <div class="card">
-        <h2>Binding & Equipment</h2>
-        <p>Binding School: N/A</p>
-        <p>Binding Slots: N/A</p>
-        <p>Starting Equipment: N/A</p>
-      </div>
-
     </div>
   </div>
 

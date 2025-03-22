@@ -134,3 +134,49 @@ button:hover {
 .floating-buttons button:hover {
   background-color: #3578c2;
 }
+
+.core-stats .stat-block {
+  margin-bottom: 15px;
+}
+
+.stat-main {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  background-color: #35354a;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+
+.stat-main input {
+  width: 60px;
+  text-align: right;
+  font-size: 0.95rem;
+  padding: 4px;
+}
+
+.substats {
+  margin-top: 5px;
+  padding-left: 10px;
+  border-left: 2px solid #555;
+}
+
+.substats label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin: 4px 0;
+  padding-left: 10px;
+  color: #ccc;
+}
+
+.substats input {
+  width: 60px;
+  padding: 3px;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
