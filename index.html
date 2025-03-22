@@ -7,91 +7,101 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-
   <h1>Character Planner</h1>
-  <div class="container">
-    <!-- Player & Character Info -->
-    <label for="player-name">Player Name:</label>
-    <input type="text" id="player-name" />
 
-    <label for="character-name">Character Name:</label>
-    <input type="text" id="character-name" />
+  <div class="container-flex">
+    <!-- Left Column -->
+    <div class="column">
+      <div class="card">
+        <h2>Player Info</h2>
+        <label for="player-name">Player Name:</label>
+        <input type="text" id="player-name" />
 
-    <!-- Build Points -->
-    <label for="build-points">Build Points:</label>
-    <input type="number" id="build-points" value="10" min="1" />
-    <div id="remaining-points">Remaining Points: 10</div>
+        <label for="character-name">Character Name:</label>
+        <input type="text" id="character-name" />
 
-    <!-- Race -->
-    <h2>Race</h2>
-    <label for="race">Select Race:</label>
-    <select id="race">
-      <option value="grunt">Grunt</option>
-      <option value="elf">Elf</option>
-      <option value="human">Human</option>
-      <option value="halfling">Halfling</option>
-      <option value="orc">Orc</option>
-    </select>
+        <label for="race">Select Race:</label>
+        <select id="race">
+          <option value="grunt">Grunt</option>
+          <option value="elf">Elf</option>
+          <option value="human">Human</option>
+          <option value="halfling">Halfling</option>
+          <option value="orc">Orc</option>
+        </select>
 
-    <!-- Core Stats -->
-    <h2>Core Stats</h2>
-    <label for="body">Body:</label>
-    <input type="number" id="body" value="0" min="0" />
+        <label for="build-points">Build Points:</label>
+        <input type="number" id="build-points" value="10" min="1" />
+        <div id="remaining-points">Remaining Points: 10</div>
+      </div>
 
-    <div class="sub-stat">Strength: <input type="number" id="strength" value="0" min="0" /></div>
-    <div class="sub-stat">Health: <input type="number" id="health" value="0" min="0" /></div>
-    <div class="sub-stat">Armor: <input type="number" id="armor" value="0" min="0" /></div>
+      <div class="card">
+        <h2>Proficiencies</h2>
+        <label for="weapon-prof1">Weapon Proficiency 1:</label>
+        <select id="weapon-prof1">
+          <option value="2h_blades">2-Handed Blades</option>
+          <option value="long_crushing">Long Crushing</option>
+          <option value="short_crushing">Short Crushing</option>
+          <option value="bows">Bows</option>
+          <option value="spears">Spears</option>
+        </select>
 
-    <label for="mind">Mind:</label>
-    <input type="number" id="mind" value="0" min="0" />
-    <div class="sub-stat">Lores: <input type="number" id="lores" value="0" min="0" /></div>
-    <div class="sub-stat">Tracking: <input type="number" id="tracking" value="0" min="0" /></div>
+        <label for="weapon-prof2">Weapon Proficiency 2:</label>
+        <select id="weapon-prof2">
+          <option value="long_crushing">Long Crushing</option>
+          <option value="short_crushing">Short Crushing</option>
+          <option value="bows">Bows</option>
+          <option value="spears">Spears</option>
+        </select>
+      </div>
 
-    <label for="spirit">Spirit:</label>
-    <input type="number" id="spirit" value="0" min="0" />
-    <div class="sub-stat">Gather Essence Uses: <input type="number" id="gather" value="0" min="0" /></div>
+      <div class="card">
+        <h2>Abilities</h2>
+        <select id="abilities" multiple size="6">
+          <option value="pinning_shot">Pinning Shot (2x)</option>
+          <option value="disarming_shot">Disarming Shot (2x)</option>
+          <option value="vital_shot">Vital Shot</option>
+          <option value="pressure_points">Pressure Points</option>
+          <option value="combat_refit">Combat Refit (2x)</option>
+          <option value="proficient_bows">Proficient in Bows</option>
+        </select>
+      </div>
+    </div>
 
-    <!-- Proficiencies -->
-    <h2>Proficiencies</h2>
-    <label for="weapon-prof1">Weapon Proficiency 1:</label>
-    <select id="weapon-prof1">
-      <option value="2h_blades">2-Handed Blades</option>
-      <option value="long_crushing">Long Crushing</option>
-      <option value="short_crushing">Short Crushing</option>
-      <option value="bows">Bows</option>
-      <option value="spears">Spears</option>
-    </select>
+    <!-- Right Column -->
+    <div class="column">
+      <div class="card">
+        <h2>Core Stats</h2>
 
-    <label for="weapon-prof2">Weapon Proficiency 2:</label>
-    <select id="weapon-prof2">
-      <option value="long_crushing">Long Crushing</option>
-      <option value="short_crushing">Short Crushing</option>
-      <option value="bows">Bows</option>
-      <option value="spears">Spears</option>
-    </select>
+        <label for="body">Body:</label>
+        <input type="number" id="body" value="0" min="0" />
+        <div class="sub-stat">Strength: <input type="number" id="strength" value="0" /></div>
+        <div class="sub-stat">Health: <input type="number" id="health" value="0" /></div>
+        <div class="sub-stat">Armor: <input type="number" id="armor" value="0" /></div>
 
-    <!-- Abilities -->
-    <h2>Abilities</h2>
-    <label for="abilities">Select Ability:</label>
-    <select id="abilities" multiple size="6">
-      <option value="pinning_shot">Pinning Shot (2x)</option>
-      <option value="disarming_shot">Disarming Shot (2x)</option>
-      <option value="vital_shot">Vital Shot</option>
-      <option value="pressure_points">Pressure Points</option>
-      <option value="combat_refit">Combat Refit (2x)</option>
-      <option value="proficient_bows">Proficient in Bows</option>
-    </select>
+        <label for="mind">Mind:</label>
+        <input type="number" id="mind" value="0" min="0" />
+        <div class="sub-stat">Lores: <input type="number" id="lores" value="0" /></div>
+        <div class="sub-stat">Tracking: <input type="number" id="tracking" value="0" /></div>
 
-    <!-- Binding & Equipment Placeholders -->
-    <h2>Binding & Equipment</h2>
-    <p>Binding School: N/A</p>
-    <p>Binding Slots: N/A</p>
-    <p>Starting Equipment: N/A</p>
+        <label for="spirit">Spirit:</label>
+        <input type="number" id="spirit" value="0" min="0" />
+        <div class="sub-stat">Gather Essence Uses: <input type="number" id="gather" value="0" /></div>
+      </div>
 
-    <!-- Import/Export -->
-    <input type="file" id="import-character" accept=".json" />
-    <button id="load-character">Import</button>
-    <button id="export-character">Export</button>
+      <div class="card">
+        <h2>Binding & Equipment</h2>
+        <p>Binding School: N/A</p>
+        <p>Binding Slots: N/A</p>
+        <p>Starting Equipment: N/A</p>
+      </div>
+
+      <div class="card">
+        <h2>Import / Export</h2>
+        <input type="file" id="import-character" accept=".json" />
+        <button id="load-character">Import</button>
+        <button id="export-character">Export</button>
+      </div>
+    </div>
   </div>
 
   <script src="js/scripts.js"></script>
