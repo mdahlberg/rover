@@ -8,6 +8,11 @@
 </head>
 <body>
   <h1>Character Planner</h1>
+  <div class="floating-buttons">
+    <input type="file" id="import-character" accept=".json" style="display: none;" />
+    <button id="load-character">Import</button>
+    <button id="export-character">Export</button>
+  </div>
 
   <div class="container-flex">
     <!-- Left Column -->
@@ -95,12 +100,6 @@
         <p>Starting Equipment: N/A</p>
       </div>
 
-      <div class="card">
-        <h2>Import / Export</h2>
-        <input type="file" id="import-character" accept=".json" />
-        <button id="load-character">Import</button>
-        <button id="export-character">Export</button>
-      </div>
     </div>
   </div>
 
