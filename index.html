@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Planner</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Character Planner!</h1>
+	<input type="file" id="import-character" accept=".json">
+	<button id="load-character">Import Character</button>
+    </header>
+    <main>
+
+        <section id="character-details">
+            <h2>Character Details</h2>
+            <label for="character-name">Name:</label>
+            <input type="text" id="character-name" name="character-name">
+            <label for="character-level">Level:</label>
+            <input type="number" id="character-level" name="character-level" min="1" max="100">
+        </section>
+        <section id="character-stats">
+            <h2>Stats</h2>
+            <!-- Example stat -->
+            <label for="strength">Strength:</label>
+            <input type="number" id="strength" name="strength" min="1" max="100">
+            <!-- Add more stats as needed -->
+        </section>
+        <section id="character-abilities">
+            <h2>Abilities</h2>
+            <!-- Example ability -->
+            <label>
+                <input type="checkbox" name="ability" value="fireball">
+                Fireball
+            </label>
+            <!-- Add more abilities as needed -->
+        </section>
+    </main>
+    <footer>
+        <button id="save-character">Save Character</button>
+	<button id="export-character">Export Character</button>
+    </footer>
+    <script src="js/scripts.js"></script>
+</body>
+</html>
