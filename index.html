@@ -1,47 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Planner</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Character Planner</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-    <h1>Character Planner</h1>
+  <h1>Character Planner</h1>
+  <div class="container">
+    <!-- Player & Character Info -->
+    <label for="player-name">Player Name:</label>
+    <input type="text" id="player-name" />
 
-    <div class="container">
-        <label for="character-name">Character Name:</label>
-        <input type="text" id="character-name" placeholder="Enter character name">
+    <label for="character-name">Character Name:</label>
+    <input type="text" id="character-name" />
 
-        <label for="character-level">Level:</label>
-        <input type="number" id="character-level" placeholder="Enter level" min="1" max="100">
+    <!-- Build Points -->
+    <label for="build-points">Build Points:</label>
+    <input type="number" id="build-points" value="10" min="1" />
+    <div id="remaining-points">Remaining Points: 10</div>
 
-        <label for="strength">Strength:</label>
-        <input type="number" id="strength" placeholder="Enter strength stat" min="0" max="100">
+    <!-- Race -->
+    <h2>Race</h2>
+    <label for="race">Select Race:</label>
+    <select id="race">
+      <option value="grunt">Grunt</option>
+      <option value="elf">Elf</option>
+      <option value="human">Human</option>
+      <option value="halfling">Halfling</option>
+      <option value="orc">Orc</option>
+    </select>
 
-        <label>Abilities:</label>
-        <div class="abilities">
-            <label class="ability-label">
-                <input type="checkbox" name="ability" value="Fireball"> Fireball
-            </label>
-            <label class="ability-label">
-                <input type="checkbox" name="ability" value="Ice Blast"> Ice Blast
-            </label>
-            <label class="ability-label">
-                <input type="checkbox" name="ability" value="Thunder Strike"> Thunder Strike
-            </label>
-        </div>
+    <!-- Core Stats -->
+    <h2>Core Stats</h2>
+    <label for="body">Body:</label>
+    <input type="number" id="body" value="0" min="0" />
 
-        <label for="import-character">Import Character:</label>
-        <input type="file" id="import-character" accept=".json">
-        <button id="load-character">Import</button>
+    <div class="sub-stat">Strength: <input type="number" id="strength" value="0" min="0" /></div>
+    <div class="sub-stat">Health: <input type="number" id="health" value="0" min="0" /></div>
+    <div class="sub-stat">Armor: <input type="number" id="armor" value="0" min="0" /></div>
 
-        <button id="export-character">Export</button>
-    </div>
+    <label for="mind">Mind:</label>
+    <input type="number" id="mind" value="0" min="0" />
+    <div class="sub-stat">Lores: <input type="number" id="lores" value="0" min="0" /></div>
+    <div class="sub-stat">Tracking: <input type="number" id="tracking" value="0" min="0" /></div>
 
-    <script src="script.js"></script>
+    <label for="spirit">Spirit:</label>
+    <input type="number" id="spirit" value="0" min="0" />
+    <div class="sub-stat">Gather Essence Uses: <input type="number" id="gather" value="0" min="0" /></div>
 
+    <!-- Proficiencies -->
+    <h2>Proficiencies</h2>
+    <label for="weapon-prof1">Weapon Proficiency 1:</label>
+    <select id="weapon-prof1">
+      <option value="2h_blades">2-Handed Blades</option>
+      <option value="long_crushing">Long Crushing</option>
+      <option value="short_crushing">Short Crushing</option>
+      <option value="bows">Bows</option>
+      <option value="spears">Spears</option>
+    </select>
+
+    <label for="weapon-prof2">Weapon Proficiency 2:</label>
+    <select id="weapon-prof2">
+      <option value="long_crushing">Long Crushing</option>
+      <option value="short_crushing">Short Crushing</option>
+      <option value="bows">Bows</option>
+      <option value="spears">Spears</option>
+    </select>
+
+    <!-- Abilities -->
+    <h2>Abilities</h2>
+    <label for="abilities">Select Ability:</label>
+    <select id="abilities" multiple size="6">
+      <option value="pinning_shot">Pinning Shot (2x)</option>
+      <option value="disarming_shot">Disarming Shot (2x)</option>
+      <option value="vital_shot">Vital Shot</option>
+      <option value="pressure_points">Pressure Points</option>
+      <option value="combat_refit">Combat Refit (2x)</option>
+      <option value="proficient_bows">Proficient in Bows</option>
+    </select>
+
+    <!-- Binding & Equipment Placeholders -->
+    <h2>Binding & Equipment</h2>
+    <p>Binding School: N/A</p>
+    <p>Binding Slots: N/A</p>
+    <p>Starting Equipment: N/A</p>
+
+    <!-- Import/Export -->
+    <input type="file" id="import-character" accept=".json" />
+    <button id="load-character">Import</button>
+    <button id="export-character">Export</button>
+  </div>
+
+  <script src="js/scripts.js"></script>
 </body>
 </html>
-
