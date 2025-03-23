@@ -12,7 +12,11 @@
     <input type="file" id="import-character" accept=".json" style="display: none;" />
     <button id="load-character">Import</button>
     <button id="export-character">Export</button>
+    <div id="level-display">Level: 1</div>
+    <button id="level-up-button">Level Up</button>
   </div>
+
+  <div id="layer-history"></div>
 
   <div class="container-flex">
     <!-- Left Column -->
@@ -78,7 +82,7 @@
         <h2>Core Stats</h2>
       
         <div class="stat-block">
-          <label class="stat-main">Body: <input type="number" id="body" min="0" /></label>
+          <div class="stat-category">Body</div>
           <div class="substats">
             <label>Strength: <input type="number" id="strength" min="0" /></label>
             <label>Health: <input type="number" id="health" min="0" /></label>
@@ -87,7 +91,7 @@
         </div>
       
         <div class="stat-block">
-          <label class="stat-main">Mind: <input type="number" id="mind" min="0" /></label>
+          <div class="stat-category">Mind</div>
           <div class="substats">
             <label>Lores: <input type="number" id="lores" min="0" /></label>
             <label>Tracking: <input type="number" id="tracking" min="0" /></label>
@@ -95,7 +99,7 @@
         </div>
       
         <div class="stat-block">
-          <label class="stat-main">Spirit: <input type="number" id="spirit" min="0" /></label>
+          <div class="stat-category">Spirit</div>
           <div class="substats">
             <label>Gather Essence Uses: <input type="number" id="gather" min="0" /></label>
           </div>

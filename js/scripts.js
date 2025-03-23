@@ -1,11 +1,171 @@
+const statCostTable = [
+  { levelMin: 1, levelMax: 2, costs: [2, 3, 5] },
+  { levelMin: 3, levelMax: 6, costs: [3, 5, 6] },
+  { levelMin: 7, levelMax: 12, costs: [5, 6, 8] },
+  { levelMin: 13, levelMax: 18, costs: [6, 8, 10] },
+  { levelMin: 19, levelMax: 20, costs: [8, 10, 12] },
+];
+
+function getPointCost(level, value) {
+  const bracket = statCostTable.find(row => level >= row.levelMin && level <= row.levelMax);
+  if (!bracket) return 99; // failsafe
+
+  if (value <= 5) return bracket.costs[0];
+  if (value <= 20) return bracket.costs[1];
+  return bracket.costs[2];
+}
+
+
+const characterData = {
+  currentLevel: 1,
+  layers: [], // Each layer = { level, buildPoints, stats, abilities }
+  buildPointsPerLevel: 10, // After level 1
+};
+
+document.getElementById("abilities").addEventListener("change", () => {
+  const locked = getLockedAbilities();
+  Array.from(document.getElementById("abilities").options).forEach(opt => {
+    if (locked.has(opt.value)) {
+      opt.selected = true; // reselect it
+      opt.disabled = true; // prevent future deselection
+    } else {
+      opt.disabled = false;
+    }
+  });
+});
+
+const spendableStatIDs = [
+  "strength", "health", "armor",
+  "lores", "tracking", "gather"
+];
+
+spendableStatIDs.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener("input", updateRemainingPoints);
+  }
+});
+
+
+
+function getCurrentLayerData() {
+  const stats = {};
+  ["body", "mind", "spirit", "strength", "health", "armor", "lores", "tracking", "gather"].forEach(id => {
+    stats[id] = parseInt(document.getElementById(id).value) || 0;
+  });
+
+  const abilities = Array.from(document.getElementById("abilities").selectedOptions).map(opt => opt.value);
+
+  return {
+    level: characterData.currentLevel,
+    buildPoints: parseInt(document.getElementById("build-points").value) || 0,
+    stats,
+    abilities,
+  };
+}
+
+function updateLevelDisplay() {
+  document.getElementById("level-display").textContent = `Level: ${characterData.currentLevel}`;
+}
+
+document.getElementById("level-up-button").addEventListener("click", levelUp);
+
+function levelUp() {
+  // Lock current layer
+  const layer = getCurrentLayerData();
+  characterData.layers.push(layer);
+  characterData.currentLevel++;
+
+  // Reset editable stats/abilities (but we’ll restrict lowering later)
+  ["body", "mind", "spirit", "strength", "health", "armor", "lores", "tracking", "gather"]
+    .forEach(id => document.getElementById(id).value = 0);
+
+  // Clear ability selections
+  Array.from(document.getElementById("abilities").options).forEach(opt => opt.selected = false);
+
+  // Assign new build points for next level
+  const newPoints = characterData.buildPointsPerLevel;
+  document.getElementById("build-points").value = newPoints;
+
+  updateRemainingPoints();
+  updateLevelDisplay();
+  renderLayerHistory();
+  enforceLockedAbilities();
+}
+
+function enforceLockedAbilities() {
+  const locked = getLockedAbilities();
+  Array.from(document.getElementById("abilities").options).forEach(opt => {
+    opt.disabled = locked.has(opt.value);
+    if (opt.disabled) opt.selected = true;
+  });
+}
+
+
+function getMinimumStatsFromPreviousLayers() {
+  const minStats = {};
+  characterData.layers.forEach(layer => {
+    for (const stat in layer.stats) {
+      const val = layer.stats[stat] || 0;
+      minStats[stat] = Math.max(minStats[stat] || 0, val);
+    }
+  });
+  return minStats;
+}
+
+
+function getMinimumStatsFromPreviousLayers() {
+  const minStats = {};
+  characterData.layers.forEach(layer => {
+    for (const stat in layer.stats) {
+      const val = layer.stats[stat] || 0;
+      minStats[stat] = Math.max(minStats[stat] || 0, val);
+    }
+  });
+  return minStats;
+}
+
+
 // Update build point display
 function updateRemainingPoints() {
+  const currentLevel = characterData.currentLevel;
   const total = parseInt(document.getElementById("build-points").value) || 0;
-  const spent = ["body", "mind", "spirit"]
-    .map(id => parseInt(document.getElementById(id).value) || 0)
-    .reduce((a, b) => a + b, 0);
-  document.getElementById("remaining-points").textContent = `Remaining Points: ${total - spent}`;
+  const minStats = getMinimumStatsFromPreviousLayers();
+
+  const spendableStatIDs = [
+    "strength", "health", "armor",
+    "lores", "tracking", "gather"
+  ];
+
+  let spent = 0;
+
+  spendableStatIDs.forEach(id => {
+    const currentVal = parseInt(document.getElementById(id).value) || 0;
+    const lockedVal = minStats[id] || 0;
+
+    if (currentVal < lockedVal) {
+      document.getElementById(id).value = lockedVal;
+      return;
+    }
+
+    for (let val = lockedVal + 1; val <= currentVal; val++) {
+      spent += getPointCost(currentLevel, val);
+    }
+  });
+
+  const remaining = total - spent;
+  document.getElementById("remaining-points").textContent = `Remaining Points: ${remaining}`;
 }
+
+
+function getLockedAbilities() {
+  const locked = new Set();
+  characterData.layers.forEach(layer => {
+    layer.abilities.forEach(a => locked.add(a));
+  });
+  return locked;
+}
+
 
 // Race bonus logic (can be expanded per race)
 const racialBonuses = {
@@ -145,4 +305,40 @@ document.getElementById("import-character").addEventListener("change", (event) =
 
   reader.readAsText(file);
 });
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("build-points").value = 50;
+  characterData.currentLevel = 1;
+  updateLevelDisplay();
+  updateRemainingPoints();
+});
+
+function renderLayerHistory() {
+  const historyDiv = document.getElementById("layer-history");
+  historyDiv.innerHTML = ""; // clear previous render
+
+  characterData.layers.forEach(layer => {
+    const layerDiv = document.createElement("div");
+    layerDiv.className = "layer-card";
+
+    const stats = Object.entries(layer.stats)
+      .filter(([_, val]) => val > 0)
+      .map(([key, val]) => `${key}: ${val}`);
+
+    const abilities = layer.abilities.length > 0
+      ? layer.abilities
+      : ["(none)"];
+
+    layerDiv.innerHTML = `
+      <h3>Level ${layer.level}</h3>
+      <ul>
+        <li><strong>Build Points:</strong> ${layer.buildPoints}</li>
+        <li><strong>Stats:</strong> ${stats.join(", ")}</li>
+        <li><strong>Abilities:</strong> ${abilities.join(", ")}</li>
+      </ul>
+    `;
+
+    historyDiv.appendChild(layerDiv);
+  });
+}
 
