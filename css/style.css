@@ -259,3 +259,56 @@ button:hover {
   font-size: 0.9rem;
 }
 
+.ability-shop {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.ability-card {
+  background-color: #35354a;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  position: relative;
+}
+
+.ability-card h4 {
+  margin: 0 0 5px;
+  font-size: 1rem;
+}
+
+.ability-card p {
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.ability-card button {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.ability-card button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+#purchased-abilities {
+  font-size: 0.9rem;
+}
+
+.purchased-level-block {
+  margin-bottom: 12px;
+}
+
+.purchased-level-block h4 {
+  margin: 0 0 4px;
+  color: #79a9ff;
+}
+

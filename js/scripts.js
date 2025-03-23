@@ -1,3 +1,110 @@
+const allAbilities = [
+  { id: "pinning_shot", name: "Pinning Shot", cost: 4, description: "Pin an enemy in place, reducing movement by 50% for 1 round." },
+  { id: "disarming_shot", name: "Disarming Shot", cost: 4, description: "Chance to disarm the enemy, removing their weapon." },
+  { id: "vital_shot", name: "Vital Shot", cost: 6, description: "A powerful attack targeting weak points for double damage." },
+  { id: "pressure_points", name: "Pressure Points", cost: 5, description: "Disable an enemy's limbs to reduce attack and defense." },
+  { id: "combat_refit", name: "Combat Refit", cost: 3, description: "Regain a used ability during combat (2x uses)." },
+  { id: "proficient_bows", name: "Proficient in Bows", cost: 2, description: "Gain proficiency bonus when using bows." }
+];
+
+window.addEventListener("DOMContentLoaded", () => {
+  characterData.currentLevel = 1;
+  characterData.layers.push({
+    level: 1,
+    buildPoints: 50,
+    stats: {},
+    abilities: [],
+  });
+  document.getElementById("build-points").value = 50;
+  updateLevelDisplay();
+  updateRemainingPoints();
+  renderAbilityShop();
+  renderPurchasedAbilities();
+});
+
+
+function renderAbilityShop() {
+  const container = document.getElementById("ability-shop");
+  container.innerHTML = "";
+
+  const alreadyPurchased = getAllPurchasedAbilities();
+
+  allAbilities.forEach(ability => {
+    const card = document.createElement("div");
+    card.className = "ability-card";
+
+    const purchased = alreadyPurchased.has(ability.id);
+
+    card.innerHTML = `
+      <h4>${ability.name}</h4>
+      <p title="${ability.description}">${ability.description}</p>
+      <strong>Cost:</strong> ${ability.cost} pts<br/>
+      <button ${purchased ? "disabled" : ""} data-id="${ability.id}">Purchase</button>
+    `;
+
+    const button = card.querySelector("button");
+    if (!purchased) {
+      button.addEventListener("click", () => purchaseAbility(ability));
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function getAllPurchasedAbilities() {
+  const all = new Set();
+  characterData.layers.forEach(layer => {
+    (layer.abilities || []).forEach(id => all.add(id));
+  });
+  return all;
+}
+
+function getCurrentLayerAbilities() {
+  const layer = characterData.layers.find(l => l.level === characterData.currentLevel);
+  return layer?.abilities || [];
+}
+
+function purchaseAbility(ability) {
+  const currentLayer = characterData.layers.find(l => l.level === characterData.currentLevel);
+  if (!currentLayer) return;
+
+  const remainingEl = document.getElementById("remaining-points");
+  const currentRemaining = parseInt(remainingEl.textContent.split(":")[1]) || 0;
+
+  if (currentRemaining < ability.cost) {
+    alert("Not enough build points!");
+    return;
+  }
+
+  currentLayer.abilities.push(ability.id);
+  updateRemainingPoints();
+  renderAbilityShop();
+  renderPurchasedAbilities();
+}
+
+function renderPurchasedAbilities() {
+  const container = document.getElementById("purchased-abilities");
+  container.innerHTML = "";
+
+  characterData.layers.forEach(layer => {
+    if (!layer.abilities || layer.abilities.length === 0) return;
+
+    const div = document.createElement("div");
+    div.className = "purchased-level-block";
+
+    const list = layer.abilities.map(id => {
+      const ability = allAbilities.find(a => a.id === id);
+      return ability ? `• ${ability.name}` : `• ${id}`;
+    }).join("<br>");
+
+    div.innerHTML = `<h4>Level ${layer.level}</h4>${list}`;
+    container.appendChild(div);
+  });
+}
+
+
+
+
 const statCostTable = [
   { levelMin: 1, levelMax: 2, costs: [2, 3, 5] },
   { levelMin: 3, levelMax: 6, costs: [3, 5, 6] },
@@ -72,25 +179,54 @@ document.getElementById("level-up-button").addEventListener("click", levelUp);
 
 function levelUp() {
   // Lock current layer
-  const layer = getCurrentLayerData();
-  characterData.layers.push(layer);
+  const currentStats = {};
+  const statFields = ["strength", "health", "armor", "lores", "tracking", "gather"];
+  statFields.forEach(id => {
+    currentStats[id] = parseInt(document.getElementById(id).value) || 0;
+  });
+
+  const currentAbilities = getCurrentLayerAbilities();
+
+  const lockedLayer = {
+    level: characterData.currentLevel,
+    buildPoints: parseInt(document.getElementById("build-points").value) || 0,
+    stats: currentStats,
+    abilities: currentAbilities.slice(), // clone
+  };
+
+  // Replace current layer with locked one
+  const currentIndex = characterData.layers.findIndex(l => l.level === characterData.currentLevel);
+  if (currentIndex !== -1) {
+    characterData.layers[currentIndex] = lockedLayer;
+  } else {
+    characterData.layers.push(lockedLayer);
+  }
+
+  // Advance to next level
   characterData.currentLevel++;
 
-  // Reset editable stats/abilities (but we’ll restrict lowering later)
-  ["body", "mind", "spirit", "strength", "health", "armor", "lores", "tracking", "gather"]
-    .forEach(id => document.getElementById(id).value = 0);
+  // Add new editable layer
+  characterData.layers.push({
+    level: characterData.currentLevel,
+    buildPoints: characterData.buildPointsPerLevel,
+    stats: {},
+    abilities: [],
+  });
 
-  // Clear ability selections
-  Array.from(document.getElementById("abilities").options).forEach(opt => opt.selected = false);
+  // Reset form fields
+  statFields.forEach(id => {
+    document.getElementById(id).value = 0;
+  });
 
-  // Assign new build points for next level
-  const newPoints = characterData.buildPointsPerLevel;
-  document.getElementById("build-points").value = newPoints;
+  // Update build points field
+  document.getElementById("build-points").value = characterData.buildPointsPerLevel;
 
-  updateRemainingPoints();
+  // Rerender UI
   updateLevelDisplay();
+  updateRemainingPoints();
   renderLayerHistory();
-  enforceLockedAbilities();
+  renderAbilityShop();
+  renderPurchasedAbilities();
 }
 
 function enforceLockedAbilities() {
