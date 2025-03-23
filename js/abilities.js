@@ -2,10 +2,62 @@
 window.Abilities = {
     // Available abilities list (name, cost, and level requirement)
     list: [
-        { name: "Sword Mastery", cost: 2, requiredLevel: 1 },
-        { name: "Fireball",     cost: 5, requiredLevel: 2 },
-        { name: "Heal",         cost: 3, requiredLevel: 2 },
-        { name: "Dragon Slayer",cost: 10, requiredLevel: 5 }
+        {
+          id: "dual_wielder",
+          name: "Dual Wielder",
+          cost: 10,
+          maxPurchases: 1,
+          description: "Allows you to dual wield melee weapons: one proficient main-hand weapon and a short/small off-hand weapon."
+        },
+        {
+          id: "weapon_mastery",
+          name: "Weapon Mastery",
+          cost: 12,
+          stackable: true,
+          description: "Choose a proficient weapon type. You deal +1 damage with that type. Can be purchased multiple times for different types."
+        },
+        {
+          id: "strike_from_behind",
+          name: "Strike from Behind",
+          cost: 8,
+          maxPurchases: 1,
+          description: "Deal +1 damage when striking from behind with a small/short melee or thrown weapon. Stacks with Weapon Mastery."
+        },
+        {
+          id: "parry",
+          name: "Parry",
+          cost: 3,
+          maxPurchases: 1,
+          description: "Cancel a melee attack’s damage/effects. May also be used to protect an ally if you're in range and holding a melee-capable weapon or shield."
+        },
+        {
+          id: "evade",
+          name: "Evade",
+          cost: 5,
+          maxPurchases: 1,
+          description: "Avoid a melee or ranged attack by calling 'Evade!' Must have free movement and not be impaired (pinned, entangled, etc)."
+        },
+        {
+          id: "medical_training",
+          name: "Medical Training",
+          cost: 5,
+          maxPurchases: 1,
+          description: "Grants access to First Aid and Diagnose:\n\nFirst Aid: 60s roleplay to pause bleed-out and restore 1 HP.\nDiagnose: Ask questions like 'Are you dying?' or 'Are you unconscious?' — must be answered honestly."
+        },
+        {
+          id: "healthy_body",
+          name: "Healthy Body",
+          cost: 5,
+          stackable: true,
+          description: "Permanently increases your health by 3 (up to 50). Does not raise Body Core Stat. Can be bought multiple times."
+        },
+        {
+          id: "combat_refit",
+          name: "Combat Refit",
+          cost: 2,
+          stackable: true,
+          description: "Repair armor during battle with 60s silent count. Roleplay fixing armor. Cannot act/move or defend while refitting."
+        }
     ],
     // Track purchased abilities
     purchased: [],

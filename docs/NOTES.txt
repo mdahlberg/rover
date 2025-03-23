@@ -25,7 +25,7 @@ Abilities
 	Disarming Shot 2x
 	Vital shot
 	pressure points
-	combad refit 2x
+	combat refit 2x
 
 binding school
 	n/a
