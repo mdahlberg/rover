@@ -108,17 +108,21 @@ window.Abilities = {
     if (maxed) return alert("You’ve already purchased the maximum allowed.");
     if (ability.cost > Layers.getRemainingPoints()) return alert("Not enough build points!");
 
-    // Update records
-    this.purchased.push({ id: ability.id, name: ability.name, cost: ability.cost, level: Layers.currentLevel });
+    const newPurchase = {
+      id: ability.id,
+      name: ability.name,
+      cost: ability.cost,
+      level: Layers.currentLevel
+    };
+
+    this.purchased.push(newPurchase);
     this.purchasedMap[id] = currentCount + 1;
 
-    // Track in layer
     const layer = Layers.layersData[Layers.currentLevel - 1];
     if (layer) {
       layer.abilities.push(ability.name + (ability.stackable ? ` (x${this.purchasedMap[id]})` : ""));
     }
 
-    // Re-render
     this.renderShop();
     UI.updatePurchasedAbilities();
     UI.updateRemainingPoints(Layers.getRemainingPoints());
@@ -129,7 +133,11 @@ window.Abilities = {
     if (index === -1) return false;
     const ability = this.purchased[index];
 
-    // Remove from records
+    if (ability.level !== Layers.currentLevel) {
+      alert("You can only remove abilities purchased at your current level.");
+      return false;
+    }
+
     this.purchased.splice(index, 1);
     if (this.purchasedMap[ability.id]) {
       this.purchasedMap[ability.id] -= 1;
