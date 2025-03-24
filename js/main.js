@@ -70,6 +70,27 @@ window.addEventListener('DOMContentLoaded', function() {
     if (levelUpBtn) {
         levelUpBtn.addEventListener('click', () => {
             Layers.levelUp();
+            updateStatButtonLabels();
         });
     }
 });
+
+function updateStatButtonLabels() {
+  const currentLevel = Layers.currentLevel;
+
+  document.querySelectorAll('.stat-line').forEach(statLine => {
+    const statName = statLine.querySelector('.stat-increase').getAttribute('data-stat');
+    const currentValue = Stats.stats[statName];
+
+    const nextValue = currentValue + 1;
+    const incCost = Stats.getIncrementCost(currentLevel, nextValue);
+    const decCost = Stats.getIncrementCost(currentLevel, currentValue); // refund is based on current
+
+    const incBtn = statLine.querySelector('.stat-increase');
+    const decBtn = statLine.querySelector('.stat-decrease');
+
+    incBtn.textContent = `Increase (+${incCost} pts)`;
+    decBtn.textContent = `Decrease (+${decCost} pts)`;
+  });
+}
+
