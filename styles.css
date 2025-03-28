@@ -88,7 +88,7 @@ body {
 
 .race-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .race-card.selected {
@@ -169,7 +169,7 @@ header {
 }
 
 .card:hover {
-  transform: scale(1.02);
+  transform: scale(1.005);
 }
 
 /* Core Stat Categories and Grids */
@@ -318,4 +318,19 @@ header {
   0% { transform: scale(1); }
   50% { transform: scale(1.03); }
   100% { transform: scale(1); }
+}
+#start-over-btn {
+  padding: 6px 12px;
+  font-size: 1rem;
+  background-color: #e05555;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
+
+#start-over-btn:hover {
+  background-color: #c04444;
 }

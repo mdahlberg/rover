@@ -161,3 +161,15 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+/**
+ * Clears all saved data and redirects the user to the splash screen.
+ */
+function startOver() {
+  if (confirm("Are you sure you want to start over? This will clear all progress.")) {
+    localStorage.clear();
+    // Redirect to the splash screen.
+    // If you're using an integrated approach, you can simply reload the page.
+    // Alternatively, if the splash is a separate page, change the URL accordingly.
+    window.location.href = 'index.html';
+  }
+}
