@@ -128,30 +128,48 @@ window.Abilities = {
     UI.updateRemainingPoints(Layers.getRemainingPoints());
   },
 
+  /**
+   * Removes one instance of an ability purchased at the current level.
+   * Only abilities purchased at the current level can be removed.
+   * @param {string} abilityName - The name of the ability to remove.
+   * @returns {boolean} True if removal succeeded, false otherwise.
+   */
   removeAbility: function (abilityName) {
-    const index = this.purchased.findIndex(ab => ab.name === abilityName);
-    if (index === -1) return false;
-    const ability = this.purchased[index];
-
-    if (ability.level !== Layers.currentLevel) {
+    // Find an ability instance with the given name that was purchased in the current level.
+    const index = this.purchased.findIndex(ab => ab.name === abilityName && ab.level === Layers.currentLevel);
+    if (index === -1) {
       alert("You can only remove abilities purchased at your current level.");
       return false;
     }
-
-    this.purchased.splice(index, 1);
-    if (this.purchasedMap[ability.id]) {
-      this.purchasedMap[ability.id] -= 1;
-      if (this.purchasedMap[ability.id] <= 0) delete this.purchasedMap[ability.id];
-    }
-
+    
+    // Remove the ability instance from the purchased array.
+    const ability = this.purchased.splice(index, 1)[0];
+  
+    // Recalculate purchasedMap based on remaining purchased abilities.
+    this.purchasedMap = {};
+    this.purchased.forEach(ab => {
+      this.purchasedMap[ab.id] = (this.purchasedMap[ab.id] || 0) + 1;
+    });
+  
+    // Remove from the current layer record.
     const layer = Layers.layersData[ability.level - 1];
     if (layer) {
-      layer.abilities = layer.abilities.filter(a => !a.startsWith(ability.name));
+      // Remove only one instance for the given ability name.
+      let removed = false;
+      layer.abilities = layer.abilities.filter(a => {
+        if (!removed && a.startsWith(ability.name)) {
+          removed = true;
+          return false;
+        }
+        return true;
+      });
     }
-
+  
+    // Re-render the shop, purchased abilities list, and update remaining points.
     this.renderShop();
     UI.updatePurchasedAbilities();
     UI.updateRemainingPoints(Layers.getRemainingPoints());
     return true;
   }
+
 };
