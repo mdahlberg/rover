@@ -1,15 +1,18 @@
 /* 
-  main.js - Sets up event handlers and initializes the application.
-  It dynamically updates button labels for stat increases/decreases and ensures
-  that the current level layer (stat purchases) is updated in real time.
+  main.js - Initializes the application, handles event listeners, and updates the UI.
+  This version supports the integrated splash/character planner approach.
 */
 
-// Updates button labels to reflect the true cost for stat changes.
+// --- Utility Functions ---
+
+/**
+ * Updates the dynamic text on Increase/Decrease buttons to reflect true costs.
+ */
 function updateStatButtonLabels() {
   const currentLevel = Layers.currentLevel;
   document.querySelectorAll('.stat-line').forEach(statLine => {
     const statName = statLine.querySelector('.stat-increase').getAttribute('data-stat');
-    const totalValue = Stats.getTotal(statName);
+    const totalValue = Stats.getTotal(statName); // locked + current
     const incCost = Stats.getIncrementCost(currentLevel, totalValue + 1);
     const decCost = Stats.getIncrementCost(currentLevel, totalValue);
     const incBtn = statLine.querySelector('.stat-increase');
@@ -19,8 +22,52 @@ function updateStatButtonLabels() {
   });
 }
 
-// Set up event listeners after DOM content is loaded.
+/**
+ * Updates derived stats based on the "body" stat.
+ * Derived Health = body score + 5
+ * Derived Strength = floor(body score / 4)
+ */
+function updateDerivedStats() {
+  const bodyTotal = Stats.getTotal('body');
+  const derivedHealth = bodyTotal + 5;
+  const derivedStrength = Math.floor(bodyTotal / 4);
+  const healthElem = document.getElementById('derived-health');
+  const strengthElem = document.getElementById('derived-strength');
+  if (healthElem) healthElem.textContent = derivedHealth;
+  if (strengthElem) strengthElem.textContent = derivedStrength;
+}
+
+// --- Initialization: Check for Race Selection and Setup UI ---
+
 window.addEventListener('DOMContentLoaded', function () {
+  // Check if a race was previously selected.
+  const selectedRace = localStorage.getItem('selectedRace');
+  if (selectedRace) {
+    // If race is selected, hide the splash screen and show the planner.
+    document.getElementById('splash-container').classList.add('hidden');
+    document.getElementById('planner-container').classList.remove('hidden');
+
+    // Retrieve starting build points and update Layers.
+    const startingBP = parseInt(localStorage.getItem('startingBP')) || 50;
+    Layers.buildPoints = startingBP;
+
+    // Update each stat's display using locked stats plus current purchases.
+    const stats = ['body', 'armor', 'lores', 'tracking', 'gather'];
+    stats.forEach(stat => {
+      const elem = document.getElementById(`${stat}-value`);
+      if (elem) {
+        elem.textContent = Stats.getTotal(stat);
+      }
+    });
+  } else {
+    // No race selected: show splash, hide planner.
+    document.getElementById('splash-container').classList.remove('hidden');
+    document.getElementById('planner-container').classList.add('hidden');
+    // Exit further initialization since planner won't be active.
+    return;
+  }
+
+  // Initialize UI components.
   UI.init();
   UI.updateLevelDisplay(Layers.currentLevel);
   UI.updateRemainingPoints(Layers.getRemainingPoints());
@@ -28,56 +75,71 @@ window.addEventListener('DOMContentLoaded', function () {
   UI.updatePurchasedAbilities();
   updateStatButtonLabels();
   UI.updateCurrentLayerDisplay();
+  updateDerivedStats();
 
-  // Stat increase handler.
+  // --- Event Listeners for Stat Adjustments ---
+  // Increase stat button
   document.querySelectorAll('.stat-increase').forEach(button => {
     button.addEventListener('click', () => {
       const statName = button.getAttribute('data-stat');
-      const cost = Stats.getIncrementCost(Layers.currentLevel, Stats.getTotal(statName) + 1);
+      const currentLevel = Layers.currentLevel;
+      const cost = Stats.getIncrementCost(currentLevel, Stats.getTotal(statName) + 1);
       if (cost <= Layers.getRemainingPoints() && Stats.canIncrease(statName)) {
-        Stats.increaseStat(statName, Layers.currentLevel);
+        // Increase the current stat purchase for this stat.
+        Stats.increaseStat(statName, currentLevel);
+        // Update the stat display.
         document.getElementById(`${statName}-value`).textContent = Stats.getTotal(statName);
+        // Update the current layer record.
         Layers.updateCurrentLayer();
+        // Update remaining build points.
         UI.updateRemainingPoints(Layers.getRemainingPoints());
+        // Refresh button labels and derived stats if "body" was modified.
         updateStatButtonLabels();
         UI.updateCurrentLayerDisplay();
+        if (statName === "body") {
+          updateDerivedStats();
+        }
       } else {
         alert("Not enough build points or stat maxed out.");
       }
     });
   });
 
-  // Stat decrease handler.
+  // Decrease stat button
   document.querySelectorAll('.stat-decrease').forEach(button => {
     button.addEventListener('click', () => {
       const statName = button.getAttribute('data-stat');
+      const currentLevel = Layers.currentLevel;
       if (Stats.canDecrease(statName)) {
-        Stats.decreaseStat(statName, Layers.currentLevel);
+        Stats.decreaseStat(statName, currentLevel);
         document.getElementById(`${statName}-value`).textContent = Stats.getTotal(statName);
         Layers.updateCurrentLayer();
         UI.updateRemainingPoints(Layers.getRemainingPoints());
         updateStatButtonLabels();
         UI.updateCurrentLayerDisplay();
+        if (statName === "body") {
+          updateDerivedStats();
+        }
       }
     });
   });
 
-  // Level Up button handler.
+  // --- Level Up Button ---
   document.getElementById('level-up-btn').addEventListener('click', () => {
     Layers.levelUp();
-    // Update displayed stat values to show new locked totals.
-    for (let stat in Stats.lockedStats) {
+    // Update all stat displays to show locked totals.
+    const stats = ['body', 'armor', 'lores', 'tracking', 'gather'];
+    stats.forEach(stat => {
       document.getElementById(`${stat}-value`).textContent = Stats.getTotal(stat);
-    }
+    });
     updateStatButtonLabels();
     UI.updateRemainingPoints(Layers.getRemainingPoints());
-    // Clear current layer display since current level purchases are now locked.
-    UI.updateCurrentLayerDisplay();
-    // Re-render purchased abilities so that remove buttons disappear for previous levels.
+    UI.updateCurrentLayerDisplay(); // Now should display "(None)" for current level.
+    updateDerivedStats();
     UI.updatePurchasedAbilities();
   });
 
-  // Ability Shop: Handle ability purchases via event delegation.
+  // --- Ability Shop Event Delegation ---
   const abilityShopEl = document.getElementById('ability-shop');
   if (abilityShopEl) {
     abilityShopEl.addEventListener('click', (event) => {
@@ -88,7 +150,7 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Purchased Abilities: Handle ability removals via event delegation.
+  // --- Purchased Abilities Removal ---
   const purchasedListEl = document.getElementById('purchased-abilities');
   if (purchasedListEl) {
     purchasedListEl.addEventListener('click', (event) => {
