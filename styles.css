@@ -1,25 +1,153 @@
-/* Global Styles */
+/* ===================================================
+   Global Styles
+=================================================== */
 body {
   font-family: Arial, sans-serif;
-  background-color: #1e1e2e;
-  color: #f0f0f0;
   margin: 0;
   padding: 0;
+  /* Use a dark gradient as the global background */
+  background: linear-gradient(270deg, #1e1e2e, #2e2e3e, #3a3a4f);
+  background-size: 600% 600%;
+  animation: GradientShift 15s ease infinite;
+  color: #f0f0f0;
 }
 
-/* Main container */
+@keyframes GradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
 
-/* Sticky header */
+/* ===================================================
+   Splash Page Styles
+=================================================== */
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.splash-header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #f8f8f8;
+}
+
+.splash-header h1,
+.splash-header p {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInUp 1.5s forwards;
+}
+
+.splash-header h1 {
+  animation-delay: 0.5s;
+}
+
+.splash-header p {
+  animation-delay: 1s;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.race-selection {
+  width: 80%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.race-card {
+  background-color: #2e2e3e;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.race-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.race-card.selected {
+  border: 2px solid #4a90e2;
+  box-shadow: 0 0 20px #4a90e2;
+}
+
+#start-button-container {
+  margin-top: 30px;
+}
+
+.hidden {
+  display: none;
+}
+
+#start-btn {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  background-color: #4a90e2;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  animation: pulse 2s infinite;
+}
+
+#start-btn:hover {
+  background-color: #3c78c0;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* ===================================================
+   Main Planner Styles
+=================================================== */
+
+/* Planner Container: The main planner section */
+#planner-container {
+  animation: fadeIn 1s ease;
+  background-color: rgba(20, 20, 26, 0.95);
+  padding: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Sticky header for the planner (reapplied for consistency) */
 header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: #2e2e3e;
+  background-color: rgba(46,46,62,0.95);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,22 +158,27 @@ header {
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-/* Card layout */
+/* Card layout for planner sections */
 .card {
-  background-color: #2a2a3a;
-  padding: 16px;
+  background-color: #202028;
+  padding: 20px;
   margin-bottom: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
 }
 
-/* Core Stat Categories */
+.card:hover {
+  transform: scale(1.005);
+}
+
+/* Core Stat Categories and Grids */
 .core-stat-category h3 {
   border-bottom: 1px solid #444;
   padding-bottom: 4px;
   margin-top: 20px;
 }
 
-/* Stat Grid Layout */
 .stats-grid {
   display: flex;
   flex-wrap: wrap;
@@ -53,19 +186,18 @@ header {
   justify-content: space-between;
 }
 
-/* Stat line styling */
+/* Stat Line Styling */
 .stat-line {
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: #3a3a4f;
+  background-color: #2e2e3e;
   padding: 10px;
   border-radius: 6px;
   flex: 1 1 280px;
   transition: background-color 0.3s ease;
 }
 
-/* Buttons styling */
 .stat-line button {
   padding: 6px 12px;
   background-color: #4a90e2;
@@ -76,11 +208,12 @@ header {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .stat-line button:hover {
   background-color: #3c78c0;
 }
 
-/* Derived Stats display styling */
+/* Derived Stats for Body */
 .derived-stats {
   margin-top: 8px;
   font-size: 0.9rem;
@@ -89,27 +222,13 @@ header {
   margin: 4px 0;
 }
 
-/* Level Up Button Styling */
-#level-up-btn {
-  padding: 6px 12px;
-  font-size: 1rem;
-  background-color: #00cc99;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-#level-up-btn:hover {
-  background-color: #00b386;
-}
-
-/* Ability Shop: Flex layout for ability cards */
+/* Ability Shop Layout */
 .ability-shop {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
+
 .ability-item {
   background-color: #3a3a4a;
   padding: 10px;
@@ -120,7 +239,7 @@ header {
   align-items: center;
 }
 
-/* Purchase button styling for ability shop */
+/* Purchase Button for Ability Shop */
 .buy-ability-btn {
   padding: 6px 12px;
   background-color: #4a90e2;
@@ -131,11 +250,12 @@ header {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .buy-ability-btn:hover {
   background-color: #3c78c0;
 }
 
-/* Purchased Abilities List */
+/* Purchased Abilities Styling */
 .purchased-ability-item {
   background-color: #3f3f4f;
   padding: 6px;
@@ -145,6 +265,7 @@ header {
   justify-content: space-between;
   align-items: center;
 }
+
 .purchased-ability-item button {
   padding: 4px 8px;
   font-size: 0.8rem;
@@ -155,167 +276,61 @@ header {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .purchased-ability-item button:hover {
   background-color: #c04444;
 }
 
-/* Level History styling */
+/* Level History Styling */
 #layer-history div {
   margin-bottom: 6px;
 }
-/* Splash Page Styles */
-.splash-body {
-  margin: 0;
-  padding: 0;
-  background: url('images/background.jpg') no-repeat center center fixed;
-  background-size: cover;
-  font-family: 'Arial', sans-serif;
+
+/* Current Level Purchases Styling */
+#current-layer {
+  margin-top: 20px;
 }
 
-/* Main container for splash content */
-.splash-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+#current-layer-display {
+  font-size: 0.9rem;
+  color: #aad;
 }
 
-/* Header Styling */
-.splash-header {
-  text-align: center;
-  margin-bottom: 40px;
-  color: #f8f8f8;
-}
-.splash-header h1 span {
-  color: #4a90e2;
-  font-style: italic;
-}
-
-/* Race Selection Section */
-.race-selection {
-  width: 80%;
-  max-width: 1000px;
-  margin: auto;
-}
-.race-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-/* Individual Race Cards */
-.race-card {
-  background-color: #2e2e3e;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  color: white;
+#level-up-btn {
+  padding: 8px 16px;              /* Smaller padding for a smaller button */
+  font-size: 1rem;                /* Slightly smaller font size */
+  background: linear-gradient(45deg, #00cc99, #00b386);
+  border: none;
+  color: #fff;
+  border-radius: 6px;             /* Slightly less rounded */
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.race-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-}
-.race-card.selected {
-  border: 2px solid #4a90e2;
-  box-shadow: 0 0 20px #4a90e2;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Start Button */
-#start-button-container {
-  margin-top: 30px;
+#level-up-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
 }
-.hidden {
-  display: none;
+
+/* Keyframes for a subtle pulsing effect */
+@keyframes buttonPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
-#start-btn {
-  padding: 12px 24px;
-  font-size: 1.2rem;
-  background-color: #4a90e2;
+#start-over-btn {
+  padding: 6px 12px;
+  font-size: 1rem;
+  background-color: #e05555;
   border: none;
   color: white;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-#start-btn:hover {
-  background-color: #3c78c0;
-}
-/* Splash Screen Styles */
-.splash-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: url('images/background.jpg') no-repeat center center fixed;
-  background-size: cover;
-  color: #f8f8f8;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
 }
 
-.splash-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.splash-header h1 span {
-  color: #4a90e2;
-  font-style: italic;
-}
-
-.race-selection {
-  width: 80%;
-  max-width: 1000px;
-}
-
-.race-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.race-card {
-  background-color: #2e2e3e;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.race-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-}
-
-.race-card.selected {
-  border: 2px solid #4a90e2;
-  box-shadow: 0 0 20px #4a90e2;
-}
-
-#start-button-container {
-  margin-top: 30px;
-}
-
-.hidden {
-  display: none;
-}
-
-#start-btn {
-  padding: 12px 24px;
-  font-size: 1.2rem;
-  background-color: #4a90e2;
-  border: none;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#start-btn:hover {
-  background-color: #3c78c0;
+#start-over-btn:hover {
+  background-color: #c04444;
 }
