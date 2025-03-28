@@ -1,0 +1,34 @@
+{
+    "proficiencies": [
+        {
+            "armor_destroyer": [
+                "helm_crusher",
+                "staggering_blows",
+                "clear_the_way",
+                "sword_breaker"
+            ]
+        },
+        {
+            "weighty_blows": [
+                "body_blow",
+                "strike_the_throat",
+                "smite",
+                "helm_crusher"
+            ]
+        }
+    ]
+
+
+
+List of proficinceis
+
+a proficiency HAS a list of weapon properties
+a weapon property MAY have a list of combat abilities
+
+
+proficiency -> [weapon properties] ->
+	weapon_property -> [combat abilities]
+
+Combat ability is like a spell - you can purchase multiple times (for the same build point cost) they are single use like spells.
+
+{"proficienties": [{"long_crusing": ["armor_destroyer": ["helm_crusher"]]}}
