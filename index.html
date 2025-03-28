@@ -8,8 +8,7 @@
 </head>
 <body>
   <main class="container">
-
-    <!-- Header -->
+    <!-- Header: Sticky with level and remaining build points -->
     <header>
       <h1>Character Planner</h1>
       <div id="level-controls">
@@ -21,77 +20,79 @@
       </div>
     </header>
 
-    <!-- Core Stats -->
+    <!-- Core Stats Section -->
     <section id="core-stats" class="card">
       <h2>Core Stats</h2>
-
       <div class="core-stat-category">
         <h3>Body</h3>
         <div class="stats-grid">
           <div class="stat-line">
-            <span>Strength: <span id="strength-value">5</span></span>
-            <button class="stat-increase" data-stat="strength">Increase (-2 pts)</button>
+            <span>Strength: <span id="strength-value">0</span></span>
+            <button class="stat-increase" data-stat="strength">Increase (+2 pts)</button>
             <button class="stat-decrease" data-stat="strength">Decrease (+2 pts)</button>
           </div>
           <div class="stat-line">
-            <span>Health: <span id="health-value">5</span></span>
-            <button class="stat-increase" data-stat="health">Increase (-2 pts)</button>
+            <span>Health: <span id="health-value">0</span></span>
+            <button class="stat-increase" data-stat="health">Increase (+2 pts)</button>
             <button class="stat-decrease" data-stat="health">Decrease (+2 pts)</button>
           </div>
           <div class="stat-line">
-            <span>Armor: <span id="armor-value">5</span></span>
-            <button class="stat-increase" data-stat="armor">Increase (-2 pts)</button>
+            <span>Armor: <span id="armor-value">0</span></span>
+            <button class="stat-increase" data-stat="armor">Increase (+2 pts)</button>
             <button class="stat-decrease" data-stat="armor">Decrease (+2 pts)</button>
           </div>
         </div>
       </div>
-
       <div class="core-stat-category">
         <h3>Mind</h3>
         <div class="stats-grid">
           <div class="stat-line">
-            <span>Lores: <span id="lores-value">5</span></span>
-            <button class="stat-increase" data-stat="lores">Increase (-2 pts)</button>
+            <span>Lores: <span id="lores-value">0</span></span>
+            <button class="stat-increase" data-stat="lores">Increase (+2 pts)</button>
             <button class="stat-decrease" data-stat="lores">Decrease (+2 pts)</button>
           </div>
           <div class="stat-line">
-            <span>Tracking: <span id="tracking-value">5</span></span>
-            <button class="stat-increase" data-stat="tracking">Increase (-2 pts)</button>
+            <span>Tracking: <span id="tracking-value">0</span></span>
+            <button class="stat-increase" data-stat="tracking">Increase (+2 pts)</button>
             <button class="stat-decrease" data-stat="tracking">Decrease (+2 pts)</button>
           </div>
         </div>
       </div>
-
       <div class="core-stat-category">
         <h3>Spirit</h3>
         <div class="stats-grid">
           <div class="stat-line">
-            <span>Gather Essence: <span id="gather-value">5</span></span>
-            <button class="stat-increase" data-stat="gather">Increase (-2 pts)</button>
+            <span>Gather Essence: <span id="gather-value">0</span></span>
+            <button class="stat-increase" data-stat="gather">Increase (+2 pts)</button>
             <button class="stat-decrease" data-stat="gather">Decrease (+2 pts)</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Ability Shop -->
+    <!-- Current Level Purchases Section -->
+    <section id="current-layer" class="card">
+      <h2>Current Level Purchases</h2>
+      <div id="current-layer-display">(None)</div>
+    </section>
+
+    <!-- Ability Shop Section -->
     <section class="card">
       <h2>Ability Shop</h2>
       <div id="ability-shop" class="ability-shop"></div>
     </section>
 
-    <!-- Purchased Abilities -->
+    <!-- Purchased Abilities Section -->
     <section class="card">
       <h2>Purchased Abilities</h2>
       <div id="purchased-abilities">(None)</div>
     </section>
 
-    <!-- Level History -->
+    <!-- Level History Section -->
     <section class="card">
       <h2>Level History</h2>
       <div id="layer-history"></div>
     </section>
-
   </main>
 
   <!-- Scripts -->
