@@ -71,6 +71,7 @@ window.addEventListener('DOMContentLoaded', function() {
         levelUpBtn.addEventListener('click', () => {
             Layers.levelUp();
             updateStatButtonLabels();
+            UI.updatePurchasedAbilities();
         });
     }
 });
