@@ -2,108 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Character Planner</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Character Planner</h1>
-  <div class="floating-buttons">
-    <input type="file" id="import-character" accept=".json" style="display: none;" />
-    <button id="load-character">Import</button>
-    <button id="export-character">Export</button>
-  </div>
+  <main class="container">
 
-  <div class="container-flex">
-    <!-- Left Column -->
-    <div class="column">
-      <div class="card">
-        <h2>Player Info</h2>
-        <label for="player-name">Player Name:</label>
-        <input type="text" id="player-name" />
-
-        <label for="character-name">Character Name:</label>
-        <input type="text" id="character-name" />
-
-        <label for="race">Select Race:</label>
-        <select id="race">
-          <option value="grunt">Grunt</option>
-          <option value="elf">Elf</option>
-          <option value="human">Human</option>
-          <option value="halfling">Halfling</option>
-          <option value="orc">Orc</option>
-        </select>
-
-        <label for="build-points">Build Points:</label>
-        <input type="number" id="build-points" value="105" min="1" />
-        <div id="remaining-points">Remaining Points: 105</div>
+    <!-- Header -->
+    <header>
+      <h1>Character Planner</h1>
+      <div id="level-controls">
+        <strong>Level:</strong> <span id="level-display">1</span>
+        <button id="level-up-btn">Level Up</button>
       </div>
-
-      <div class="card">
-        <h2>Proficiencies</h2>
-        <label for="weapon-prof1">Weapon Proficiency 1:</label>
-        <select id="weapon-prof1">
-          <option value="2h_blades">2-Handed Blades</option>
-          <option value="long_crushing">Long Crushing</option>
-          <option value="short_crushing">Short Crushing</option>
-          <option value="bows">Bows</option>
-          <option value="spears">Spears</option>
-        </select>
-
-        <label for="weapon-prof2">Weapon Proficiency 2:</label>
-        <select id="weapon-prof2">
-          <option value="long_crushing">Long Crushing</option>
-          <option value="short_crushing">Short Crushing</option>
-          <option value="bows">Bows</option>
-          <option value="spears">Spears</option>
-        </select>
+      <div>
+        <strong>Remaining Build Points:</strong> <span id="remaining-points">0</span>
       </div>
+    </header>
 
-      <div class="card">
-        <h2>Abilities</h2>
-        <select id="abilities" multiple size="6">
-          <option value="pinning_shot">Pinning Shot (2x)</option>
-          <option value="disarming_shot">Disarming Shot (2x)</option>
-          <option value="vital_shot">Vital Shot</option>
-          <option value="pressure_points">Pressure Points</option>
-          <option value="combat_refit">Combat Refit (2x)</option>
-          <option value="proficient_bows">Proficient in Bows</option>
-        </select>
-      </div>
-    </div>
+    <!-- Core Stats -->
+    <section id="core-stats" class="card">
+      <h2>Core Stats</h2>
 
-    <!-- Right Column -->
-    <div class="column">
-      <div class="card core-stats">
-        <h2>Core Stats</h2>
-      
-        <div class="stat-block">
-          <label class="stat-main">Body: <input type="number" id="body" min="0" /></label>
-          <div class="substats">
-            <label>Strength: <input type="number" id="strength" min="0" /></label>
-            <label>Health: <input type="number" id="health" min="0" /></label>
-            <label>Armor: <input type="number" id="armor" min="0" /></label>
+      <div class="core-stat-category">
+        <h3>Body</h3>
+        <div class="stats-grid">
+          <div class="stat-line">
+            <span>Strength: <span id="strength-value">5</span></span>
+            <button class="stat-increase" data-stat="strength">Increase (-2 pts)</button>
+            <button class="stat-decrease" data-stat="strength">Decrease (+2 pts)</button>
           </div>
-        </div>
-      
-        <div class="stat-block">
-          <label class="stat-main">Mind: <input type="number" id="mind" min="0" /></label>
-          <div class="substats">
-            <label>Lores: <input type="number" id="lores" min="0" /></label>
-            <label>Tracking: <input type="number" id="tracking" min="0" /></label>
+          <div class="stat-line">
+            <span>Health: <span id="health-value">5</span></span>
+            <button class="stat-increase" data-stat="health">Increase (-2 pts)</button>
+            <button class="stat-decrease" data-stat="health">Decrease (+2 pts)</button>
           </div>
-        </div>
-      
-        <div class="stat-block">
-          <label class="stat-main">Spirit: <input type="number" id="spirit" min="0" /></label>
-          <div class="substats">
-            <label>Gather Essence Uses: <input type="number" id="gather" min="0" /></label>
+          <div class="stat-line">
+            <span>Armor: <span id="armor-value">5</span></span>
+            <button class="stat-increase" data-stat="armor">Increase (-2 pts)</button>
+            <button class="stat-decrease" data-stat="armor">Decrease (+2 pts)</button>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <script src="js/scripts.js"></script>
+      <div class="core-stat-category">
+        <h3>Mind</h3>
+        <div class="stats-grid">
+          <div class="stat-line">
+            <span>Lores: <span id="lores-value">5</span></span>
+            <button class="stat-increase" data-stat="lores">Increase (-2 pts)</button>
+            <button class="stat-decrease" data-stat="lores">Decrease (+2 pts)</button>
+          </div>
+          <div class="stat-line">
+            <span>Tracking: <span id="tracking-value">5</span></span>
+            <button class="stat-increase" data-stat="tracking">Increase (-2 pts)</button>
+            <button class="stat-decrease" data-stat="tracking">Decrease (+2 pts)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="core-stat-category">
+        <h3>Spirit</h3>
+        <div class="stats-grid">
+          <div class="stat-line">
+            <span>Gather Essence: <span id="gather-value">5</span></span>
+            <button class="stat-increase" data-stat="gather">Increase (-2 pts)</button>
+            <button class="stat-decrease" data-stat="gather">Decrease (+2 pts)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ability Shop -->
+    <section class="card">
+      <h2>Ability Shop</h2>
+      <div id="ability-shop" class="ability-shop"></div>
+    </section>
+
+    <!-- Purchased Abilities -->
+    <section class="card">
+      <h2>Purchased Abilities</h2>
+      <div id="purchased-abilities">(None)</div>
+    </section>
+
+    <!-- Level History -->
+    <section class="card">
+      <h2>Level History</h2>
+      <div id="layer-history"></div>
+    </section>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/stats.js"></script>
+  <script src="js/abilities.js"></script>
+  <script src="js/layers.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

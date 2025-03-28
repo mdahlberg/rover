@@ -1,0 +1,87 @@
+Player name
+
+Character Name
+
+Level
+
+Build Points
+
+Core Stats
+	Body
+		strenght
+		health
+		armor
+	Mind
+		Lores
+		Tracking
+	Spirit
+		Gather Essence Uses
+Race
+	Grunt
+	Racial Abilities: 2 body 1 spirit, 1 strength, proficient in 2 handed blades, prof in 1 crushing of choice: long crushing
+
+Abilities
+	Pinning shot 2x, Prof in bows
+	Disarming Shot 2x
+	Vital shot
+	pressure points
+	combat refit 2x
+
+binding school
+	n/a
+
+binding slots
+	n/a
+
+equipment
+	n/a
+
+
+----------------------------
+Rule book page 3-4
+
+For Core stats ONLY (mind body spirit) cost differences depending on level
+
+So your planner starts at level 1, You assign whatever points you want (they can carry over)
+Then you 'level up' and spend more points (optionally)
+
+-----------------------------
+Page 48
+Essence = Magic
+
+Slots get cheaper depending on your mind stat
+
+level one bind slot - if you mind is 1 it costs 3, if your mind is 5 it costs 2
+
+-----------------
+Page 47
+Magic is 'bottom heavy'
+level 1 - you get 5 level 1 slots
+
+pay attentiont to unnaceptable configuration
+
+IF you want 5 level 9 slots, you will need 5 level 1-8 slots first (extreme)
+
+---------------
+ability pre-reqs page 36
+
+Let's talk weapon proficiency -> if you want to be proficient in "Long Crushing"
+Long Crushing -> has armor destroyer -> once you have armor destroyer you can access helm crusher, staggering blows, clear the way, sword breaker
+
+Combat abilities (helm crusher) is locked behind proficiencies
+
+{"proficiencies": [{"armor_destroyer": ["helm_crusher", "staggering_blows", "clear_the_way", "sword_breaker"]}, {"weighty_blows": ["body_blow", "strike_the_throat", "smite", "helm_crusher"}]}
+
+--------------
+page 5 anthropomorhps 
+build your own race
+
+page 6 'cost for extra uses'
+Natural weapons - no extra cost
+hard to kill - "like" a combat ability"
+MUST be a MORPH and choosing HARD TO KILL as ONE OF YOUR TWO MORPH SKILLS
+IF you want more than one! You must be a morph to unlock AND you must have selected it as
+
+Naturally tough has a MAX of THREE
+
+If you take hard to kill and naturally tough - you can't buy any others, but you can stack on top your one free combat ability
