@@ -1,9 +1,9 @@
 /* 
-  ui.js - Handles DOM manipulation and rendering based on the current state.
-  Updates include:
+  ui.js - Updates the DOM based on current state.
+  Handles:
     - Level display.
     - Remaining build points.
-    - Level history (collapsible entries).
+    - Level history (summary entries).
     - Purchased abilities list.
     - Current level stat purchases display.
 */
@@ -15,7 +15,9 @@ window.UI = {
   purchasedListEl: null,
   currentLayerEl: null,
 
-  // Initialize and cache DOM element references.
+  /**
+   * Initializes DOM element references.
+   */
   init: function () {
     this.remainingPointsEl = document.getElementById('remaining-points');
     this.levelDisplayEl = document.getElementById('level-display');
@@ -24,14 +26,20 @@ window.UI = {
     this.currentLayerEl = document.getElementById('current-layer-display');
   },
 
-  // Update remaining build points display.
+  /**
+   * Updates the remaining build points display.
+   * @param {number} points 
+   */
   updateRemainingPoints: function (points) {
     if (this.remainingPointsEl) {
       this.remainingPointsEl.textContent = points;
     }
   },
 
-  // Update level display.
+  /**
+   * Updates the level display.
+   * @param {number} level 
+   */
   updateLevelDisplay: function (level) {
     if (this.levelDisplayEl) {
       this.levelDisplayEl.textContent = level;
@@ -39,10 +47,9 @@ window.UI = {
   },
 
   /**
-   * Adds a new entry to the level history log.
-   * This is called when leveling up.
-   * @param {number} levelNumber
-   * @param {object} levelData - Contains stat purchases and abilities from that level.
+   * Adds a new history entry when leveling up.
+   * @param {number} levelNumber 
+   * @param {object} levelData 
    */
   addHistoryEntry: function (levelNumber, levelData) {
     if (!this.historyContainer) return;
@@ -64,7 +71,10 @@ window.UI = {
     this.historyContainer.appendChild(entryDiv);
   },
 
-  // Update the purchased abilities list.
+  /**
+   * Updates the purchased abilities list.
+   * Only shows a "Remove" button for abilities purchased at the current level.
+   */
   updatePurchasedAbilities: function () {
     if (!this.purchasedListEl) return;
     this.purchasedListEl.innerHTML = '';
@@ -76,8 +86,6 @@ window.UI = {
       const item = document.createElement('div');
       item.className = 'purchased-ability-item';
       item.textContent = `${ability.name} (Level ${ability.level})`;
-
-      // Only show the Remove button if purchased at the current level.
       if (ability.level === Layers.currentLevel) {
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';
@@ -90,8 +98,7 @@ window.UI = {
   },
 
   /**
-   * Updates the display of the current level's stat purchases.
-   * It reads the current Stats.currentStats and displays non-zero entries.
+   * Updates the display of current level stat purchases.
    */
   updateCurrentLayerDisplay: function () {
     if (!this.currentLayerEl) return;

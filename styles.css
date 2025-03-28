@@ -14,7 +14,7 @@ body {
   padding: 20px;
 }
 
-/* Sticky header for persistent level & points view */
+/* Sticky header */
 header {
   position: sticky;
   top: 0;
@@ -30,7 +30,7 @@ header {
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-/* Card layout for sections */
+/* Card layout */
 .card {
   background-color: #2a2a3a;
   padding: 16px;
@@ -53,7 +53,7 @@ header {
   justify-content: space-between;
 }
 
-/* Each stat-line displays a stat and its Increase/Decrease buttons */
+/* Stat line styling */
 .stat-line {
   display: flex;
   align-items: center;
@@ -65,7 +65,7 @@ header {
   transition: background-color 0.3s ease;
 }
 
-/* Increase/Decrease Buttons styling */
+/* Buttons styling */
 .stat-line button {
   padding: 6px 12px;
   background-color: #4a90e2;
@@ -78,6 +78,15 @@ header {
 }
 .stat-line button:hover {
   background-color: #3c78c0;
+}
+
+/* Derived Stats display styling */
+.derived-stats {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+.derived-stats p {
+  margin: 4px 0;
 }
 
 /* Level Up Button Styling */
@@ -111,7 +120,7 @@ header {
   align-items: center;
 }
 
-/* Styling for the Ability Shop purchase button */
+/* Purchase button styling for ability shop */
 .buy-ability-btn {
   padding: 6px 12px;
   background-color: #4a90e2;
@@ -126,7 +135,7 @@ header {
   background-color: #3c78c0;
 }
 
-/* Purchased Abilities list styling */
+/* Purchased Abilities List */
 .purchased-ability-item {
   background-color: #3f3f4f;
   padding: 6px;
@@ -154,30 +163,159 @@ header {
 #layer-history div {
   margin-bottom: 6px;
 }
-/* Level History: Collapsible Entries */
-.history-entry {
-  border: 1px solid #444;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  overflow: hidden;
+/* Splash Page Styles */
+.splash-body {
+  margin: 0;
+  padding: 0;
+  background: url('images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Arial', sans-serif;
 }
 
-.history-header {
-  background-color: #3a3a4f;
-  padding: 8px;
+/* Main container for splash content */
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Header Styling */
+.splash-header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #f8f8f8;
+}
+.splash-header h1 span {
+  color: #4a90e2;
+  font-style: italic;
+}
+
+/* Race Selection Section */
+.race-selection {
+  width: 80%;
+  max-width: 1000px;
+  margin: auto;
+}
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Individual Race Cards */
+.race-card {
+  background-color: #2e2e3e;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.race-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+}
+.race-card.selected {
+  border: 2px solid #4a90e2;
+  box-shadow: 0 0 20px #4a90e2;
 }
 
-.history-header:hover {
+/* Start Button */
+#start-button-container {
+  margin-top: 30px;
+}
+.hidden {
+  display: none;
+}
+#start-btn {
+  padding: 12px 24px;
+  font-size: 1.2rem;
   background-color: #4a90e2;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+#start-btn:hover {
+  background-color: #3c78c0;
+}
+/* Splash Screen Styles */
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: url('images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #f8f8f8;
 }
 
-.history-details {
-  background-color: #2a2a3a;
-  padding: 8px;
-  font-family: monospace;
-  white-space: pre-wrap;
-  font-size: 0.85rem;
+.splash-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.splash-header h1 span {
+  color: #4a90e2;
+  font-style: italic;
+}
+
+.race-selection {
+  width: 80%;
+  max-width: 1000px;
+}
+
+.race-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.race-card {
+  background-color: #2e2e3e;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.race-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+}
+
+.race-card.selected {
+  border: 2px solid #4a90e2;
+  box-shadow: 0 0 20px #4a90e2;
+}
+
+#start-button-container {
+  margin-top: 30px;
+}
+
+.hidden {
+  display: none;
+}
+
+#start-btn {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  background-color: #4a90e2;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#start-btn:hover {
+  background-color: #3c78c0;
 }

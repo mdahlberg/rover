@@ -3,12 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Character Planner</title>
+  <title>Roles of the Valiant - Character Planner</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="container">
-    <!-- Header: Sticky with level and remaining build points -->
+  <!-- Splash Screen Section -->
+  <div id="splash-container" class="splash-container">
+    <div class="splash-header">
+      <h1>Welcome to <span>Roles of the Valiant</span></h1>
+      <p>Select your starting race to begin your adventure!</p>
+    </div>
+    <section class="race-selection">
+      <div class="race-grid">
+        <!-- Humans -->
+        <div class="race-card" onclick="selectRace('humans')">
+          <h2>Humans</h2>
+          <p>Cost: <strong>0 BP</strong></p>
+          <p>+1 to all core stats</p>
+        </div>
+        <!-- Espers -->
+        <div class="race-card" onclick="selectRace('espers')">
+          <h2>Espers</h2>
+          <p>Cost: <strong>5 BP</strong></p>
+          <p>+2 Mind, +1 Spirit</p>
+          <p>Free: Proficiency in Bows, Short Blades</p>
+        </div>
+        <!-- Grunt -->
+        <div class="race-card" onclick="selectRace('grunt')">
+          <h2>Grunt</h2>
+          <p>Cost: <strong>5 BP</strong></p>
+          <p>+2 Body, +1 Spirit</p>
+          <p>Free: Proficiency in Two-Handed Blades</p>
+          <p>Passive: +1 Strength</p>
+        </div>
+        <!-- Duskers -->
+        <div class="race-card" onclick="selectRace('duskers')">
+          <h2>Duskers</h2>
+          <p>Cost: <strong>10 BP</strong></p>
+          <p>+1 Mind, +1 Spirit, +1 Core Stat of Choice</p>
+          <p>Proficient in Short Blades</p>
+          <p>Half cost: Dual Wielder, Strike from Behind</p>
+        </div>
+        <!-- Harrowed -->
+        <div class="race-card" onclick="selectRace('harrowed')">
+          <h2>Harrowed</h2>
+          <p>Cost: <strong>15 BP</strong></p>
+          <p>+2 Body, +2 Spirit</p>
+          <p>Proficient in Shields and Double Weapons</p>
+        </div>
+        <!-- Anthropomorphs -->
+        <div class="race-card" onclick="selectRace('morphs')">
+          <h2>Anthropomorphs (Morphs)</h2>
+          <p>Cost: <strong>10 BP</strong></p>
+          <p>+1 to two core stats of choice</p>
+          <p>One free weapon proficiency</p>
+          <p>Choose 2 Morph traits</p>
+        </div>
+      </div>
+    </section>
+    <!-- Confirm Button (hidden until a race is selected) -->
+    <div id="start-button-container" class="hidden">
+      <button id="start-btn" onclick="confirmRace()">Confirm Race & Begin</button>
+    </div>
+  </div>
+
+  <!-- Main Planner Section -->
+  <div id="planner-container" class="hidden">
+    <!-- Header: Sticky header remains the same -->
     <header>
       <h1>Character Planner</h1>
       <div id="level-controls">
@@ -27,44 +88,38 @@
         <h3>Body</h3>
         <div class="stats-grid">
           <div class="stat-line">
-            <span>Strength: <span id="strength-value">0</span></span>
-            <button class="stat-increase" data-stat="strength">Increase (+2 pts)</button>
-            <button class="stat-decrease" data-stat="strength">Decrease (+2 pts)</button>
+            <span>Body: <span id="body-value">0</span></span>
+            <button class="stat-increase" data-stat="body">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="body">Decrease (+? pts)</button>
           </div>
-          <div class="stat-line">
-            <span>Health: <span id="health-value">0</span></span>
-            <button class="stat-increase" data-stat="health">Increase (+2 pts)</button>
-            <button class="stat-decrease" data-stat="health">Decrease (+2 pts)</button>
-          </div>
-          <div class="stat-line">
-            <span>Armor: <span id="armor-value">0</span></span>
-            <button class="stat-increase" data-stat="armor">Increase (+2 pts)</button>
-            <button class="stat-decrease" data-stat="armor">Decrease (+2 pts)</button>
-          </div>
+        </div>
+        <div class="derived-stats">
+          <p>Derived Strength: <span id="derived-strength">0</span></p>
+          <p>Derived Health: <span id="derived-health">5</span></p>
         </div>
       </div>
       <div class="core-stat-category">
-        <h3>Mind</h3>
+        <h3>Other Stats</h3>
         <div class="stats-grid">
           <div class="stat-line">
+            <span>Armor: <span id="armor-value">0</span></span>
+            <button class="stat-increase" data-stat="armor">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="armor">Decrease (+? pts)</button>
+          </div>
+          <div class="stat-line">
             <span>Lores: <span id="lores-value">0</span></span>
-            <button class="stat-increase" data-stat="lores">Increase (+2 pts)</button>
-            <button class="stat-decrease" data-stat="lores">Decrease (+2 pts)</button>
+            <button class="stat-increase" data-stat="lores">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="lores">Decrease (+? pts)</button>
           </div>
           <div class="stat-line">
             <span>Tracking: <span id="tracking-value">0</span></span>
-            <button class="stat-increase" data-stat="tracking">Increase (+2 pts)</button>
-            <button class="stat-decrease" data-stat="tracking">Decrease (+2 pts)</button>
+            <button class="stat-increase" data-stat="tracking">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="tracking">Decrease (+? pts)</button>
           </div>
-        </div>
-      </div>
-      <div class="core-stat-category">
-        <h3>Spirit</h3>
-        <div class="stats-grid">
           <div class="stat-line">
             <span>Gather Essence: <span id="gather-value">0</span></span>
-            <button class="stat-increase" data-stat="gather">Increase (+2 pts)</button>
-            <button class="stat-decrease" data-stat="gather">Decrease (+2 pts)</button>
+            <button class="stat-increase" data-stat="gather">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="gather">Decrease (+? pts)</button>
           </div>
         </div>
       </div>
@@ -93,9 +148,10 @@
       <h2>Level History</h2>
       <div id="layer-history"></div>
     </section>
-  </main>
+  </div>
 
-  <!-- Scripts -->
+  <!-- Scripts: Load splash.js first, then the rest -->
+  <script src="js/splash.js"></script>
   <script src="js/stats.js"></script>
   <script src="js/abilities.js"></script>
   <script src="js/layers.js"></script>

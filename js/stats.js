@@ -1,25 +1,23 @@
 /* 
   stats.js - Manages core stat logic with level-based locking.
-  Stats are split into two parts:
-    - lockedStats: Stat points purchased in previous levels (immutable).
-    - currentStats: Stat points purchased in the current level (modifiable).
-  The displayed total for a stat = lockedStats + currentStats.
+  For the Body stat, only points into "body" are directly purchased.
+  Derived stats are calculated as:
+    - Derived Health = body score + 5
+    - Derived Strength = floor(body score / 4)
+  Other stats (armor, lores, tracking, gather) remain unchanged.
 */
 
 window.Stats = {
-  // Stat points locked from previous levels.
+  // For the Body stat, we now only allow direct modifications to "body"
   lockedStats: {
-    strength: 0,
-    health: 0,
+    body: 0,
     armor: 0,
     lores: 0,
     tracking: 0,
     gather: 0
   },
-  // Stat points purchased in the current level.
   currentStats: {
-    strength: 0,
-    health: 0,
+    body: 0,
     armor: 0,
     lores: 0,
     tracking: 0,
@@ -27,19 +25,18 @@ window.Stats = {
   },
 
   /**
-   * Returns the total stat value for a given stat.
-   * @param {string} statName - The name of the stat.
-   * @returns {number} Total value = locked + current.
+   * Returns the total value for a given stat (locked + current).
+   * @param {string} statName 
+   * @returns {number}
    */
   getTotal: function(statName) {
     return this.lockedStats[statName] + this.currentStats[statName];
   },
 
   /**
-   * Calculates the cost for increasing a stat to a new total value,
-   * based on the current character level.
-   * @param {number} level - The current level.
-   * @param {number} newValue - The new total value (locked + current + 1).
+   * Calculates the cost for increasing a stat to a new total value.
+   * @param {number} level - Current character level.
+   * @param {number} newValue - New total value (locked + current + 1).
    * @returns {number} Build point cost.
    */
   getIncrementCost: function(level, newValue) {
@@ -67,8 +64,8 @@ window.Stats = {
   },
 
   /**
-   * Checks if a stat can be increased. (Additional limits can be added here.)
-   * @param {string} statName
+   * Checks if a stat can be increased.
+   * @param {string} statName 
    * @returns {boolean}
    */
   canIncrease: function(statName) {
@@ -77,8 +74,8 @@ window.Stats = {
 
   /**
    * Checks if a stat can be decreased.
-   * Only points purchased in the current level can be removed.
-   * @param {string} statName
+   * Only current level points are modifiable.
+   * @param {string} statName 
    * @returns {boolean}
    */
   canDecrease: function(statName) {
@@ -87,9 +84,9 @@ window.Stats = {
 
   /**
    * Increases the current stat purchase for a given stat by 1.
-   * Returns the build point cost of the increase.
-   * @param {string} statName
-   * @param {number} currentLevel
+   * Returns the cost for that increase.
+   * @param {string} statName 
+   * @param {number} currentLevel 
    * @returns {number} Cost spent.
    */
   increaseStat: function(statName, currentLevel) {
@@ -102,9 +99,9 @@ window.Stats = {
 
   /**
    * Decreases the current stat purchase for a given stat by 1.
-   * Returns the build points refunded.
-   * @param {string} statName
-   * @param {number} currentLevel
+   * Returns the refund amount.
+   * @param {string} statName 
+   * @param {number} currentLevel 
    * @returns {number} Refund amount.
    */
   decreaseStat: function(statName, currentLevel) {
@@ -116,7 +113,7 @@ window.Stats = {
   },
 
   /**
-   * Calculates total points spent on current level stat purchases.
+   * Calculates the total points spent on current level stat purchases.
    * @returns {number} Total points spent.
    */
   pointsSpentOnCurrent: function() {
@@ -133,7 +130,7 @@ window.Stats = {
   }
 };
 
-// Initialize current stats to 0 for each stat.
+// Initialize currentStats for each stat.
 for (let stat in Stats.lockedStats) {
   Stats.currentStats[stat] = 0;
 }
