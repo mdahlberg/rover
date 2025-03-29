@@ -78,6 +78,12 @@ window.addEventListener('DOMContentLoaded', function () {
   updateDerivedStats();
   UI.updateLoreUI()
 
+  // Update lores after mind stat changes
+  function handleMindStatChange() {
+    Abilities.updateGatherEssenceDerived();
+    UI.updateLoreUI();
+  }
+
   // --- Event Listeners for Stat Adjustments ---
   // Increase stat button
   document.querySelectorAll('.stat-increase').forEach(button => {
@@ -101,7 +107,9 @@ window.addEventListener('DOMContentLoaded', function () {
           updateDerivedStats();
         } else if (statName === "spirit") {
 	  Abilities.updateGatherEssenceDerived();
-        }
+        } else if (statName === "mind") {
+	  handleMindStatChange()
+	}
       } else {
         alert("Not enough build points or stat maxed out.");
       }
@@ -124,7 +132,9 @@ window.addEventListener('DOMContentLoaded', function () {
           updateDerivedStats();
         } else if (statName === "spirit") {
           Abilities.updateGatherEssenceDerived();
-	}
+	} else if (statName === "mind") {
+          handleMindStatChange()
+        }
       }
     });
   });

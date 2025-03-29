@@ -18,7 +18,7 @@ window.Lores = {
     // Add more lores as needed
   ],
 
-  selectedLores: {}, // Tracks which lores are chosen at each level
+  selectedLores: {}, // Tracks the levels of lores for each level { level: { loreId: points } }
 
   /**
    * Calculate how many lores the user has earned based on Mind stat.
@@ -30,10 +30,10 @@ window.Lores = {
 
   /**
    * Get the selected lores for the current level.
-   * @returns {array} Selected lore IDs.
+   * @returns {object} Selected lores with their current level.
    */
   getSelectedLores: function() {
-    return this.selectedLores[Layers.currentLevel] || [];
+    return this.selectedLores[Layers.currentLevel] || {};
   },
 
   /**
@@ -41,34 +41,29 @@ window.Lores = {
    * @returns {number} Number of unspent lores.
    */
   getUnspentLores: function() {
-    return this.getEarnedLores() - this.getSelectedLores().length;
+    const selectedLores = this.getSelectedLores();
+    const totalSpentLores = Object.values(selectedLores).reduce((sum, level) => sum + level, 0);
+    return this.getEarnedLores() - totalSpentLores;
   },
 
   /**
-   * Select a lore for the current level if lores are available.
-   * @param {string} loreId - ID of the lore to select.
+   * Increase the level of a specific lore if unspent lores are available.
+   * @param {string} loreId - ID of the lore to increase.
    */
-  selectLore: function(loreId) {
-    if (this.getUnspentLores() <= 0) return false;
+  increaseLore: function(loreId) {
+    if (this.getUnspentLores() <= 0) return false; // No unspent lores available
     if (!this.selectedLores[Layers.currentLevel]) {
-      this.selectedLores[Layers.currentLevel] = [];
+      this.selectedLores[Layers.currentLevel] = {};
     }
-    this.selectedLores[Layers.currentLevel].push(loreId);
-    UI.updateLoreUI();
-    return true;
-  },
-
-  /**
-   * Remove a previously selected lore from the current level.
-   * @param {string} loreId - ID of the lore to remove.
-   */
-  removeLore: function(loreId) {
-    if (!this.selectedLores[Layers.currentLevel]) return false;
-    const index = this.selectedLores[Layers.currentLevel].indexOf(loreId);
-    if (index === -1) return false;
-    this.selectedLores[Layers.currentLevel].splice(index, 1);
-    UI.updateLoreUI();
-    return true;
+    if (!this.selectedLores[Layers.currentLevel][loreId]) {
+      this.selectedLores[Layers.currentLevel][loreId] = 0;
+    }
+    if (this.selectedLores[Layers.currentLevel][loreId] < 5) {
+      this.selectedLores[Layers.currentLevel][loreId]++;
+      UI.updateLoreUI();
+      return true;
+    }
+    return false;
   },
 
   /**
@@ -79,3 +74,4 @@ window.Lores = {
     Layers.updateCurrentLayer();
   }
 };
+
