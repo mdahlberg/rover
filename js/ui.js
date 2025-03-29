@@ -86,7 +86,7 @@ window.UI = {
       const item = document.createElement('div');
       item.className = 'purchased-ability-item';
       item.textContent = `${ability.name} (Level ${ability.level})`;
-      if (ability.level === Layers.currentLevel) {
+      if (ability.level === Layers.currentLevel && ability.id !== "gather_essence") {
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';
         removeBtn.className = 'remove-ability-btn';

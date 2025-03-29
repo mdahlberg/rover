@@ -86,6 +86,8 @@
     <!-- Core Stats Section -->
     <section id="core-stats" class="card">
       <h2>Core Stats</h2>
+      
+      <!-- Body Category -->
       <div class="core-stat-category">
         <h3>Body</h3>
         <div class="stats-grid">
@@ -100,32 +102,38 @@
           <p>Derived Health: <span id="derived-health">5</span></p>
         </div>
       </div>
+      
+      <!-- Mind Category -->
       <div class="core-stat-category">
-        <h3>Other Stats</h3>
+        <h3>Mind</h3>
         <div class="stats-grid">
           <div class="stat-line">
-            <span>Armor: <span id="armor-value">0</span></span>
-            <button class="stat-increase" data-stat="armor">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="armor">Decrease (+? pts)</button>
+            <span>Mind: <span id="mind-value">0</span></span>
+            <button class="stat-increase" data-stat="mind">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="mind">Decrease (+? pts)</button>
           </div>
+        </div>
+        <div class="derived-stats">
+          <p>Derived Lore: <span id="derived-lore">0</span></p>
+        </div>
+      </div>
+      
+      <!-- Spirit Category -->
+      <div class="core-stat-category">
+        <h3>Spirit</h3>
+        <div class="stats-grid">
           <div class="stat-line">
-            <span>Lores: <span id="lores-value">0</span></span>
-            <button class="stat-increase" data-stat="lores">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="lores">Decrease (+? pts)</button>
+            <span>Spirit: <span id="spirit-value">0</span></span>
+            <button class="stat-increase" data-stat="spirit">Increase (+? pts)</button>
+            <button class="stat-decrease" data-stat="spirit">Decrease (+? pts)</button>
           </div>
-          <div class="stat-line">
-            <span>Tracking: <span id="tracking-value">0</span></span>
-            <button class="stat-increase" data-stat="tracking">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="tracking">Decrease (+? pts)</button>
-          </div>
-          <div class="stat-line">
-            <span>Gather Essence: <span id="gather-value">0</span></span>
-            <button class="stat-increase" data-stat="gather">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="gather">Decrease (+? pts)</button>
-          </div>
+        </div>
+        <div class="derived-stats">
+          <p>Derived Gather Essence Uses: <span id="derived-gather">0</span></p>
         </div>
       </div>
     </section>
+
 
     <!-- Current Level Purchases Section -->
     <section id="current-layer" class="card">

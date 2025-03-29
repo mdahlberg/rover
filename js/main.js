@@ -98,6 +98,8 @@ window.addEventListener('DOMContentLoaded', function () {
         UI.updateCurrentLayerDisplay();
         if (statName === "body") {
           updateDerivedStats();
+        } else if (statName === "spirit") {
+	  Abilities.updateGatherEssenceDerived();
         }
       } else {
         alert("Not enough build points or stat maxed out.");
@@ -119,7 +121,9 @@ window.addEventListener('DOMContentLoaded', function () {
         UI.updateCurrentLayerDisplay();
         if (statName === "body") {
           updateDerivedStats();
-        }
+        } else if (statName === "spirit") {
+          Abilities.updateGatherEssenceDerived();
+	}
       }
     });
   });
