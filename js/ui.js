@@ -112,7 +112,7 @@ window.UI = {
   }
 };
 
-// ui.js - UI updates for the lore system.
+// ui.js - Updates the DOM based on current state, including lore UI updates.
 
 UI.updateLoreUI = function() {
   const loreContainer = document.getElementById('lore-content');
@@ -121,12 +121,12 @@ UI.updateLoreUI = function() {
 
   // Update unspent lores badge.
   unspentBadge.textContent = `${unspentLores} Unspent`;
-  unspentBadge.style.display = unspentLores > 0 ? 'inline-block' : 'none';
+  unspentBadge.style.display = 'inline-block';
 
   // Clear previous lore display.
   loreContainer.innerHTML = "";
 
-  // Group lores by category.
+  // Group available lores by category.
   const loresByCategory = {};
   Lores.availableLores.forEach(lore => {
     if (!loresByCategory[lore.category]) loresByCategory[lore.category] = [];
@@ -140,21 +140,37 @@ UI.updateLoreUI = function() {
     categoryDiv.innerHTML = `<h3>${category}</h3>`;
 
     const loreList = document.createElement('ul');
+    loreList.style.listStyleType = 'none';
+    loreList.style.paddingLeft = '20px';
 
     loresByCategory[category].forEach(lore => {
       const listItem = document.createElement('li');
+      const selectedLores = Lores.getSelectedLores();
       const loreLevel = Lores.getSelectedLores()[lore.id] || 0;
 
-      // Display lore name and level
-      listItem.innerHTML = `<span title="${lore.description}">${lore.name} (Level: ${loreLevel})</span>`;
+      // Display lore name and current level.
+      listItem.innerHTML = `<span title="${lore.description}">${lore.name} (Level: ${loreLevel})</span> `;
+      // Create a container for the buttons.
+      const buttonContainer = document.createElement('span');
+      buttonContainer.className = 'lore-button-container';
 
-      // Add plus button if below max level
+      // If lore has been increased, add a minus button first.
+      if (loreLevel > 0) {
+        const minusButton = document.createElement('button');
+        minusButton.textContent = '−';
+        minusButton.onclick = () => Lores.decreaseLore(lore.id);
+        buttonContainer.appendChild(minusButton);
+      }
+
+      // Add the plus button.
       const plusButton = document.createElement('button');
       plusButton.textContent = '+';
-      plusButton.disabled = (loreLevel >= 5 || Lores.getUnspentLores() === 0);
       plusButton.onclick = () => Lores.increaseLore(lore.id);
-      listItem.appendChild(plusButton);
+      plusButton.disabled = (loreLevel >= 5 || Lores.getUnspentLores() === 0);
+      buttonContainer.appendChild(plusButton);
 
+      // Append the button container to the list item.
+      listItem.appendChild(buttonContainer);
       loreList.appendChild(listItem);
     });
 

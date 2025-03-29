@@ -78,13 +78,19 @@ window.Stats = {
    * @returns {boolean}
    */
   canDecrease: function(statName) {
-    const currentMind = Stats.getTotal('mind');
-    const newMind = currentMind - 1;
-    const newEarned = Math.floor(newMind / 3);
-    const spentLores = Object.values(Lores.getSelectedLores()).reduce((sum, lvl) => sum + lvl, 0);
-    if (newEarned < spentLores) {
-      alert("You cannot decrease your Mind stat further because you have already spent lore points. Please unassign a lore first.");
-      return false;
+
+    if (statName === "mind") {
+        const currentMind = Stats.getTotal('mind');
+        const newMind = currentMind - 1;
+	if (newMind < 0) {
+	    return false;
+	}
+        const newEarned = Math.floor(newMind / 3);
+        const spentLores = Object.values(Lores.getSelectedLores()).reduce((sum, lvl) => sum + lvl, 0);
+        if (newEarned < spentLores) {
+          alert("You cannot decrease your Mind stat further because you have already spent lore points. Please unassign a lore first.");
+          return false;
+        }
     }
 
     return this.currentStats[statName] > 0;

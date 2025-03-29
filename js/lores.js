@@ -18,48 +18,51 @@ window.Lores = {
     // Add more lores as needed
   ],
 
-  selectedLores: {}, // Tracks the levels of lores for each level { level: { loreId: points } }
+  // Tracks the levels of lores for each level in the format:
+  // { level: { loreId: points } }
+  // Stores the selected lore points as a mapping: { loreId: points }
+  selectedLores: {},
 
   /**
-   * Calculate how many lores the user has earned based on Mind stat.
-   * @returns {number} Number of earned lores.
+   * Calculate how many lores the user has earned based on the Mind stat.
+   * Every 3 points in Mind stat grants 1 lore.
+   * @returns {number} Number of earned lore points.
    */
   getEarnedLores: function() {
     return Math.floor(Stats.getTotal('mind') / 3);
   },
 
   /**
-   * Get the selected lores for the current level.
-   * @returns {object} Selected lores with their current level.
+   * Returns the selected lore levels (global, not per-level).
+   * @returns {object} An object mapping loreId to allocated points.
    */
   getSelectedLores: function() {
-    return this.selectedLores[Layers.currentLevel] || {};
+    return this.selectedLores;
   },
 
   /**
-   * Calculate how many lores remain unspent.
-   * @returns {number} Number of unspent lores.
+   * Calculates how many lore points remain unspent.
+   * @returns {number} Unspent lore points.
    */
   getUnspentLores: function() {
-    const selectedLores = this.getSelectedLores();
-    const totalSpentLores = Object.values(selectedLores).reduce((sum, level) => sum + level, 0);
-    return this.getEarnedLores() - totalSpentLores;
+    const selected = this.getSelectedLores();
+    const totalSpent = Object.values(selected).reduce((sum, pts) => sum + pts, 0);
+    return this.getEarnedLores() - totalSpent;
   },
 
   /**
-   * Increase the level of a specific lore if unspent lores are available.
-   * @param {string} loreId - ID of the lore to increase.
+   * Increases the allocated level for a given lore if unspent lore points are available.
+   * Each lore can be increased up to a maximum of 5.
+   * @param {string} loreId - The ID of the lore to increase.
+   * @returns {boolean} True if increased, false otherwise.
    */
   increaseLore: function(loreId) {
-    if (this.getUnspentLores() <= 0) return false; // No unspent lores available
-    if (!this.selectedLores[Layers.currentLevel]) {
-      this.selectedLores[Layers.currentLevel] = {};
+    if (this.getUnspentLores() <= 0) return false;
+    if (!this.selectedLores[loreId]) {
+      this.selectedLores[loreId] = 0;
     }
-    if (!this.selectedLores[Layers.currentLevel][loreId]) {
-      this.selectedLores[Layers.currentLevel][loreId] = 0;
-    }
-    if (this.selectedLores[Layers.currentLevel][loreId] < 5) {
-      this.selectedLores[Layers.currentLevel][loreId]++;
+    if (this.selectedLores[loreId] < 5) {
+      this.selectedLores[loreId]++;
       UI.updateLoreUI();
       return true;
     }
@@ -67,11 +70,15 @@ window.Lores = {
   },
 
   /**
-   * Reset lores for a new level up (locking in previous selections).
+   * Decreases the allocated level for a given lore if it is above 0.
+   * @param {string} loreId - The ID of the lore to decrease.
+   * @returns {boolean} True if decreased, false otherwise.
    */
-  lockLores: function() {
-    if (!this.selectedLores[Layers.currentLevel]) return;
-    Layers.updateCurrentLayer();
+  decreaseLore: function(loreId) {
+    if (!this.selectedLores[loreId] || this.selectedLores[loreId] <= 0) return false;
+    this.selectedLores[loreId]--;
+    UI.updateLoreUI();
+    return true;
   }
 };
 
