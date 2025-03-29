@@ -1,32 +1,31 @@
 /* 
   stats.js - Manages core stat logic with level-based locking.
-  For the Body stat, only points into "body" are directly purchased.
-  Derived stats are calculated as:
-    - Derived Health = body score + 5
-    - Derived Strength = floor(body score / 4)
-  Other stats (armor, lores, tracking, gather) remain unchanged.
+  Now, only the three core stats exist:
+    - Body, Mind, and Spirit.
+  
+  Derived stats:
+    - Body: Derived Strength = floor(body / 4), Derived Health = body + 5
+    - Mind: Derived Lore = floor(mind / 3)
+    - Spirit: Derived Gather Essence Uses = floor(spirit / 3)
 */
 
 window.Stats = {
-  // For the Body stat, we now only allow direct modifications to "body"
+  // Locked stat values (from previous levels)
   lockedStats: {
     body: 0,
-    armor: 0,
-    lores: 0,
-    tracking: 0,
-    gather: 0
+    mind: 0,
+    spirit: 0
   },
+  // Stat points purchased in the current level
   currentStats: {
     body: 0,
-    armor: 0,
-    lores: 0,
-    tracking: 0,
-    gather: 0
+    mind: 0,
+    spirit: 0
   },
 
   /**
    * Returns the total value for a given stat (locked + current).
-   * @param {string} statName 
+   * @param {string} statName
    * @returns {number}
    */
   getTotal: function(statName) {
@@ -65,7 +64,7 @@ window.Stats = {
 
   /**
    * Checks if a stat can be increased.
-   * @param {string} statName 
+   * @param {string} statName
    * @returns {boolean}
    */
   canIncrease: function(statName) {
@@ -74,8 +73,8 @@ window.Stats = {
 
   /**
    * Checks if a stat can be decreased.
-   * Only current level points are modifiable.
-   * @param {string} statName 
+   * Only current level points can be modified.
+   * @param {string} statName
    * @returns {boolean}
    */
   canDecrease: function(statName) {
@@ -84,9 +83,9 @@ window.Stats = {
 
   /**
    * Increases the current stat purchase for a given stat by 1.
-   * Returns the cost for that increase.
-   * @param {string} statName 
-   * @param {number} currentLevel 
+   * Returns the cost spent.
+   * @param {string} statName
+   * @param {number} currentLevel
    * @returns {number} Cost spent.
    */
   increaseStat: function(statName, currentLevel) {
@@ -100,8 +99,8 @@ window.Stats = {
   /**
    * Decreases the current stat purchase for a given stat by 1.
    * Returns the refund amount.
-   * @param {string} statName 
-   * @param {number} currentLevel 
+   * @param {string} statName
+   * @param {number} currentLevel
    * @returns {number} Refund amount.
    */
   decreaseStat: function(statName, currentLevel) {
