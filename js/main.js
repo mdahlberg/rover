@@ -52,7 +52,7 @@ window.addEventListener('DOMContentLoaded', function () {
     Layers.buildPoints = startingBP;
 
     // Update each stat's display using locked stats plus current purchases.
-    const stats = ['body', 'armor', 'lores', 'tracking', 'gather'];
+    const stats = ['body', 'mind', 'spirit'];
     stats.forEach(stat => {
       const elem = document.getElementById(`${stat}-value`);
       if (elem) {
@@ -76,6 +76,13 @@ window.addEventListener('DOMContentLoaded', function () {
   updateStatButtonLabels();
   UI.updateCurrentLayerDisplay();
   updateDerivedStats();
+  UI.updateLoreUI()
+
+  // Update lores after mind stat changes
+  function handleMindStatChange() {
+    Abilities.updateGatherEssenceDerived();
+    UI.updateLoreUI();
+  }
 
   // --- Event Listeners for Stat Adjustments ---
   // Increase stat button
@@ -100,7 +107,9 @@ window.addEventListener('DOMContentLoaded', function () {
           updateDerivedStats();
         } else if (statName === "spirit") {
 	  Abilities.updateGatherEssenceDerived();
-        }
+        } else if (statName === "mind") {
+	  handleMindStatChange()
+	}
       } else {
         alert("Not enough build points or stat maxed out.");
       }
@@ -123,7 +132,9 @@ window.addEventListener('DOMContentLoaded', function () {
           updateDerivedStats();
         } else if (statName === "spirit") {
           Abilities.updateGatherEssenceDerived();
-	}
+	} else if (statName === "mind") {
+          handleMindStatChange()
+        }
       }
     });
   });
@@ -132,7 +143,7 @@ window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('level-up-btn').addEventListener('click', () => {
     Layers.levelUp();
     // Update all stat displays to show locked totals.
-    const stats = ['body', 'armor', 'lores', 'tracking', 'gather'];
+    const stats = ['body', 'mind', 'spirit'];
     stats.forEach(stat => {
       document.getElementById(`${stat}-value`).textContent = Stats.getTotal(stat);
     });
