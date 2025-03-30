@@ -367,3 +367,48 @@ header {
   background-color: #c04444;
 }
 
+/* Style for lore parent (non-clickable headers) */
+.lore-category h3 {
+  font-size: 1.2rem;
+  margin-top: 15px;
+}
+
+/* Indent child lores beneath parent lores */
+ul ul {
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+/* Apply consistent button styles to all lore buttons */
+button.lore-button {
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #4a90e2;
+  color: #fff;
+  margin-left: 4px;
+}
+
+button.lore-button:hover:not(:disabled) {
+  background-color: #3c78c0;
+}
+
+/* Ensure button container is correctly styled */
+.lore-button-container {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Style for disabled lore buttons (plus button when no unspent lores) */
+button.lore-button:disabled {
+  background-color: #ccc; /* Light gray */
+  color: #666; /* Slightly darker text */
+  cursor: not-allowed;
+  border: 1px solid #bbb;
+}
+
