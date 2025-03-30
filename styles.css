@@ -409,6 +409,5 @@ button.lore-button:disabled {
   background-color: #ccc; /* Light gray */
   color: #666; /* Slightly darker text */
   cursor: not-allowed;
-  border: 1px solid #bbb;
 }
 
