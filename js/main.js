@@ -26,15 +26,19 @@ function updateStatButtonLabels() {
  * Updates derived stats based on the "body" stat.
  * Derived Health = body score + 5
  * Derived Strength = floor(body score / 4)
+ * Derived Armor = body score + 10
  */
 function updateDerivedStats() {
   const bodyTotal = Stats.getTotal('body');
   const derivedHealth = bodyTotal + 5;
   const derivedStrength = Math.floor(bodyTotal / 4);
+  const derivedArmor = bodyTotal + 10;
   const healthElem = document.getElementById('derived-health');
   const strengthElem = document.getElementById('derived-strength');
+  const armorElem = document.getElementById('derived-armor');
   if (healthElem) healthElem.textContent = derivedHealth;
   if (strengthElem) strengthElem.textContent = derivedStrength;
+  if (armorElem) armorElem.textContent = derivedArmor;
 }
 
 // --- Initialization: Check for Race Selection and Setup UI ---
