@@ -411,3 +411,28 @@ button.lore-button:disabled {
   cursor: not-allowed;
 }
 
+
+/* Styles for Proficiency Shop */
+#proficiency-shop, #selected-proficiencies-card {
+  margin-top: 20px;
+}
+
+#proficiency-content li, #selected-proficiencies li {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#proficiency-content button, #selected-proficiencies button {
+  padding: 4px 8px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#proficiency-content button:hover, #selected-proficiencies button:hover {
+  background-color: #3c78c0;
+}

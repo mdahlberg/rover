@@ -1,6 +1,7 @@
 // splash.js - Handles race selection and transition to the planner.
+console.log("splash.js loaded");
 
-let selectedRace = null;
+let selectedRace = {};
 
 /**
  * Called when a race card is clicked.
@@ -33,10 +34,26 @@ function confirmRace() {
   }
   // Save the selected race in localStorage.
   localStorage.setItem('selectedRace', selectedRace);
+  console.log("Race confirmed:", selectedRace); // Debug
+
   // Apply race effects (e.g., deduct build points, modify locked stats, add racial abilities).
   applyRaceEffects(selectedRace);
+
+  UI.showCharacterPlanner()
   // Redirect to the main planner page.
-  window.location.href = 'index.html';
+  // Hide splash and show planner
+  //document.getElementById("splash-container").classList.add("hidden");
+  //console.log("Is planner container visible? ", !document.getElementById("planner-container").classList.contains("hidden"));
+
+  //document.getElementById("planner-container").classList.remove("hidden");
+
+  // Initialize UI only after planner is visible
+  //UI.updateBuildPoints();
+  //UI.updateDerivedStats();
+  //UI.updateAbilityUI();
+  //UI.updateProficiencyUI();
+  //UI.updateLoreUI();
+  //UI.updateStatsUI()
 }
 
 /**

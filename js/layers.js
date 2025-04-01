@@ -1,71 +1,84 @@
-/* 
-  layers.js - Manages level progression and locking in stat purchases.
-  Now using three core stats: body, mind, and spirit.
-  When leveling up, the current level's stat purchases are added to lockedStats and reset.
-*/
+
+// layers.js - Centralized Build Point Management
 
 window.Layers = {
-  currentLevel: 1,
-  buildPoints: 50,
-  layersData: [],
+  layers: [],
 
-  /**
-   * Updates the current level's layer record to match the latest Stats.currentStats.
-   * This stores the stat purchases made during the current level.
-   */
-  updateCurrentLayer: function () {
-    if (!this.layersData[this.currentLevel - 1]) {
-      this.layersData[this.currentLevel - 1] = { 
-        stats: { ...Stats.currentStats }, 
-        abilities: [] 
-      };
-    } else {
-      this.layersData[this.currentLevel - 1].stats = { ...Stats.currentStats };
-    }
+  currentLayer: {
+    pointsSpent: 0,
+    stats: {},
+    abilities: {},
+    proficiencies: {},
+    lores: {}
   },
 
+  totalPoints: 50, // Initial points for level 1
+
   /**
-   * Computes the remaining build points for the current level.
-   * It subtracts the points spent on current stat purchases and abilities from the total build points.
-   * @returns {number} Remaining build points.
+   * Get remaining unspent points.
+   * @returns {number} Available build points.
    */
   getRemainingPoints: function () {
-    const spentOnStats = Stats.pointsSpentOnCurrent();
-    const spentOnAbilities = Abilities.pointsSpentOnAbilities();
-    return this.buildPoints - spentOnStats - spentOnAbilities;
+    return this.totalPoints - this.currentLayer.pointsSpent;
   },
 
   /**
-   * Locks in current level stat purchases and abilities, then levels up.
-   * Current level stat purchases (from Stats.currentStats) are added to Stats.lockedStats
-   * and then reset. The level is incremented and additional build points are added.
+   * Spend points on a specific domain.
+   * @param {string} domain - "stats", "abilities", "proficiencies", "lores"
+   * @param {string} id - ID of the item being purchased.
+   * @param {number} points - Number of points to spend.
    */
-  levelUp: function () {
-    // Ensure the current layer record is up-to-date.
-    this.updateCurrentLayer();
+  spendPoints: function (domain, id, points) {
+    console.log('Spending ${points} points on ${id} in ${domain}');
+    console.log("Before Spending: ", this.currentLayer.pointsSpent);
+    console.log("Points Being Added:", points);
 
-    // Create a snapshot for the current level.
-    const newLayer = {
-      stats: { ...Stats.currentStats },
-      abilities: Abilities.purchased
-        .filter(ab => ab.level === this.currentLevel)
-        .map(ab => ab.name)
-    };
-    this.layersData[this.currentLevel - 1] = newLayer;
-
-    // Lock in the current level's stat purchases.
-    for (let stat in Stats.currentStats) {
-      Stats.lockedStats[stat] += Stats.currentStats[stat];
-      Stats.currentStats[stat] = 0;
+    if (this.getRemainingPoints() < points) {
+      console.error("Not enough points available.");
+      return false;
     }
 
-    // Increment the level and add additional build points.
-    this.currentLevel++;
-    this.buildPoints += 50;
+    // Initialize domain if undefined
+    if (!this.currentLayer[domain]) {
+      this.currentLayer[domain] = {};
+    }
 
-    // Update the UI.
-    UI.updateLevelDisplay(this.currentLevel);
-    UI.addHistoryEntry(this.currentLevel, newLayer);
-    UI.updateRemainingPoints(this.getRemainingPoints());
-  }
+    this.currentLayer[domain][id] = (this.currentLayer[domain][id] || 0) + points;
+    this.currentLayer.pointsSpent += points;
+    return true;
+  },
+
+  /**
+   * Refund points from a specific domain.
+   * @param {string} domain - "stats", "abilities", "proficiencies", "lores"
+   * @param {string} id - ID of the item being refunded.
+   */
+  refundPoints: function (domain, id) {
+    const spentPoints = this.currentLayer[domain][id] || 0;
+    this.currentLayer.pointsSpent -= spentPoints;
+    delete this.currentLayer[domain][id];
+  },
+
+  /**
+   * Reset current layer on level up.
+   */
+  resetLayer: function () {
+    this.currentLayer = {
+      pointsSpent: 0,
+      stats: {},
+      abilities: {},
+      proficiencies: {},
+      lores: {}
+    };
+  },
+
+  /**
+   * Returns the current character level.
+   * Level is based on the number of layers added + 1.
+   * @returns {number} Current level.
+   */
+  getCurrentLevel: function () {
+    return this.layers.length + 1; // Level starts at 1, increment with each new layer
+  },
+
 };
