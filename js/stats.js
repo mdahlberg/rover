@@ -79,6 +79,44 @@ window.Stats = {
 
   },
 
+  canDecrease: function (statName) {
+    const current = this.getTotal(statName);
+  
+    // Never allow going below 0
+    if (current <= 0) {
+        alert("Cannot go below starting value")
+        return false;
+    }
+  
+    // 🧠 MIND → prevent refunding spent lore
+    if (statName === "mind") {
+      console.log("Checking if can decrease mind")
+      const newMind = current - 1;
+      const newEarnedLores = Math.floor(newMind / 3);
+      const spentLores = Object.values(Lores.getSelectedLores()).reduce((sum, v) => sum + v, 0);
+  
+      if (newEarnedLores < spentLores) {
+        alert("You cannot decrease your Mind stat further because you have already spent lore points. Please unassign a lore first.");
+        return false;
+      }
+    }
+  
+    // 🧪 SPIRIT → prevent removing Gather Essence use (if you're tracking it similarly)
+    if (statName === "spirit") {
+      const newSpirit = current - 1;
+      const newUses = Math.floor(newSpirit / 3);
+      const activeUses = Abilities.getDerivedGatherEssenceUses(); // assumes this exists
+  
+      if (newUses < activeUses) {
+        alert("You cannot decrease Spirit because it would remove a Gather Essence use you've already gained.");
+        return false;
+      }
+    }
+  
+    // BODY doesn't have conditional constraints (unless you want one)
+    return true;
+  },
+
   /**
    * Decreases a core stat and refunds build points.
    * @param {string} statName - The name of the stat to decrease.

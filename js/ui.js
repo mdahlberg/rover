@@ -82,8 +82,10 @@ window.UI = {
     document.querySelectorAll(".stat-decrease").forEach((button) => {
       button.addEventListener("click", function () {
         const statName = this.dataset.stat;
-        Stats.decreaseStat(statName);
-        UI.refreshAll();
+        if (Stats.canDecrease(statName)) {
+          Stats.decreaseStat(statName);
+          UI.refreshAll();
+        }
       });
     });
   },
@@ -232,30 +234,42 @@ window.UI = {
    * Update the lore system UI.
    */
   updateLoreUI: function () {
-    const loreContainer = document.getElementById("lore-content");
-    if (!loreContainer) return;
-    loreContainer.innerHTML = "";
+    const container = document.getElementById("lore-content");
+    if (!container) return;
+    container.innerHTML = "";
+    console.log("updating lores card")
   
-    Object.keys(Lores.availableLores).forEach((loreId) => {
-      const lore = Lores.availableLores[loreId];
-      if (lore.isParent) {
-        // Create parent category
-        const parentContainer = document.createElement("div");
-        parentContainer.className = "lore-category";
-        parentContainer.innerHTML = `<h3>${lore.name}</h3>`;
-        
-        // Get child lores and add them below the parent
-        const childLores = Lores.getChildLores(loreId);
-        childLores.forEach((childLore) => {
-          const childItem = UI.createLoreItem(childLore, loreId);
-          parentContainer.appendChild(childItem);
-        });
-        loreContainer.appendChild(parentContainer);
-      } else if (!lore.parent) {
-        // Render regular lore not part of a parent
-        const listItem = UI.createLoreItem(lore);
-        loreContainer.appendChild(listItem);
-      }
+    const categories = ["General", "Knowledge"];
+  
+    categories.forEach(category => {
+      // Section Header
+      const sectionTitle = document.createElement("div");
+      sectionTitle.className = "lore-section";
+      sectionTitle.innerText = category;
+      container.appendChild(sectionTitle);
+  
+      // Pull lores from this category that are not Biology children
+      const lores = Lores.availableLores.filter(l =>
+        l.category === category && !l.parent
+      );
+  
+      lores.forEach(lore => {
+        if (lore.id === "biology") {
+          // Biology header
+          const biologyHeader = document.createElement("div");
+          biologyHeader.className = "lore-subgroup";
+          biologyHeader.innerText = "Biology";
+          container.appendChild(biologyHeader);
+  
+          // Get children of biology
+          const bioChildren = Lores.getChildLores("biology");
+          bioChildren.forEach(childLore => {
+            container.appendChild(UI.createLoreItem(childLore, true)); // pass true for extra indent
+          });
+        } else {
+          container.appendChild(UI.createLoreItem(lore));
+        }
+      });
     });
   },
 
@@ -268,25 +282,36 @@ window.UI = {
   createLoreItem: function (lore, parentId = null) {
     const listItem = document.createElement("div");
     listItem.className = `lore-item ${parentId ? "sub-lore" : ""}`;
-    listItem.innerHTML = `
-      <strong title="${lore.description}">${lore.name}</strong>
-      ${
-        Lores.isSelected(lore.id)
-          ? '<button onclick="Lores.removeLore(\'' +
-            lore.id +
-            '\')">-</button>'
-          : Lores.getUnspentLores() > 0
-          ? '<button onclick="Lores.purchaseLore(\'' +
-            lore.id +
-            '\')">+</button>'
-          : ""
-      }
-      ${
-        Lores.isSelected(lore.id)
-          ? `<span>Level ${Lores.selectedLores[lore.id] || 0}</span>`
-          : ""
-      }
-    `;
+  
+    // Controls container (left-aligned buttons)
+    const controls = document.createElement("span");
+    controls.className = "lore-controls";
+  
+    const minus = document.createElement("button");
+    minus.textContent = "-";
+    minus.disabled = !Lores.canDecreaseLore(lore.id);
+    minus.onclick = () => {
+      if (Lores.removeLore(lore.id)) UI.refreshAll();
+    };
+  
+    const plus = document.createElement("button");
+    plus.textContent = "+";
+    plus.disabled = !Lores.canIncreaseLore(lore.id);
+    plus.onclick = () => {
+      if (Lores.purchaseLore(lore.id)) UI.refreshAll();
+    };
+  
+    controls.appendChild(minus);
+    controls.appendChild(plus);
+  
+    // Label container (text and level)
+    const label = document.createElement("span");
+    label.textContent = `${lore.name} ${Lores.isSelected(lore.id) ? `(Level ${Lores.selectedLores[lore.id] || 0})` : ""}`;
+    label.title = lore.description;
+  
+    // Combine and return
+    listItem.appendChild(controls);
+    listItem.appendChild(label);
     return listItem;
   },
 };

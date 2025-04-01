@@ -1,95 +1,135 @@
 window.Lores = {
-  availableLores: {
-    tracking: {
+  availableLores: [
+    {
+      id: "tracking",
       name: "Tracking",
       description: "Capable of reading trail signs and marking where creatures or humanoids have passed.",
+      category: "General",
     },
-    appraisal: {
+    {
+      id: "appraisal",
       name: "Appraisal",
       description: "Evaluate the worth of raw materials and resources, and identify essence in physical objects.",
+      category: "General",
     },
-    worldbreaker_historian: {
+    {
+      id: "worldbreaker_historian",
       name: "Worldbreaker Historian",
       description: "Experts in myths and stories of the past. Can attempt to identify or use Worldbreaker technology.",
+      category: "General",
     },
-    new_world_historian: {
+    {
+      id: "new_world_historian",
       name: "New World Historian",
       description: "Experts in events and politics that have occurred since the Great Unraveling.",
+      category: "General",
     },
-    smooth_talker: {
+    {
+      id: "smooth_talker",
       name: "Smooth Talker",
       description: "Skilled in making deals, bargains, and bringing people around to your point of view.",
+      category: "General",
     },
-    survivalist: {
+    {
+      id: "survivalist",
       name: "Survivalist",
       description: "Capable of surviving outside of civilization. Able to find food and water more easily.",
+      category: "General",
     },
-    cartographer: {
+    {
+      id: "cartographer",
       name: "Cartographer",
       description: "Able to read and make maps. Rarely lost and can retrace steps accurately.",
+      category: "General",
     },
-    arcanist: {
+    {
+      id: "arcanist",
       name: "Arcanist Knowledge",
       description: "Understanding how Essence works and behaves.",
+      category: "Knowledge",
     },
-    theology: {
+    {
+      id: "theology",
       name: "Theology Knowledge",
       description: "Expertise on various religious factions, beliefs, and actions.",
+      category: "Knowledge",
     },
-    underworld: {
+    {
+      id: "underworld",
       name: "Underworld Knowledge",
       description: "Knowledge of how criminals work and communicate.",
+      category: "Knowledge",
     },
-    military: {
+    {
+      id: "military",
       name: "Military Knowledge",
       description: "Understanding military tactics, behavior, and army movements.",
+      category: "Knowledge",
     },
-    biology: {
+    {
+      id: "biology",
       name: "Biology Knowledge",
       description: "A parent category representing expertise in various types of creatures.",
       isParent: true, // Indicate it's a parent lore, not selectable
+      category: "Knowledge",
     },
-    necrologist: {
+    {
+      id: "necrologist",
       name: "Necrologist",
       description: "Expert on undead monsters, their behaviors, and weaknesses.",
       parent: "biology",
+      category: "Knowledge",
     },
-    macrologist: {
+    {
+      id: "macrologist",
       name: "Macrologist",
       description: "Expert on Earthshakers and their behavior.",
       parent: "biology",
+      category: "Knowledge",
     },
-    pelagist: {
+    {
+      id: "pelagist",
       name: "Pelagist",
       description: "Expert on ocean monsters and their territories.",
       parent: "biology",
+      category: "Knowledge",
     },
-    toxicologist: {
+    {
+      id: "toxicologist",
       name: "Toxicologist",
       description: "Recognizes poisons and poisonous creatures.",
       parent: "biology",
+      category: "Knowledge",
     },
-    umbralogist: {
+    {
+      id: "umbralogist",
       name: "Umbralogist",
       description: "Expert on tainted living creatures and their traits.",
       parent: "biology",
+      category: "Knowledge",
     },
-    aetherologist: {
+    {
+      id: "aetherologist",
       name: "Aetherologist",
       description: "Expert on elemental creatures and their behavior.",
       parent: "biology",
+      category: "Knowledge",
     },
-    naturologist: {
+    {
+      id: "naturologist",
       name: "Naturologist",
       description: "Expert on unmutated natural creatures.",
       parent: "biology",
+      category: "Knowledge",
     },
-    mutologist: {
+    {
+      id: "mutologist",
       name: "Mutologist",
       description: "Expert on unnaturally mutated creatures.",
       parent: "biology",
+      category: "Knowledge",
     },
-  },
+  ],
 
   // Keeps track of selected lores
   selectedLores: {},
@@ -120,11 +160,12 @@ window.Lores = {
    * @returns {boolean} True if successfully purchased
    */
   purchaseLore: function (loreId) {
-    if (!this.availableLores[loreId]) {
+  const lore = this.availableLores.find(l => l.id === loreId);
+    if (!lore) {
       console.warn("Invalid lore selected.");
       return false;
     }
-
+  
     if (!this.selectedLores[loreId]) {
       this.selectedLores[loreId] = 1;
     } else if (this.selectedLores[loreId] < 5) {
@@ -133,9 +174,22 @@ window.Lores = {
       console.warn("Lore maxed out.");
       return false;
     }
-
+  
     UI.updateLoreUI();
     return true;
+  },
+
+  getSelectedLores: function () {
+    return this.selectedLores || {};
+  },
+
+  canDecreaseLore: function (loreId) {
+    return (this.selectedLores[loreId] || 0) > 0;
+  },
+
+  canIncreaseLore: function (loreId) {
+    const current = this.selectedLores[loreId] || 0;
+    return current < 5 && this.getUnspentLores() > 0;
   },
 
   /**
