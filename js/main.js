@@ -10,22 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (plannerContainer && !plannerContainer.classList.contains("hidden")) {
     console.log("Planner is already visible. Initializing...");
-    UI.updateBuildPoints();
-    UI.updateDerivedStats();
-    UI.updateAbilityUI();
-    UI.updateProficiencyUI();
-    UI.updateLoreUI();
-    UI.updateStatsUI();
+    UI.refreshAll();
   } else {
     console.log("Planner is not visible yet. Waiting for confirmation...");
     document.getElementById("start-btn").addEventListener("click", function () {
       console.log("Race confirmed! Initializing planner now...");
-      UI.updateBuildPoints();
-      UI.updateDerivedStats();
-      UI.updateAbilityUI();
-      UI.updateProficiencyUI();
-      UI.updateLoreUI();
-      UI.updateStatsUI();
+      UI.refreshAll();
     });
   }
 });
@@ -36,10 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
 function levelUp() {
   console.log("Leveling up...");
   Layers.resetLayer(); // Lock in the previous layer and start a new one.
-  UI.updateDerivedStats();
-  UI.updateAbilityUI();
-  UI.updateProficiencyUI();
-  UI.updateLoreUI();
-  UI.updateStatsUI();
+  UI.refreshAll();
   alert("Level Up! New Layer Started.");
 }

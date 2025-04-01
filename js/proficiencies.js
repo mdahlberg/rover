@@ -73,7 +73,7 @@ window.Proficiencies = {
   purchaseProficiency: function (profId) {
     const proficiency = this.availableProficiencies[profId];
     if (!proficiency || Layers.getRemainingPoints() < proficiency.cost) {
-      console.warn("Not enough points or invalid proficiency.");
+      alert("Not enough build points or invalid proficiency.");
       return false;
     }
     if (!this.purchasedProficiencies[profId]) {

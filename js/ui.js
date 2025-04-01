@@ -2,6 +2,53 @@
 // ui.js - Updates the DOM based on Layer and Point Changes
 
 window.UI = {
+  refreshAll: function () {
+    // Not on the character planner page yet
+    if (!document.getElementById("planner-container") || document.getElementById("planner-container").classList.contains("hidden")) {
+      console.warn("UI.refreshAll() skipped — planner not visible yet.");
+      return;
+    }
+
+    UI.updateBuildPoints();
+    UI.updateStatsUI();
+    UI.updateDerivedStats();
+    UI.updateAbilityUI();
+    UI.updateProficiencyUI();
+    UI.updateLoreUI();
+    UI.updateLayerPreview();
+  },
+
+  updateLayerPreview: function () {
+    const list = document.getElementById("current-layer-display");
+    if (!list) {
+      // Not on the character planner page yet
+      console.log("Not on the character planner page yet")
+      return;
+    }
+
+    console.log("Updating layer preview")
+
+    list.innerHTML = ""; // Clear previous content
+  
+    const layer = Layers.currentLayer;
+  
+    const domains = ["stats", "abilities", "proficiencies", "lores"];
+    domains.forEach(domain => {
+      const entries = layer[domain];
+      if (entries && Object.keys(entries).length > 0) {
+        const domainHeader = document.createElement("li");
+        domainHeader.innerHTML = `<strong>${domain.charAt(0).toUpperCase() + domain.slice(1)}</strong>`;
+        list.appendChild(domainHeader);
+  
+        for (const id in entries) {
+          const li = document.createElement("li");
+          li.textContent = `• ${id} (${entries[id]} pts)`;
+          list.appendChild(li);
+        }
+      }
+    });
+  },
+
   /**
    * Update the UI for available build points.
    */
@@ -14,10 +61,8 @@ window.UI = {
     document.getElementById("planner-container").classList.remove("hidden");
   
     // Initialize buttons and update UI
+    UI.refreshAll();
     UI.setupStatButtons();
-    UI.updateStatsUI();
-    UI.updateDerivedStats();
-    UI.updateBuildPoints();
   },
 
 
@@ -25,13 +70,12 @@ window.UI = {
    * Attaches event listeners to the stat increase/decrease buttons.
    */
   setupStatButtons: function () {
+    console.log("Setting up stats button")
     document.querySelectorAll(".stat-increase").forEach((button) => {
       button.addEventListener("click", function () {
         const statName = this.dataset.stat;
         Stats.increaseStat(statName);
-        UI.updateStatsUI();
-        UI.updateDerivedStats();
-        UI.updateBuildPoints();
+        UI.refreshAll()
       });
     });
   
@@ -39,9 +83,7 @@ window.UI = {
       button.addEventListener("click", function () {
         const statName = this.dataset.stat;
         Stats.decreaseStat(statName);
-        UI.updateStatsUI();
-        UI.updateDerivedStats();
-        UI.updateBuildPoints();
+        UI.refreshAll();
       });
     });
   },
@@ -80,6 +122,53 @@ window.UI = {
     document.getElementById("armor-value").innerText = Stats.getTotal("body") + 10;
     document.getElementById("unspent-lores").innerText = Lores.getUnspentLores();
     this.updateBuildPoints();
+  },
+
+  /**
+   * Updates the current level purchases card with a summary.
+   */
+  updateLayerSummary: function () {
+    const summaryContainer = document.getElementById("current-layer-summary");
+    summaryContainer.innerHTML = "";
+  
+    const currentLayer = Layers.currentLayer;
+    if (!currentLayer) {
+      console.warn("No current layer found.");
+      return;
+    }
+  
+    let content = "<h3>Current Level Purchases</h3>";
+  
+    // Stats
+    Object.keys(currentLayer.stats).forEach((stat) => {
+      if (currentLayer.stats[stat] > 0) {
+        content += `<p>${stat.charAt(0).toUpperCase() + stat.slice(1)}: +${currentLayer.stats[stat]}</p>`;
+      }
+    });
+  
+    // Abilities
+    Object.keys(currentLayer.abilities).forEach((ability) => {
+      if (currentLayer.abilities[ability] > 0) {
+        content += `<p>Ability: ${ability} (${currentLayer.abilities[ability]}x)</p>`;
+      }
+    });
+  
+    // Proficiencies
+    Object.keys(currentLayer.proficiencies).forEach((proficiency) => {
+      if (currentLayer.proficiencies[proficiency] > 0) {
+        content += `<p>Proficiency: ${proficiency}</p>`;
+      }
+    });
+  
+    // Lores
+    Object.keys(currentLayer.lores).forEach((lore) => {
+      if (currentLayer.lores[lore] > 0) {
+        content += `<p>Lore: ${lore} (${currentLayer.lores[lore]}x)</p>`;
+      }
+    });
+  
+    // Add the content or show a placeholder if nothing was purchased
+    summaryContainer.innerHTML = content || "<p>No purchases this level.</p>";
   },
 
   /**

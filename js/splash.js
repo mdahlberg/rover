@@ -40,20 +40,6 @@ function confirmRace() {
   applyRaceEffects(selectedRace);
 
   UI.showCharacterPlanner()
-  // Redirect to the main planner page.
-  // Hide splash and show planner
-  //document.getElementById("splash-container").classList.add("hidden");
-  //console.log("Is planner container visible? ", !document.getElementById("planner-container").classList.contains("hidden"));
-
-  //document.getElementById("planner-container").classList.remove("hidden");
-
-  // Initialize UI only after planner is visible
-  //UI.updateBuildPoints();
-  //UI.updateDerivedStats();
-  //UI.updateAbilityUI();
-  //UI.updateProficiencyUI();
-  //UI.updateLoreUI();
-  //UI.updateStatsUI()
 }
 
 /**

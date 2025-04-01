@@ -75,9 +75,7 @@ window.Stats = {
   
     // Update UI after increasing stat
     console.log(`${statName} increased! New value: ${this.currentStats[statName]}`);
-    UI.updateStatsUI();
-    UI.updateDerivedStats();
-    UI.updateBuildPoints();
+    UI.refreshAll();
 
   },
 
@@ -100,9 +98,7 @@ window.Stats = {
   
     // Update UI after decreasing stat
     console.log(`${statName} decreased! New value: ${this.currentStats[statName]}`);
-    UI.updateStatsUI();
-    UI.updateDerivedStats();
-    UI.updateBuildPoints();
+    UI.refreshAll();
   },
 
   /**
