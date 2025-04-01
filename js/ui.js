@@ -63,6 +63,9 @@ window.UI = {
         const statCost = Stats.getStatCost(statName); // You might not need this, but just in case
         decreaseButton.innerHTML = `Decrease (-${statCost} pts)`;
       }
+
+      document.getElementById(`${statName}-value`).innerText = Stats.getTotal(statName);
+
     });
   
     console.log("Core stat buttons updated.");

@@ -68,32 +68,31 @@ function applyRaceEffects(race) {
       startingBP -= 0;
       // +1 to all core stats.
       Stats.lockedStats.body += 1;
-      Stats.lockedStats.armor += 1;
-      Stats.lockedStats.lores += 1;
-      Stats.lockedStats.tracking += 1;
-      Stats.lockedStats.gather += 1;
+      Stats.lockedStats.mind += 1;
+      Stats.lockedStats.spirit += 1;
       localStorage.setItem('racialAbilities', JSON.stringify(['Racial: +1 all core stats']));
       break;
     case 'espers':
       startingBP -= 5;
       // +2 Mind (lores) and +1 Spirit (gather).
-      Stats.lockedStats.lores += 2;
-      Stats.lockedStats.gather += 1;
+      Stats.lockedStats.mind += 2;
+      Stats.lockedStats.spirit += 1;
       localStorage.setItem('racialAbilities', JSON.stringify(['Proficiency: Bows', 'Proficiency: Short Blades']));
       break;
     case 'grunt':
       startingBP -= 5;
       // +2 Body and +1 Spirit.
       Stats.lockedStats.body += 2;
-      Stats.lockedStats.gather += 1;
+      Stats.lockedStats.spirit += 1;
       localStorage.setItem('racialAbilities', JSON.stringify(['Proficiency: Two-Handed Blades']));
       localStorage.setItem('racialBonusStrength', 1);
       break;
     case 'duskers':
       startingBP -= 10;
       // +1 Mind, +1 Spirit, +1 Core Stat of Choice (default to body).
-      Stats.lockedStats.lores += 1;
-      Stats.lockedStats.gather += 1;
+      Stats.lockedStats.mind += 1;
+      Stats.lockedStats.spirit += 1;
+      // TODO - fix to make selectable
       Stats.lockedStats.body += 1;
       localStorage.setItem('racialAbilities', JSON.stringify(['Proficiency: Short Blades']));
       localStorage.setItem('racialDiscounts', JSON.stringify({ 'Dual Wielder': 0.5, 'Strike from Behind': 0.5 }));
@@ -102,12 +101,13 @@ function applyRaceEffects(race) {
       startingBP -= 15;
       // +2 Body, +2 Spirit.
       Stats.lockedStats.body += 2;
-      Stats.lockedStats.gather += 2;
+      Stats.lockedStats.spirit += 2;
       localStorage.setItem('racialAbilities', JSON.stringify(['Proficiency: Shields', 'Proficiency: Double Weapons']));
       break;
     case 'morphs':
       startingBP -= 10;
       // +1 to two core stats of choice (default to body and lores).
+      // TODO make selectable
       Stats.lockedStats.body += 1;
       Stats.lockedStats.lores += 1;
       localStorage.setItem('racialAbilities', JSON.stringify(['Free Weapon Proficiency']));

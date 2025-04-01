@@ -29,7 +29,7 @@ window.Layers = {
    * @param {number} points - Number of points to spend.
    */
   spendPoints: function (domain, id, points) {
-    console.log('Spending ${points} points on ${id} in ${domain}');
+    console.log('Spending ', points,  'points on ', id, ' in ', domain);
     console.log("Before Spending: ", this.currentLayer.pointsSpent);
     console.log("Points Being Added:", points);
 
