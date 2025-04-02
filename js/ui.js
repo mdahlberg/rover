@@ -1,218 +1,426 @@
-/* 
-  ui.js - Updates the DOM based on current state.
-  Handles:
-    - Level display.
-    - Remaining build points.
-    - Level history (summary entries).
-    - Purchased abilities list.
-    - Current level stat purchases display.
-*/
+
+// ui.js - Updates the DOM based on Layer and Point Changes
 
 window.UI = {
-  remainingPointsEl: null,
-  levelDisplayEl: null,
-  historyContainer: null,
-  purchasedListEl: null,
-  currentLayerEl: null,
-
-  /**
-   * Initializes DOM element references.
-   */
-  init: function () {
-    this.remainingPointsEl = document.getElementById('remaining-points');
-    this.levelDisplayEl = document.getElementById('level-display');
-    this.historyContainer = document.getElementById('layer-history');
-    this.purchasedListEl = document.getElementById('purchased-abilities');
-    this.currentLayerEl = document.getElementById('current-layer-display');
-  },
-
-  /**
-   * Updates the remaining build points display.
-   * @param {number} points 
-   */
-  updateRemainingPoints: function (points) {
-    if (this.remainingPointsEl) {
-      this.remainingPointsEl.textContent = points;
-    }
-  },
-
-  /**
-   * Updates the level display.
-   * @param {number} level 
-   */
-  updateLevelDisplay: function (level) {
-    if (this.levelDisplayEl) {
-      this.levelDisplayEl.textContent = level;
-    }
-  },
-
-  /**
-   * Adds a new history entry when leveling up.
-   * @param {number} levelNumber 
-   * @param {object} levelData 
-   */
-  addHistoryEntry: function (levelNumber, levelData) {
-    if (!this.historyContainer) return;
-    let entryText = `Level ${levelNumber} reached.`;
-    const statEntries = [];
-    for (let stat in levelData.stats) {
-      if (levelData.stats[stat] > 0) {
-        statEntries.push(`${stat}: +${levelData.stats[stat]}`);
-      }
-    }
-    entryText += ` | Stats: ${statEntries.length > 0 ? statEntries.join(', ') : '(None)'}`;
-    if (levelData.abilities && levelData.abilities.length > 0) {
-      entryText += ` | Abilities: ${levelData.abilities.join(', ')}`;
-    } else {
-      entryText += ` | Abilities: (None)`;
-    }
-    const entryDiv = document.createElement('div');
-    entryDiv.textContent = entryText;
-    this.historyContainer.appendChild(entryDiv);
-  },
-
-  /**
-   * Updates the purchased abilities list.
-   * Only shows a "Remove" button for abilities purchased at the current level.
-   */
-  updatePurchasedAbilities: function () {
-    if (!this.purchasedListEl) return;
-    this.purchasedListEl.innerHTML = '';
-    if (Abilities.purchased.length === 0) {
-      this.purchasedListEl.textContent = '(None)';
+  refreshAll: function () {
+    // Not on the character planner page yet
+    if (!document.getElementById("planner-container") || document.getElementById("planner-container").classList.contains("hidden")) {
+      console.warn("UI.refreshAll() skipped — planner not visible yet.");
       return;
     }
-    for (let ability of Abilities.purchased) {
-      const item = document.createElement('div');
-      item.className = 'purchased-ability-item';
-      item.textContent = `${ability.name} (Level ${ability.level})`;
-      if (ability.level === Layers.currentLevel && ability.id !== "gather_essence") {
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.className = 'remove-ability-btn';
-        removeBtn.setAttribute('data-ability', ability.name);
-        item.appendChild(removeBtn);
-      }
-      this.purchasedListEl.appendChild(item);
+
+    UI.updateBuildPoints();
+    UI.updateStatsUI();
+    UI.updateDerivedStats();
+    UI.updateAbilityUI();
+    UI.updateProficiencyUI();
+    UI.updateLoreUI();
+    UI.updateLayerPreview();
+    UI.updateLayerHistory();
+  },
+
+  updateLayerPreview: function () {
+    const list = document.getElementById("current-layer-display");
+    if (!list) {
+      // Not on the character planner page yet
+      console.log("Not on the character planner page yet")
+      return;
     }
+
+    console.log("Updating layer preview")
+
+    list.innerHTML = ""; // Clear previous content
+  
+    const layer = Layers.currentLayer;
+  
+    const domains = ["stats", "abilities", "proficiencies", "lores"];
+    domains.forEach(domain => {
+      const entries = layer[domain];
+      if (entries && Object.keys(entries).length > 0) {
+        const domainHeader = document.createElement("li");
+        domainHeader.innerHTML = `<strong>${domain.charAt(0).toUpperCase() + domain.slice(1)}</strong>`;
+        list.appendChild(domainHeader);
+  
+        for (const id in entries) {
+          const li = document.createElement("li");
+          li.textContent = `• ${id} (${entries[id]} pts)`;
+          list.appendChild(li);
+        }
+      }
+    });
+  },
+
+  updateLayerHistory: function () {
+    console.log("Updating layer history")
+    const historyList = document.getElementById("layer-history");
+    if (!historyList) return;
+  
+    historyList.innerHTML = "";
+  
+    Layers.layers.forEach((layer, index) => {
+      const item = document.createElement("li");
+      item.className = "layer-history-item";
+      item.innerHTML = `
+        <strong>Level ${index + 1}</strong><br>
+        <em>Stats:</em> ${Object.entries(layer.stats || {})
+          .map(([k, v]) => `${k}: +${v}`)
+          .join(", ") || "None"}<br>
+        <em>Abilities:</em> ${Object.entries(layer.abilities || {})
+          .map(([k, v]) => `${Abilities.availableAbilities[k]?.name || k} x${v}`)
+          .join(", ") || "None"}<br>
+        <em>Proficiencies:</em> ${Object.keys(layer.proficiencies || {})
+          .map((k) => Proficiencies.availableProficiencies[k]?.name || k)
+          .join(", ") || "None"}<br>
+        <em>Lores:</em> ${Object.entries(layer.lores || {})
+          .map(([k, v]) => `${Lores.availableLores.find(l => l.id === k)?.name || k} x${v}`)
+          .join(", ") || "None"}
+      `;
+      historyList.appendChild(item);
+    });
+  },
+
+
+  /**
+   * Update the UI for available build points.
+   */
+  updateBuildPoints: function () {
+    document.getElementById("build-points").innerText = Layers.getRemainingPoints();
+  },
+
+  showCharacterPlanner: function () {
+    document.getElementById("splash-container").classList.add("hidden");
+    document.getElementById("planner-container").classList.remove("hidden");
+  
+    // Initialize buttons and update UI
+    UI.refreshAll();
+    UI.setupStatButtons();
+  },
+
+
+  /**
+   * Attaches event listeners to the stat increase/decrease buttons.
+   */
+  setupStatButtons: function () {
+    console.log("Setting up stats button")
+    document.querySelectorAll(".stat-increase").forEach((button) => {
+      button.addEventListener("click", function () {
+        const statName = this.dataset.stat;
+        Stats.increaseStat(statName);
+        UI.refreshAll()
+      });
+    });
+  
+    document.querySelectorAll(".stat-decrease").forEach((button) => {
+      button.addEventListener("click", function () {
+        const statName = this.dataset.stat;
+        if (Stats.canDecrease(statName)) {
+          Stats.decreaseStat(statName);
+          UI.refreshAll();
+        }
+      });
+    });
   },
 
   /**
-   * Updates the display of current level stat purchases.
+   * Updates the UI for core stat buttons to show correct point costs.
    */
-  updateCurrentLayerDisplay: function () {
-    if (!this.currentLayerEl) return;
-    const entries = [];
-    for (let stat in Stats.currentStats) {
-      if (Stats.currentStats[stat] > 0) {
-        entries.push(`${stat}: +${Stats.currentStats[stat]}`);
+  updateStatsUI: function () {
+    ["body", "mind", "spirit"].forEach((statName) => {
+      const increaseButton = document.querySelector(`.stat-increase[data-stat="${statName}"]`);
+      const decreaseButton = document.querySelector(`.stat-decrease[data-stat="${statName}"]`);
+  
+      if (increaseButton) {
+        const statCost = Stats.getStatCost(statName);
+        increaseButton.innerHTML = `Increase (+${statCost} pts)`;
       }
+      
+      if (decreaseButton) {
+        const statCost = Stats.getStatCost(statName); // You might not need this, but just in case
+        decreaseButton.innerHTML = `Decrease (-${statCost} pts)`;
+      }
+
+      document.getElementById(`${statName}-value`).innerText = Stats.getTotal(statName);
+
+    });
+  
+    console.log("Core stat buttons updated.");
+  },
+
+  /**
+   * Update the UI for core stats and derived stats.
+   */
+  updateDerivedStats: function () {
+    document.getElementById("strength-value").innerText = Math.floor(Stats.getTotal("body") / 4);
+    document.getElementById("health-value").innerText = Stats.getTotal("body") + 5;
+    document.getElementById("armor-value").innerText = Stats.getTotal("body") + 10;
+    document.getElementById("unspent-lores").innerText = Lores.getUnspentLores();
+    this.updateBuildPoints();
+  },
+
+  /**
+   * Updates the current level purchases card with a summary.
+   */
+  updateLayerSummary: function () {
+    const summaryContainer = document.getElementById("current-layer-summary");
+    summaryContainer.innerHTML = "";
+  
+    const currentLayer = Layers.currentLayer;
+    if (!currentLayer) {
+      console.warn("No current layer found.");
+      return;
     }
-    this.currentLayerEl.textContent = entries.length > 0 ? entries.join(', ') : '(None)';
-  }
-};
-
-// ui.js - Updates the DOM based on current state, including lore UI updates.
-
-UI.updateLoreUI = function () {
-  const loreContainer = document.getElementById("lore-content");
-  const unspentLores = Lores.getUnspentLores();
-  const unspentBadge = document.getElementById("unspent-lores");
-
-  // Update unspent lores badge.
-  unspentBadge.textContent = `${unspentLores} Unspent`;
-  unspentBadge.style.display = "inline-block";
-
-  // Clear previous lore display.
-  loreContainer.innerHTML = "";
-
-  // Group available lores by category.
-  const loresByCategory = {};
-  Lores.availableLores.forEach((lore) => {
-    if (!loresByCategory[lore.category]) {
-      loresByCategory[lore.category] = [];
-    }
-    loresByCategory[lore.category].push(lore);
-  });
-
-  // Render each category and its lores.
-  Object.keys(loresByCategory).forEach((category) => {
-    const categoryDiv = document.createElement("div");
-    categoryDiv.className = "lore-category";
-    categoryDiv.innerHTML = `<h3>${category}</h3>`;
-
-    const loreList = document.createElement("ul");
-    loreList.style.listStyleType = "none";
-    loreList.style.paddingLeft = "20px";
-
-    loresByCategory[category].forEach((lore) => {
-      // Check if the lore is a parent lore (like Biology).
-      const childLores = Lores.getChildLores(lore.id);
-      if (childLores.length > 0) {
-        // Render the parent as a non-clickable header.
-        const parentItem = document.createElement("li");
-        parentItem.innerHTML = `<strong>${lore.name}</strong>`;
-        parentItem.style.marginTop = "10px";
-	parentItem.className = "lore-parent"; //Add this for better styling
-        loreList.appendChild(parentItem);
-
-        // Render all child lores under the parent.
-        const childList = document.createElement("ul");
-        childList.style.listStyleType = "none";
-        childList.style.paddingLeft = "20px"; // Indentation for child lores.
-
-        childLores.forEach((childLore) => {
-          childList.appendChild(UI.createLoreListItem(childLore));
-        });
-
-        loreList.appendChild(childList);
-      } else if (!lore.parent) {
-        // Render regular lores (non-child lores).
-        loreList.appendChild(UI.createLoreListItem(lore));
+  
+    let content = "<h3>Current Level Purchases</h3>";
+  
+    // Stats
+    Object.keys(currentLayer.stats).forEach((stat) => {
+      if (currentLayer.stats[stat] > 0) {
+        content += `<p>${stat.charAt(0).toUpperCase() + stat.slice(1)}: +${currentLayer.stats[stat]}</p>`;
       }
     });
+  
+    // Abilities
+    Object.keys(currentLayer.abilities).forEach((ability) => {
+      if (currentLayer.abilities[ability] > 0) {
+        content += `<p>Ability: ${ability} (${currentLayer.abilities[ability]}x)</p>`;
+      }
+    });
+  
+    // Proficiencies
+    Object.keys(currentLayer.proficiencies).forEach((proficiency) => {
+      if (currentLayer.proficiencies[proficiency] > 0) {
+        content += `<p>Proficiency: ${proficiency}</p>`;
+      }
+    });
+  
+    // Lores
+    Object.keys(currentLayer.lores).forEach((lore) => {
+      if (currentLayer.lores[lore] > 0) {
+        content += `<p>Lore: ${lore} (${currentLayer.lores[lore]}x)</p>`;
+      }
+    });
+  
+    // Add the content or show a placeholder if nothing was purchased
+    summaryContainer.innerHTML = content || "<p>No purchases this level.</p>";
+  },
 
-    categoryDiv.appendChild(loreList);
-    loreContainer.appendChild(categoryDiv);
-  });
+  /**
+   * Update the ability shop UI.
+   */
+  updateAbilityUI: function () {
+    const abilityContainer = document.getElementById("ability-shop");
+    abilityContainer.innerHTML = "";
+  
+    Object.keys(Abilities.availableAbilities).forEach((abilityId) => {
+      const ability = Abilities.availableAbilities[abilityId];
+  
+      const item = document.createElement("div");
+      item.className = "ability-item";
+  
+      // Header with name and cost
+      const header = document.createElement("div");
+      header.className = "ability-header";
+  
+      const name = document.createElement("strong");
+      name.className = "ability-name";
+      name.textContent = ability.name;
+      name.title = ability.description;
+
+      // Show badge stacking
+      const badge = document.createElement("span");
+      badge.className = "ability-badge";
+
+      const count = Abilities.getPurchaseCount(abilityId)
+      badge.textContent = `x${count}`;
+      if (count === 0) badge.classList.add("muted");
+      header.appendChild(badge);
+
+      const cost = document.createElement("span");
+      cost.className = "ability-cost";
+      cost.textContent = `(${ability.cost} BP)`;
+  
+      header.appendChild(name);
+      header.appendChild(cost);
+  
+      // Description
+      const description = document.createElement("div");
+      description.className = "ability-description";
+      description.textContent = ability.description;
+  
+      // Action buttons
+      const actions = document.createElement("div");
+      actions.className = "ability-actions";
+
+      const plus = document.createElement("button");
+      plus.textContent = "+";
+      plus.disabled = Layers.getRemainingPoints() < ability.cost;
+      plus.onclick = () => {
+        Abilities.purchaseAbility(abilityId, ability.cost);
+        UI.refreshAll();
+      };
+      
+      const minus = document.createElement("button");
+      minus.textContent = "-";
+      minus.disabled = count === 0;
+      minus.onclick = () => {
+        Abilities.removeAbility(abilityId);
+        UI.refreshAll();
+      };
+      
+      actions.appendChild(minus);
+      actions.appendChild(plus);
+  
+      // Assemble the item
+      item.appendChild(header);
+      item.appendChild(description);
+      item.appendChild(actions);
+  
+      abilityContainer.appendChild(item);
+    });
+  
+    this.updateBuildPoints();
+  },
+
+  /**
+   * Update the proficiency shop UI.
+   */
+  updateProficiencyUI: function () {
+    const container = document.getElementById("proficiency-shop");
+    container.innerHTML = "";
+  
+    Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
+      const item = document.createElement("div");
+      item.className = "ability-item";
+  
+      const header = document.createElement("div");
+      header.className = "ability-header";
+  
+      const name = document.createElement("strong");
+      name.className = "ability-name";
+      name.textContent = prof.name;
+      name.title = prof.description;
+  
+      const cost = document.createElement("span");
+      cost.className = "ability-cost";
+      cost.textContent = `(${prof.cost} BP)`;
+  
+      header.appendChild(name);
+      header.appendChild(cost);
+  
+      const desc = document.createElement("div");
+      desc.className = "ability-description";
+      desc.textContent = prof.description;
+  
+      const actions = document.createElement("div");
+      actions.className = "ability-actions";
+  
+      const button = document.createElement("button");
+  
+      if (Proficiencies.isProficiencyPurchased(id)) {
+        button.textContent = "Remove";
+        button.onclick = () => {
+          Proficiencies.removeProficiency(id);
+          UI.refreshAll();
+        };
+      } else {
+        button.textContent = `Purchase (${prof.cost} BP)`;
+        button.disabled = Layers.getRemainingPoints() < prof.cost;
+        button.onclick = () => {
+          Proficiencies.purchaseProficiency(id);
+          UI.refreshAll();
+        };
+      }
+  
+      actions.appendChild(button);
+      item.appendChild(header);
+      item.appendChild(desc);
+      item.appendChild(actions);
+      container.appendChild(item);
+    });
+  },
+
+  /**
+   * Update the lore system UI.
+   */
+  updateLoreUI: function () {
+    const container = document.getElementById("lore-content");
+    if (!container) return;
+    container.innerHTML = "";
+    console.log("updating lores card")
+  
+    const categories = ["General", "Knowledge"];
+  
+    categories.forEach(category => {
+      // Section Header
+      const sectionTitle = document.createElement("div");
+      sectionTitle.className = "lore-section";
+      sectionTitle.innerText = category;
+      container.appendChild(sectionTitle);
+  
+      // Pull lores from this category that are not Biology children
+      const lores = Lores.availableLores.filter(l =>
+        l.category === category && !l.parent
+      );
+  
+      lores.forEach(lore => {
+        if (lore.id === "biology") {
+          // Biology header
+          const biologyHeader = document.createElement("div");
+          biologyHeader.className = "lore-subgroup";
+          biologyHeader.innerText = "Biology";
+          container.appendChild(biologyHeader);
+  
+          // Get children of biology
+          const bioChildren = Lores.getChildLores("biology");
+          bioChildren.forEach(childLore => {
+            container.appendChild(UI.createLoreItem(childLore, true)); // pass true for extra indent
+          });
+        } else {
+          container.appendChild(UI.createLoreItem(lore));
+        }
+      });
+    });
+  },
+
+  /**
+   * Creates an individual lore item to display in the UI.
+   * @param {object} lore - The lore object.
+   * @param {string} parentId - Optional parent ID for nested lores.
+   * @returns {HTMLElement} The list item for the lore.
+   */
+  createLoreItem: function (lore, parentId = null) {
+    const listItem = document.createElement("div");
+    listItem.className = `lore-item ${parentId ? "sub-lore" : ""}`;
+  
+    // Controls container (left-aligned buttons)
+    const controls = document.createElement("span");
+    controls.className = "lore-controls";
+  
+    const minus = document.createElement("button");
+    minus.textContent = "-";
+    minus.disabled = !Lores.canDecreaseLore(lore.id);
+    minus.onclick = () => {
+      if (Lores.removeLore(lore.id)) UI.refreshAll();
+    };
+  
+    const plus = document.createElement("button");
+    plus.textContent = "+";
+    plus.disabled = !Lores.canIncreaseLore(lore.id);
+    plus.onclick = () => {
+      if (Lores.purchaseLore(lore.id)) UI.refreshAll();
+    };
+  
+    controls.appendChild(minus);
+    controls.appendChild(plus);
+  
+    // Label container (text and level)
+    const label = document.createElement("span");
+    label.textContent = `${lore.name} ${Lores.isSelected(lore.id) ? `(Level ${Lores.selectedLores[lore.id] || 0})` : ""}`;
+    label.title = lore.description;
+  
+    // Combine and return
+    listItem.appendChild(controls);
+    listItem.appendChild(label);
+    return listItem;
+  },
 };
-
-/**
- * Creates a list item for a given lore with plus and minus buttons.
- * @param {object} lore - The lore object.
- * @returns {HTMLElement} The list item element.
- */
-UI.createLoreListItem = function (lore) {
-  const listItem = document.createElement("li");
-  const selectedLores = Lores.getSelectedLores();
-  const loreLevel = selectedLores[lore.id] || 0;
-
-  // Display lore name and current level.
-  listItem.innerHTML = `<span title="${lore.description}">${lore.name} (Level: ${loreLevel})</span>`;
-
-  // Create a container for the buttons.
-  const buttonContainer = document.createElement("span");
-  buttonContainer.className = "lore-buttoncontainer";
-
-  // Add minus button if the lore has points assigned.
-  if (loreLevel > 0) {
-    const minusButton = document.createElement("button");
-    minusButton.textContent = "−";
-    minusButton.className = "lore-button";
-    minusButton.onclick = () => Lores.decreaseLore(lore.id);
-    buttonContainer.appendChild(minusButton);
-  }
-
-  // Add plus button to increase lore level.
-  const plusButton = document.createElement("button");
-  plusButton.className = "lore-button";
-  plusButton.textContent = "+";
-  plusButton.onclick = () => Lores.increaseLore(lore.id);
-  plusButton.disabled = loreLevel >= 5 || Lores.getUnspentLores() === 0;
-  buttonContainer.appendChild(plusButton);
-
-  // Append button container to the list item.
-  listItem.appendChild(buttonContainer);
-  return listItem;
-};
-

@@ -1,0 +1,42 @@
+Name: Small weapons
+Cost: Free
+Description: All Valiants are automatically proficient with small weapons. These include daggers, hatchets, or similar weapons. Small weapons deal slashing damage and should have a clearly defined edge and flat and cannot be completely round. Small weapons have a maximum striking surface of 16” and must be between 18” and 24” total length. They deal 1 less damage than the wielder’s strength score, to a minimum of 1 damage. If the wielder is already dealing 1 damage and loses any strength at all, damage falls to 0 until their strength returns. be no longer than 24” with a maximum striking surface of 16 inches, but cannot be smaller than 18 inches total. Small weapons must have a thrusting tip to make thrusting attacks.
+
+Name: Short Weapons
+Cost: 5 BP
+Description: Short weapons are short swords, maces, hammers, or axes and with a striking surface no longer than 24”. They must be at least 30” to 36”overall to qualify as a short weapon. Short weapons deal either slashing or crushing damage as appropriate for the type of weapon they represent. Bladed weapons should have a clearly defined edge and flat and cannot be completely round. If the weapon deals crushing damage it cannot be used to make thrusting attacks and must be swung. Bladed short weapons must have a thrusting tip to make thrusting attacks. 
+
+Name: Long Blades
+Cost: 5 BP
+Description: Long blades are long swords, spears, or any other long slashing weapon intended to be wielded with one hand or two hands. Long swords have a maximum striking surface of 48”. They must be between 48” and 60” long to qualify as a long blade. Bladed weapons should have a clearly defined edge and flat and cannot be completely round. If they are intended to make stabbing attacks, they must have a thrusting tip. These weapons can be used one or two handed. 
+
+Name: Long Crushing Weapons
+cost: 5 BP
+Description: Long crushing weapons are maces, hammers, morning stars, flails, or axes that intend to deal damage by the weight of the weapon rather than a sharp edge alone. Long Crushing weapons have a maximum striking surface of 30” with a between 48” and 60” total. Long crushing weapons cannot be used to make thusting attacks and must be swung. Long crushing weapons all have the Heavy weapon property and deal 1 additional damage per swing. 
+
+Name: Two Handed Blades
+Cost: 10 BP
+Description: Two handed weapons are long weapons such as various polearms, long spears, or greatswords. Two handed blades deal slashing damage and must have a thrusting tip to make thrusting attacks. Two handed blades may only deal damage with one side of the weapon. They have a maximum striking surface of 48", and must be between 60” and 72” total. Two handed blades have the Heavy weapon property and deal 1 additional damage per swing.
+
+Name: Two Handed Crushing Weapons
+cost: 10 BP
+Description: Two handed Crushing weapons are long weapons like great hammers, kanabo, or a heavy battle ax. These weapons deal damage by sheer weight, but can smash through armor and even shields when used properly. These weapons have a maximum striking surface of 35 inches and must be between 60” and 72” total. Two handed blades have the Heavy weapon property and deal 1 additional damage per swing.
+
+Name: Double weapons
+cost: 10 BP
+Description: Double weapons such as staves and dual bladed swords are a special type of two handed weapon that have striking surfaces on both ends. They deal either slashing or crushing damage as appropriate for the weapon they represent. Each striking surface should be no more than 30”, and should be between 55” and 72” total. Bladed weapons should have a clearly defined edge and flat. Both ends are required to have thrusting tips whether blunt or bladed. Unlike other crushing damage weapons, double weapons may be used to make thrust attacks but do not have the Heavy property. 
+
+Name: Shields
+cost: 5 BP
+Description: Shields are not melee weapons at all, but can still grant significant benefits in combat by stopping attacks. Shields can come in a variety of shapes and sizes, but all must be securely held or fastened when in use, must be sturdy enough to absorb blows in melee combat, and must be padded on all edges. No hand holding a shield may be used to make an attack or cast Essence, but may be used to hold things such as in-game items, packets, or ammunition. Shields cannot be used to push, shield bash, or be otherwise used to make offensive maneuvers due to safety concerns. No character can benefit from more than one shield at a time and must hold the shield to benefit from it. Due to the variety of sizes they come in, see the diagram below for minimum and maximum shield measurements. 
+   Turtling: Turtling is when a character uses a large shield strictly for defense, and is effectively hiding behind the shield and making no effort to attack. This isn't fun for anyone and should be avoided. In addition, some people are smaller than others and can benefit more from a large shield, and as such, no shield can cover more than approximately 60% of the wielder's body regardless of standard measurements. If a marshall observes excessive turtling, the character will receive a warning to come out of their strictly defensive stance.
+
+Name: Bows & Crossbows
+cost: 10 BP
+Description: Bows and crossbows are both ranged weapons types that deliver attacks at a distance. Both can deliver attacks via packets or marshall approved boffer arrows, depending on the wielder's preference. 
+   Bows: A bow must be represented by a padded border in a curved shape with both ends connected by a string. Bows do not have to be able to actually shoot a projectile. Holding a bow allows you to throw packets as arrows in the other hand. If the bow is designed to actually fire boffer arrows, it cannot have a draw weight of over 30 lbs. There are no striking surfaces on a bow. Bows must be a minimum of 48” total length. Bows cannot be used to make melee attacks.
+   Crossbows: Crossbows are represented by a stock, a body, and perpendicular arms joined by a string. If designed to fire padded boffer bolts, its draw weight cannot be over 30 lbs. There are no striking surfaces on a crossbow, and it is not intended to be used in melee combat, so minimal to no padding is acceptable. Crossbows cannot make melee attacks. The biggest difference from bows is the fact that crossbows damage is not affected by a weakened or strengthened effect on the wielder.
+
+Name: Thrown Weapons
+cost: 5 BP
+Description: Thrown weapons differ in several ways from other boffers. They may not have a solid core, and should have soft foam on all striking surfaces. They can be made to represent traditional throwing weapons such as daggers, hatchets, shuriken, or even rocks. The tips on throwing weapons must not be smaller than two inches for safety. Throwing weapons must be between 18 and 30 inches to be considered a small throwing weapon and 36 to 60 inches to be considered a large throwing weapon. Throwing weapons may not be used to make melee attacks but are able to block them (but it may be physically difficult to do so effectively!) As with other weapons, shots to the head, hands, and groin do not count unless they are intentionally blocked by the target in this manner.

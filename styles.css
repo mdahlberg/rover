@@ -183,22 +183,52 @@ header {
   cursor: pointer;
 }
 
-.lore-category h3 {
-  margin-bottom: 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 1rem;
 }
 
-.lore-category ul {
-  list-style-type: none;
-  padding-left: 20px;
+  font-style: italic;
+  font-size: 1rem;
+  margin-left: 2rem;
+  margin-bottom: 0.25rem;
 }
 
-.lore-category li {
-  margin: 10px 0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: flex-start; /* Left-align the whole row */
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  margin-left: 2rem;
+  text-align: left;
 }
 
+}
+
+  display: flex;
+  gap: 0.3rem;
+}
+
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  background-color: #334155;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+  background-color: #475569;
+}
+
+  background-color: #1e293b;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+  font-size: 0.95rem;
+  flex-grow: 1; /* ensures label stretches to fill space */
+}
 
 .card:hover {
   transform: scale(1.005);
@@ -254,63 +284,91 @@ header {
   margin: 4px 0;
 }
 
-/* Ability Shop Layout */
-.ability-shop {
+/* General Shop Layout */
+.shop-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 1rem; /* Adjust spacing as desired */
+}
+
+/* Ability Shop Layout */
+#ability-shop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
 }
 
 .ability-item {
-  background-color: #3a3a4a;
-  padding: 10px;
-  border-radius: 6px;
-  width: 260px;
+  background-color: #1e293b;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.ability-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Purchase Button for Ability Shop */
-.buy-ability-btn {
-  padding: 6px 12px;
-  background-color: #4a90e2;
-  border: none;
+.ability-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.ability-cost {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.ability-description {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.ability-badge {
+  background-color: #4ade80;
+  color: #1e293b;
+  padding: 2px 6px;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
   border-radius: 4px;
-  color: white;
+  font-weight: bold;
+}
+
+.ability-badge.muted {
+  background-color: #94a3b8;
+  color: #1e293b;
+}
+
+.ability-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ability-actions button {
+  padding: 4px 10px;
   font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.buy-ability-btn:hover {
-  background-color: #3c78c0;
-}
-
-/* Purchased Abilities Styling */
-.purchased-ability-item {
-  background-color: #3f3f4f;
-  padding: 6px;
-  margin: 4px 0;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.purchased-ability-item button {
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  background-color: #e05555;
+  background-color: #334155;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.purchased-ability-item button:hover {
-  background-color: #c04444;
+.ability-actions button:hover {
+  background-color: #475569;
+}
+
+.ability-actions button:disabled {
+  background-color: #1e293b;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Level History Styling */
@@ -327,6 +385,51 @@ header {
   font-size: 0.9rem;
   color: #aad;
 }
+
+.lore-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-left: 2rem;
+  padding: 0.25rem 0;
+}
+
+.lore-item.sub-lore {
+  margin-left: 3rem;
+}
+
+.lore-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.lore-label {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.lore-controls button {
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  background-color: #334155;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.lore-controls button:hover {
+  background-color: #475569;
+}
+
+.lore-controls button:disabled {
+  background-color: #1e293b;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 
 #level-up-btn {
   padding: 8px 16px;              /* Smaller padding for a smaller button */
@@ -367,20 +470,15 @@ header {
   background-color: #c04444;
 }
 
-/* Style for lore parent (non-clickable headers) */
-.lore-category h3 {
   font-size: 1.2rem;
   margin-top: 15px;
 }
 
-/* Indent child lores beneath parent lores */
 ul ul {
   margin-top: 5px;
   margin-left: 20px;
 }
 
-/* Apply consistent button styles to all lore buttons */
-button.lore-button {
   padding: 4px 8px;
   font-size: 0.9rem;
   border: none;
@@ -392,22 +490,42 @@ button.lore-button {
   margin-left: 4px;
 }
 
-button.lore-button:hover:not(:disabled) {
   background-color: #3c78c0;
 }
 
 /* Ensure button container is correctly styled */
-.lore-button-container {
   display: inline-flex;
   gap: 4px;
   margin-left: 8px;
   vertical-align: middle;
 }
 
-/* Style for disabled lore buttons (plus button when no unspent lores) */
-button.lore-button:disabled {
   background-color: #ccc; /* Light gray */
   color: #666; /* Slightly darker text */
   cursor: not-allowed;
 }
 
+/* Styles for Proficiency Shop */
+#proficiency-shop, #selected-proficiencies-card {
+  margin-top: 20px;
+}
+
+#proficiency-content li, #selected-proficiencies li {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#proficiency-content button, #selected-proficiencies button {
+  padding: 4px 8px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#proficiency-content button:hover, #selected-proficiencies button:hover {
+  background-color: #3c78c0;
+}
