@@ -52,11 +52,22 @@ window.Layers = {
    * Refund points from a specific domain.
    * @param {string} domain - "stats", "abilities", "proficiencies", "lores"
    * @param {string} id - ID of the item being refunded.
+   * @param {number} [amount=1] - Number of points to refund.
    */
-  refundPoints: function (domain, id) {
-    const spentPoints = this.currentLayer[domain][id] || 0;
-    this.currentLayer.pointsSpent -= spentPoints;
-    delete this.currentLayer[domain][id];
+  refundPoints: function (domain, id, amount = 1) {
+    const current = this.currentLayer[domain][id] || 0;
+  
+    if (current < amount) {
+      console.warn(`Attempted to refund more points than were spent on ${id}`);
+      return;
+    }
+  
+    this.currentLayer[domain][id] -= amount;
+    this.currentLayer.pointsSpent -= amount;
+  
+    if (this.currentLayer[domain][id] === 0) {
+      delete this.currentLayer[domain][id];
+    }
   },
 
   /**

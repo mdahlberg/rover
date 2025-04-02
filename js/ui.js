@@ -179,20 +179,75 @@ window.UI = {
   updateAbilityUI: function () {
     const abilityContainer = document.getElementById("ability-shop");
     abilityContainer.innerHTML = "";
+  
     Object.keys(Abilities.availableAbilities).forEach((abilityId) => {
       const ability = Abilities.availableAbilities[abilityId];
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `
-        <strong title="${ability.description}">${ability.name}</strong>
-        ${
-          Abilities.isAbilityPurchased(abilityId)
-            ? '<button onclick="Abilities.removeAbility(\'' + abilityId + '\')">Remove</button>'
-            : '<button onclick="Abilities.purchaseAbility(\'' + abilityId + '\', ' + ability.cost + ')">Purchase (' + ability.cost + ' BP)</button>'
-        }
-      `;
+  
+      const item = document.createElement("div");
+      item.className = "ability-item";
+  
+      // Header with name and cost
+      const header = document.createElement("div");
+      header.className = "ability-header";
+  
+      const name = document.createElement("strong");
+      name.className = "ability-name";
+      name.textContent = ability.name;
+      name.title = ability.description;
 
-      abilityContainer.appendChild(listItem);
+      // Show badge stacking
+      const badge = document.createElement("span");
+      badge.className = "ability-badge";
+
+      const count = Abilities.getPurchaseCount(abilityId)
+      console.log("Purchase count for ", abilityId, " is ", count)
+      badge.textContent = `x${count}`;
+      if (count === 0) badge.classList.add("muted");
+      header.appendChild(badge);
+
+      const cost = document.createElement("span");
+      cost.className = "ability-cost";
+      cost.textContent = `(${ability.cost} BP)`;
+  
+      header.appendChild(name);
+      header.appendChild(cost);
+  
+      // Description
+      const description = document.createElement("div");
+      description.className = "ability-description";
+      description.textContent = ability.description;
+  
+      // Action buttons
+      const actions = document.createElement("div");
+      actions.className = "ability-actions";
+
+      const plus = document.createElement("button");
+      plus.textContent = "+";
+      plus.disabled = Layers.getRemainingPoints() < ability.cost;
+      plus.onclick = () => {
+        Abilities.purchaseAbility(abilityId, ability.cost);
+        UI.refreshAll();
+      };
+      
+      const minus = document.createElement("button");
+      minus.textContent = "-";
+      minus.disabled = count === 0;
+      minus.onclick = () => {
+        Abilities.removeAbility(abilityId);
+        UI.refreshAll();
+      };
+      
+      actions.appendChild(minus);
+      actions.appendChild(plus);
+  
+      // Assemble the item
+      item.appendChild(header);
+      item.appendChild(description);
+      item.appendChild(actions);
+  
+      abilityContainer.appendChild(item);
     });
+  
     this.updateBuildPoints();
   },
 

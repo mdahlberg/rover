@@ -59,6 +59,10 @@ window.Abilities = {
   // Keeps track of purchased abilities
   purchasedAbilities: {},
 
+  getPurchaseCount: function (abilityId) {
+    return this.purchasedAbilities?.[abilityId] || 0;
+  },
+
   getDerivedGatherEssenceUses: function() {
     const totalSpirit = Stats.getTotal("spirit");
     return Math.floor(totalSpirit / 3);
@@ -69,19 +73,12 @@ window.Abilities = {
    * @param {string} abilityId - ID of the ability
    * @returns {boolean} Success or failure
    */
-  purchaseAbility: function (abilityId) {
-    const ability = this.availableAbilities[abilityId];
-    if (!ability || Layers.getRemainingPoints() < ability.cost) {
-      console.warn("Not enough points or invalid ability.");
-      return false;
-    }
-    if (!this.purchasedAbilities[abilityId]) {
-      this.purchasedAbilities[abilityId] = 1;
-    } else {
-      this.purchasedAbilities[abilityId]++;
-    }
-    Layers.spendPoints("abilities", abilityId, ability.cost);
-    UI.updateAbilityUI();
+  purchaseAbility: function (id, cost) {
+    if (Layers.getRemainingPoints() < cost) return false;
+  
+    if (!this.purchasedAbilities[id]) this.purchasedAbilities[id] = 0;
+    this.purchasedAbilities[id]++;
+    Layers.spendPoints("abilities", id, cost);
     return true;
   },
 
@@ -89,12 +86,16 @@ window.Abilities = {
    * Refund and remove an ability purchased at the current level.
    * @param {string} abilityId - ID of the ability to remove
    */
-  removeAbility: function (abilityId) {
-    if (!this.purchasedAbilities[abilityId]) return;
-    const ability = this.availableAbilities[abilityId];
-    delete this.purchasedAbilities[abilityId];
-    Layers.refundPoints("abilities", abilityId, ability.cost);
-    UI.updateAbilityUI();
+  removeAbility: function (id) {
+    if (!this.purchasedAbilities[id] || this.purchasedAbilities[id] <= 0) return false;
+  
+    const ability = this.availableAbilities[id];
+    this.purchasedAbilities[id]--;
+    if (this.purchasedAbilities[id] === 0) delete this.purchasedAbilities[id];
+  
+    console.log("Attempting to refund build points for ability with id: ", id)
+    Layers.refundPoints("abilities", id, ability.cost);
+    return true;
   },
 
   /**
