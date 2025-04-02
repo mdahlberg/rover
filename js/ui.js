@@ -255,34 +255,58 @@ window.UI = {
    * Update the proficiency shop UI.
    */
   updateProficiencyUI: function () {
-    const proficiencyContainer = document.getElementById("proficiency-content");
-    const selectedContainer = document.getElementById("selected-proficiencies");
-    proficiencyContainer.innerHTML = "";
-    selectedContainer.innerHTML = "";
-
-    Object.keys(Proficiencies.availableProficiencies).forEach((profId) => {
-      const prof = Proficiencies.availableProficiencies[profId];
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `
-        <strong title="${prof.description}">${prof.name}</strong>
-        ${
-          Proficiencies.isProficiencyPurchased(profId)
-            ? '<button onclick="Proficiencies.removeProficiency(\'' + profId + '\')">Remove</button>'
-            : '<button onclick="Proficiencies.purchaseProficiency(\'' + profId + '\', ' + prof.cost + ')">Purchase (' + prof.cost + ' BP)</button>'
-        }
-      `;
-      proficiencyContainer.appendChild(listItem);
+    const container = document.getElementById("proficiency-shop");
+    container.innerHTML = "";
+  
+    Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
+      const item = document.createElement("div");
+      item.className = "ability-item";
+  
+      const header = document.createElement("div");
+      header.className = "ability-header";
+  
+      const name = document.createElement("strong");
+      name.className = "ability-name";
+      name.textContent = prof.name;
+      name.title = prof.description;
+  
+      const cost = document.createElement("span");
+      cost.className = "ability-cost";
+      cost.textContent = `(${prof.cost} BP)`;
+  
+      header.appendChild(name);
+      header.appendChild(cost);
+  
+      const desc = document.createElement("div");
+      desc.className = "ability-description";
+      desc.textContent = prof.description;
+  
+      const actions = document.createElement("div");
+      actions.className = "ability-actions";
+  
+      const button = document.createElement("button");
+  
+      if (Proficiencies.isProficiencyPurchased(id)) {
+        button.textContent = "Remove";
+        button.onclick = () => {
+          Proficiencies.removeProficiency(id);
+          UI.refreshAll();
+        };
+      } else {
+        button.textContent = `Purchase (${prof.cost} BP)`;
+        button.disabled = Layers.getRemainingPoints() < prof.cost;
+        button.onclick = () => {
+          Proficiencies.purchaseProficiency(id);
+          UI.refreshAll();
+        };
+      }
+  
+      actions.appendChild(button);
+      item.appendChild(header);
+      item.appendChild(desc);
+      item.appendChild(actions);
+      container.appendChild(item);
     });
-
-    // Display selected proficiencies
-    Object.keys(Proficiencies.purchasedProficiencies).forEach((profId) => {
-      const prof = Proficiencies.availableProficiencies[profId];
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `<strong>${prof.name}</strong>`;
-      selectedContainer.appendChild(listItem);
-    });
-
-    this.updateBuildPoints();
   },
 
   /**

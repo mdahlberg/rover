@@ -284,6 +284,13 @@ header {
   margin: 4px 0;
 }
 
+/* General Shop Layout */
+.shop-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Adjust spacing as desired */
+}
+
 /* Ability Shop Layout */
 #ability-shop {
   display: flex;
