@@ -16,6 +16,7 @@ window.UI = {
     UI.updateProficiencyUI();
     UI.updateLoreUI();
     UI.updateLayerPreview();
+    UI.updateLayerHistory();
   },
 
   updateLayerPreview: function () {
@@ -48,6 +49,36 @@ window.UI = {
       }
     });
   },
+
+  updateLayerHistory: function () {
+    console.log("Updating layer history")
+    const historyList = document.getElementById("layer-history");
+    if (!historyList) return;
+  
+    historyList.innerHTML = "";
+  
+    Layers.layers.forEach((layer, index) => {
+      const item = document.createElement("li");
+      item.className = "layer-history-item";
+      item.innerHTML = `
+        <strong>Level ${index + 1}</strong><br>
+        <em>Stats:</em> ${Object.entries(layer.stats || {})
+          .map(([k, v]) => `${k}: +${v}`)
+          .join(", ") || "None"}<br>
+        <em>Abilities:</em> ${Object.entries(layer.abilities || {})
+          .map(([k, v]) => `${Abilities.availableAbilities[k]?.name || k} x${v}`)
+          .join(", ") || "None"}<br>
+        <em>Proficiencies:</em> ${Object.keys(layer.proficiencies || {})
+          .map((k) => Proficiencies.availableProficiencies[k]?.name || k)
+          .join(", ") || "None"}<br>
+        <em>Lores:</em> ${Object.entries(layer.lores || {})
+          .map(([k, v]) => `${Lores.availableLores.find(l => l.id === k)?.name || k} x${v}`)
+          .join(", ") || "None"}
+      `;
+      historyList.appendChild(item);
+    });
+  },
+
 
   /**
    * Update the UI for available build points.
@@ -200,7 +231,6 @@ window.UI = {
       badge.className = "ability-badge";
 
       const count = Abilities.getPurchaseCount(abilityId)
-      console.log("Purchase count for ", abilityId, " is ", count)
       badge.textContent = `x${count}`;
       if (count === 0) badge.classList.add("muted");
       header.appendChild(badge);

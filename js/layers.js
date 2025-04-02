@@ -29,10 +29,6 @@ window.Layers = {
    * @param {number} points - Number of points to spend.
    */
   spendPoints: function (domain, id, points) {
-    console.log('Spending ', points,  'points on ', id, ' in ', domain);
-    console.log("Before Spending: ", this.currentLayer.pointsSpent);
-    console.log("Points Being Added:", points);
-
     if (this.getRemainingPoints() < points) {
       console.error("Not enough points available.");
       return false;
@@ -81,6 +77,7 @@ window.Layers = {
       proficiencies: {},
       lores: {}
     };
+    UI.updateLayerHistory();
   },
 
   /**

@@ -20,11 +20,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const levelUpButton = document.getElementById("level-up-btn");
+  if (levelUpButton) {
+    levelUpButton.addEventListener("click", () => {
+      levelUp();
+      UI.refreshAll();
+    });
+  }
+});
+
 /**
  * Handles leveling up to create a new layer.
  */
 function levelUp() {
   console.log("Leveling up...");
+  Layers.layers.push(Layers.currentLayer)
   Layers.resetLayer(); // Lock in the previous layer and start a new one.
   UI.refreshAll();
   alert("Level Up! New Layer Started.");
