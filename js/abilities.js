@@ -59,6 +59,11 @@ window.Abilities = {
   // Keeps track of purchased abilities
   purchasedAbilities: {},
 
+  getDerivedGatherEssenceUses: function() {
+    const totalSpirit = Stats.getTotal("spirit");
+    return Math.floor(totalSpirit / 3);
+  },
+
   /**
    * Purchase an ability if enough points are available.
    * @param {string} abilityId - ID of the ability
