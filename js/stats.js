@@ -1,3 +1,13 @@
+/* 
+  stats.js - Manages core stat logic with level-based locking.
+  Now, only the three core stats exist:
+    - Body, Mind, and Spirit.
+  
+  Derived stats:
+    - Body: Derived Strength = floor(body / 4), Derived Health = body + 5, Derived Armor = body + 10
+    - Mind: Derived Lore = floor(mind / 3)
+    - Spirit: Derived Gather Essence Uses = floor(spirit / 3)
+*/
 window.Stats = {
   currentStats: {
     body: 0,
