@@ -105,9 +105,42 @@ window.EssenceSlots = {
     return true;
   },
 
+  /**
+   * Check whether refunding a slot would leave an illegal slot progression.
+   * @param {string} level - The level being refunded (e.g. "1", "2", ..., "master")
+   * @returns {boolean} True if refund is allowed, false if it breaks slot progression
+   */
+  canRefundSlot(level) {
+    const levels = this.levels;
+    const index = levels.indexOf(level);
+    if (index === -1) return false;
+  
+    const currentCount = Layers.currentLayer.essenceSlots[level] || 0;
+    const countAfterRefund = currentCount - 1;
+  
+    // Check all higher levels
+    for (let i = index + 1; i < levels.length; i++) {
+      const higher = levels[i];
+      const higherCount = Layers.currentLayer.essenceSlots[higher] || 0;
+  
+      // After refund, we must still have at least as many of this level
+      // as any higher level
+      if (higherCount > countAfterRefund) {
+        return false;
+      }
+    }
+  
+    return true;
+  },
+
   refundSlot(level) {
     if (!Layers.currentLayer.essenceSlots[level] || Layers.currentLayer.essenceSlots[level] <= 0) {
       console.warn("No essence slot to refund at level:", level);
+      return false;
+    }
+
+    if (!this.canRefundSlot(level)) {
+      alert("Cannot refund this slot because it would make your higher-level slots invalid.");
       return false;
     }
   
