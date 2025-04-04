@@ -9,7 +9,8 @@ window.Layers = {
     stats: {},
     abilities: {},
     proficiencies: {},
-    lores: {}
+    lores: {},
+    essenceSlots: EssenceSlots.getBlankEssenceSlot(),
   },
 
   totalPoints: 50, // Initial points for level 1
@@ -28,19 +29,20 @@ window.Layers = {
    * @param {string} id - ID of the item being purchased.
    * @param {number} points - Number of points to spend.
    */
-  spendPoints: function (domain, id, points) {
+  spendPoints: function(domain, id, points) {
     if (this.getRemainingPoints() < points) {
-      console.error("Not enough points available.");
+      console.error("Not enough points.");
       return false;
     }
-
-    // Initialize domain if undefined
+  
+    // Track cost for book-keeping only
     if (!this.currentLayer[domain]) {
       this.currentLayer[domain] = {};
     }
-
-    this.currentLayer[domain][id] = (this.currentLayer[domain][id] || 0) + points;
+  
+    this.currentLayer[domain][id] = (this.currentLayer[domain][id] || 0); // don't increase count
     this.currentLayer.pointsSpent += points;
+  
     return true;
   },
 
@@ -75,7 +77,8 @@ window.Layers = {
       stats: {},
       abilities: {},
       proficiencies: {},
-      lores: {}
+      lores: {},
+      essenceSlots: EssenceSlots.getBlankEssenceSlot(),
     };
     UI.updateLayerHistory();
   },
