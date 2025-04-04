@@ -72,21 +72,21 @@ window.Stats = {
    * Increases a core stat if build points are available.
    * @param {string} statName - The name of the stat to increase.
    */
-  increaseStat: function (statName) {
-    const cost = this.getStatCost(statName);
-    // Check if enough points are available
-    if (Layers.getRemainingPoints() < cost) {
-      alert("Not enough build points to increase this stat.");
-      return;
-    }
+  increaseStat: function(statName) {
+    const currentValue = this.getTotal(statName);
+    const currentLevel = Layers.getCurrentLevel();
+    const cost = this.getStatCost(currentLevel, currentValue);
 
-    Layers.spendPoints("stats", statName, cost);
-    this.currentStats[statName]++;
+    if (!Layers.spendPoints("stats", statName, cost)) return false;
   
-    // Update UI after increasing stat
-    console.log(`${statName} increased! New value: ${this.currentStats[statName]}`);
-    UI.refreshAll();
-
+    if (!Layers.currentLayer.stats[statName]) {
+      Layers.currentLayer.stats[statName] = 0;
+    }
+    Layers.currentLayer.stats[statName] += 1;
+  
+    this.currentStats[statName]++;
+    UI.updateStatsUI();
+    return true;
   },
 
   canDecrease: function (statName) {
@@ -131,22 +131,26 @@ window.Stats = {
    * Decreases a core stat and refunds build points.
    * @param {string} statName - The name of the stat to decrease.
    */
-  decreaseStat: function (statName) {
-    // Check if stat can be decreased
-    if (this.currentStats[statName] <= 0) {
-      console.warn(`${statName} cannot be decreased below 0.`);
-      return;
+  decreaseStat: function(statName) {
+    const currentValue = this.getTotal(statName);
+    const currentLevel = Layers.getCurrentLevel();
+    const cost = this.getStatCost(currentLevel, currentValue - 1); // What you're undoing
+
+    if (!Layers.currentLayer.stats[statName] || Layers.currentLayer.stats[statName] <= 0) {
+      console.warn("No stat points to refund for", statName);
+      return false;
     }
   
-    // Get the cost to decrease the stat
-    const cost = this.getStatCost(statName);
-  
     Layers.refundPoints("stats", statName, cost);
-    this.currentStats[statName]--;
+    Layers.currentLayer.stats[statName] -= 1;
   
-    // Update UI after decreasing stat
-    console.log(`${statName} decreased! New value: ${this.currentStats[statName]}`);
-    UI.refreshAll();
+    if (Layers.currentLayer.stats[statName] === 0) {
+      delete Layers.currentLayer.stats[statName];
+    }
+  
+    this.currentStats[statName]--;
+    UI.updateStatsUI();
+    return true;
   },
 
   /**

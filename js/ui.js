@@ -17,6 +17,7 @@ window.UI = {
     UI.updateLoreUI();
     UI.updateLayerPreview();
     UI.updateLayerHistory();
+    UI.updateEssenceSlotUI();
   },
 
   updateLayerPreview: function () {
@@ -49,6 +50,48 @@ window.UI = {
       }
     });
   },
+
+  // ui.js - UI rendering and interaction logic
+  
+  updateEssenceSlotUI: function () {
+    const container = document.getElementById("essence-slot-list");
+    if (!container) return;
+    container.innerHTML = "";
+  
+    // For each slot, 1-9, master
+    EssenceSlots.levels.forEach((level) => {
+      const li = document.createElement("li");
+      li.classList.add("slot-entry");
+  
+      const label = document.createElement("span");
+      label.textContent = EssenceSlots.getDisplayLabel(level);
+  
+      const count = document.createElement("span");
+      count.textContent = `x${EssenceSlots.getTotalSlotsForLevel(level)}`;
+      count.classList.add("slot-count");
+  
+      const cost = EssenceSlots.getCost(level);
+      const canBuy = EssenceSlots.canPurchase(level);
+      const isRefundable = Layers.currentLayer.essenceSlots?.[level] > 0;
+  
+      const addBtn = document.createElement("button");
+      addBtn.textContent = cost !== null ? `+ (${cost} BP)` : "+";
+      addBtn.disabled = !canBuy;
+      addBtn.onclick = () => EssenceSlots.purchaseSlot(level);
+  
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "-";
+      removeBtn.disabled = !isRefundable;
+      removeBtn.onclick = () => EssenceSlots.refundSlot(level);
+  
+      li.appendChild(label);
+      li.appendChild(count);
+      li.appendChild(addBtn);
+      li.appendChild(removeBtn);
+      container.appendChild(li);
+    });
+  },
+
 
   updateLayerHistory: function () {
     console.log("Updating layer history")

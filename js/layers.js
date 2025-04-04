@@ -9,7 +9,8 @@ window.Layers = {
     stats: {},
     abilities: {},
     proficiencies: {},
-    lores: {}
+    lores: {},
+    essenceSlots: EssenceSlots.getBlankEssenceSlot(),
   },
 
   totalPoints: 50, // Initial points for level 1
@@ -28,41 +29,54 @@ window.Layers = {
    * @param {string} id - ID of the item being purchased.
    * @param {number} points - Number of points to spend.
    */
-  spendPoints: function (domain, id, points) {
-    if (this.getRemainingPoints() < points) {
-      console.error("Not enough points available.");
+  spendPoints: function(domain, id, points) {
+    if (typeof points !== "number" || isNaN(points)) {
+      console.error("Invalid point value passed to spendPoints:", points);
       return false;
     }
 
-    // Initialize domain if undefined
+    if (this.getRemainingPoints() < points) {
+      console.error("Not enough points.");
+      return false;
+    }
+  
+    // Track cost for book-keeping only
     if (!this.currentLayer[domain]) {
       this.currentLayer[domain] = {};
     }
-
-    this.currentLayer[domain][id] = (this.currentLayer[domain][id] || 0) + points;
+  
+    this.currentLayer[domain][id] = (this.currentLayer[domain][id] || 0); // don't increase count
     this.currentLayer.pointsSpent += points;
+  
     return true;
   },
 
   /**
-   * Refund points from a specific domain.
-   * @param {string} domain - "stats", "abilities", "proficiencies", "lores"
-   * @param {string} id - ID of the item being refunded.
-   * @param {number} [amount=1] - Number of points to refund.
+   * Refund build points for an item in a specific domain.
+   * @param {string} domain - The domain (e.g. "stats", "abilities", etc.)
+   * @param {string} id - The identifier of the item
+   * @param {number} cost - The amount of points to refund
    */
-  refundPoints: function (domain, id, amount = 1) {
-    const current = this.currentLayer[domain][id] || 0;
+  refundPoints(domain, id, cost) {
+    const spent = this.currentLayer[domain]?.[id];
   
-    if (current < amount) {
+    if (typeof spent === "undefined") {
+      console.warn(`Nothing to refund for ${id}`);
+      return;
+    }
+  
+    if (this.currentLayer.pointsSpent < cost) {
       console.warn(`Attempted to refund more points than were spent on ${id}`);
       return;
     }
   
-    this.currentLayer[domain][id] -= amount;
-    this.currentLayer.pointsSpent -= amount;
+    this.currentLayer.pointsSpent -= cost;
   
-    if (this.currentLayer[domain][id] === 0) {
+    // Decrease or delete the entry
+    if (spent === 1) {
       delete this.currentLayer[domain][id];
+    } else {
+      this.currentLayer[domain][id] -= 1;
     }
   },
 
@@ -75,7 +89,8 @@ window.Layers = {
       stats: {},
       abilities: {},
       proficiencies: {},
-      lores: {}
+      lores: {},
+      essenceSlots: EssenceSlots.getBlankEssenceSlot(),
     };
     UI.updateLayerHistory();
   },
