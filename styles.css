@@ -470,6 +470,7 @@ header {
   background-color: #c04444;
 }
 
+{
   font-size: 1.2rem;
   margin-top: 15px;
 }
@@ -479,6 +480,7 @@ ul ul {
   margin-left: 20px;
 }
 
+{
   padding: 4px 8px;
   font-size: 0.9rem;
   border: none;
@@ -490,9 +492,11 @@ ul ul {
   margin-left: 4px;
 }
 
+{
   background-color: #3c78c0;
 }
 
+{
 /* Ensure button container is correctly styled */
   display: inline-flex;
   gap: 4px;
@@ -500,6 +504,7 @@ ul ul {
   vertical-align: middle;
 }
 
+{
   background-color: #ccc; /* Light gray */
   color: #666; /* Slightly darker text */
   cursor: not-allowed;
@@ -529,6 +534,7 @@ ul ul {
 #proficiency-content button:hover, #selected-proficiencies button:hover {
   background-color: #3c78c0;
 }
+
 /* styles.css - Styling for character planner UI */
 
 /* Essence Slot Shop */
