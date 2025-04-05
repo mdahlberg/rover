@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 function levelUp() {
   console.log("Leveling up...");
-  Layers.layers.push(Layers.currentLayer)
+
   Layers.resetLayer(); // Lock in the previous layer and start a new one.
 
   const levelEl = document.getElementById("level-display");
