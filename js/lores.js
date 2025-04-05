@@ -1,233 +1,90 @@
+// lores.js - Manages lore data, selection, and state management.
+
 window.Lores = {
+  // Lores are now in an array format for easier tree traversal and UI rendering.
   availableLores: [
-    {
-      id: "tracking",
-      name: "Tracking",
-      description: "Capable of reading trail signs and marking where creatures or humanoids have passed.",
-      category: "General",
-    },
-    {
-      id: "appraisal",
-      name: "Appraisal",
-      description: "Evaluate the worth of raw materials and resources, and identify essence in physical objects.",
-      category: "General",
-    },
-    {
-      id: "worldbreaker_historian",
-      name: "Worldbreaker Historian",
-      description: "Experts in myths and stories of the past. Can attempt to identify or use Worldbreaker technology.",
-      category: "General",
-    },
-    {
-      id: "new_world_historian",
-      name: "New World Historian",
-      description: "Experts in events and politics that have occurred since the Great Unraveling.",
-      category: "General",
-    },
-    {
-      id: "smooth_talker",
-      name: "Smooth Talker",
-      description: "Skilled in making deals, bargains, and bringing people around to your point of view.",
-      category: "General",
-    },
-    {
-      id: "survivalist",
-      name: "Survivalist",
-      description: "Capable of surviving outside of civilization. Able to find food and water more easily.",
-      category: "General",
-    },
-    {
-      id: "cartographer",
-      name: "Cartographer",
-      description: "Able to read and make maps. Rarely lost and can retrace steps accurately.",
-      category: "General",
-    },
-    {
-      id: "arcanist",
-      name: "Arcanist Knowledge",
-      description: "Understanding how Essence works and behaves.",
-      category: "Knowledge",
-    },
-    {
-      id: "theology",
-      name: "Theology Knowledge",
-      description: "Expertise on various religious factions, beliefs, and actions.",
-      category: "Knowledge",
-    },
-    {
-      id: "underworld",
-      name: "Underworld Knowledge",
-      description: "Knowledge of how criminals work and communicate.",
-      category: "Knowledge",
-    },
-    {
-      id: "military",
-      name: "Military Knowledge",
-      description: "Understanding military tactics, behavior, and army movements.",
-      category: "Knowledge",
-    },
-    {
-      id: "biology",
-      name: "Biology Knowledge",
-      description: "A parent category representing expertise in various types of creatures.",
-      isParent: true, // Indicate it's a parent lore, not selectable
-      category: "Knowledge",
-    },
-    {
-      id: "necrologist",
-      name: "Necrologist",
-      description: "Expert on undead monsters, their behaviors, and weaknesses.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "macrologist",
-      name: "Macrologist",
-      description: "Expert on Earthshakers and their behavior.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "pelagist",
-      name: "Pelagist",
-      description: "Expert on ocean monsters and their territories.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "toxicologist",
-      name: "Toxicologist",
-      description: "Recognizes poisons and poisonous creatures.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "umbralogist",
-      name: "Umbralogist",
-      description: "Expert on tainted living creatures and their traits.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "aetherologist",
-      name: "Aetherologist",
-      description: "Expert on elemental creatures and their behavior.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "naturologist",
-      name: "Naturologist",
-      description: "Expert on unmutated natural creatures.",
-      parent: "biology",
-      category: "Knowledge",
-    },
-    {
-      id: "mutologist",
-      name: "Mutologist",
-      description: "Expert on unnaturally mutated creatures.",
-      parent: "biology",
-      category: "Knowledge",
-    },
+    { id: "tracking", name: "Tracking", description: "Track creatures or humanoids.", category: "General" },
+    { id: "appraisal", name: "Appraisal", description: "Evaluate materials and essence.", category: "General" },
+    { id: "worldbreaker_historian", name: "Worldbreaker Historian", description: "Use or identify Worldbreaker tech.", category: "General" },
+    { id: "new_world_historian", name: "New World Historian", description: "History and politics post-Unraveling.", category: "General" },
+    { id: "smooth_talker", name: "Smooth Talker", description: "Persuade, bargain, and charm.", category: "General" },
+    { id: "survivalist", name: "Survivalist", description: "Survive and provide in wilderness.", category: "General" },
+    { id: "cartographer", name: "Cartographer", description: "Read and create maps accurately.", category: "General" },
+
+    { id: "arcanist", name: "Arcanist Knowledge", description: "Essence behavior and properties.", category: "Knowledge" },
+    { id: "theology", name: "Theology Knowledge", description: "Religious factions and beliefs.", category: "Knowledge" },
+    { id: "underworld", name: "Underworld Knowledge", description: "Criminal networks and codes.", category: "Knowledge" },
+    { id: "military", name: "Military Knowledge", description: "Strategy and army behavior.", category: "Knowledge" },
+    { id: "biology", name: "Biology", description: "Biology Lore Category", category: "Knowledge", isParent: true },
+
+    { id: "necrologist", name: "Necrologist", description: "Undead monsters.", category: "Knowledge", parent: "biology" },
+    { id: "macrologist", name: "Macrologist", description: "Earthshakers.", category: "Knowledge", parent: "biology" },
+    { id: "pelagist", name: "Pelagist", description: "Ocean monsters.", category: "Knowledge", parent: "biology" },
+    { id: "toxicologist", name: "Toxicologist", description: "Poisons and poisonous creatures.", category: "Knowledge", parent: "biology" },
+    { id: "umbralogist", name: "Umbralogist", description: "Tainted living creatures.", category: "Knowledge", parent: "biology" },
+    { id: "aetherologist", name: "Aetherologist", description: "Elemental creatures.", category: "Knowledge", parent: "biology" },
+    { id: "naturologist", name: "Naturologist", description: "Unmutated natural creatures.", category: "Knowledge", parent: "biology" },
+    { id: "mutologist", name: "Mutologist", description: "Unnaturally mutated creatures.", category: "Knowledge", parent: "biology" },
   ],
 
-  // Keeps track of selected lores
   selectedLores: {},
 
-  /**
-   * Returns child lores belonging to a parent.
-   * @param {string} parentId - The ID of the parent lore.
-   * @returns {array} Array of child lores.
-   */
-  getChildLores: function (parentId) {
-    return Object.keys(this.availableLores)
-      .filter((loreId) => this.availableLores[loreId].parent === parentId)
-      .map((loreId) => this.availableLores[loreId]);
+  getChildLores: function(parentId) {
+    return this.availableLores.filter(lore => lore.parent === parentId);
   },
 
-  /**
-   * Check if a lore is purchased or increased.
-   * @param {string} loreId
-   * @returns {boolean}
-   */
-  isLorePurchased: function (loreId) {
-    return !!this.selectedLores[loreId];
-  },
-
-  /**
-   * Purchase or increase lore points.
-   * @param {string} loreId
-   * @returns {boolean} True if successfully purchased
-   */
-  purchaseLore: function (loreId) {
-  const lore = this.availableLores.find(l => l.id === loreId);
-    if (!lore) {
-      console.warn("Invalid lore selected.");
-      return false;
-    }
-  
-    if (!this.selectedLores[loreId]) {
-      this.selectedLores[loreId] = 1;
-    } else if (this.selectedLores[loreId] < 5) {
-      this.selectedLores[loreId]++;
-    } else {
-      console.warn("Lore maxed out.");
-      return false;
-    }
-  
-    UI.updateLoreUI();
-    return true;
+  getEarnedLores: function () {
+    return Math.floor(Stats.getTotal("mind") / 3);
   },
 
   getSelectedLores: function () {
-    return this.selectedLores || {};
+    return this.selectedLores;
   },
 
-  canDecreaseLore: function (loreId) {
-    return (this.selectedLores[loreId] || 0) > 0;
+  getUnspentLores: function () {
+    const totalSpent = Object.values(this.selectedLores).reduce((sum, val) => sum + val, 0);
+    return this.getEarnedLores() - totalSpent;
   },
 
   canIncreaseLore: function (loreId) {
-    const current = this.selectedLores[loreId] || 0;
-    return current < 5 && this.getUnspentLores() > 0;
+    if (this.getUnspentLores() <= 0) return false;
+    if (!this.selectedLores[loreId]) return true;
+    return this.selectedLores[loreId] < 5;
   },
 
-  /**
-   * Decrease or remove a lore.
-   * @param {string} loreId
-   * @returns {boolean} True if successfully decreased
-   */
-  removeLore: function (loreId) {
-    if (!this.selectedLores[loreId] || this.selectedLores[loreId] <= 0) return false;
-    this.selectedLores[loreId]--;
-    if (this.selectedLores[loreId] === 0) {
-      delete this.selectedLores[loreId];
-    }
+  canDecreaseLore: function (loreId) {
+    return this.selectedLores[loreId] > 0;
+  },
+
+  isSelected: function (loreId) {
+    return !!this.selectedLores[loreId];
+  },
+
+  getLoreLevel: function (loreId) {
+    return this.selectedLores[loreId] || 0;
+  },
+
+  purchaseLore: function (loreId) {
+    if (!this.canIncreaseLore(loreId)) return false;
+    if (!this.selectedLores[loreId]) this.selectedLores[loreId] = 0;
+    this.selectedLores[loreId]++;
     UI.updateLoreUI();
     return true;
   },
 
-  /**
-   * Alias for isSelected to check if a lore is purchased.
-   * @param {string} loreId
-   * @returns {boolean}
-   */
-  isSelected: function (loreId) {
-    return this.isLorePurchased(loreId);
+  removeLore: function (loreId) {
+    if (!this.canDecreaseLore(loreId)) return false;
+    this.selectedLores[loreId]--;
+    if (this.selectedLores[loreId] <= 0) delete this.selectedLores[loreId];
+    UI.updateLoreUI();
+    return true;
   },
 
-  /**
-   * Calculates how many lore points remain unspent.
-   * Lore points are earned at a rate of 1 per 3 Mind stat.
-   * @returns {number} Unspent lore points.
-   */
-  getUnspentLores: function () {
-    const earnedLores = Math.floor(Stats.getTotal("mind") / 3);
-    const totalSpent = Object.values(this.selectedLores).reduce(
-      (sum, lvl) => sum + lvl,
-    0
-    );
-    return earnedLores - totalSpent;
+  getLoresByCategory: function (category) {
+    return this.availableLores.filter(l => l.category === category && !l.parent);
   },
+
+  getChildrenOf: function (parentId) {
+    return this.availableLores.filter(l => l.parent === parentId);
+  }
 };
-

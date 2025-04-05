@@ -1,13 +1,3 @@
-/* 
-  stats.js - Manages core stat logic with level-based locking.
-  Now, only the three core stats exist:
-    - Body, Mind, and Spirit.
-  
-  Derived stats:
-    - Body: Derived Strength = floor(body / 4), Derived Health = body + 5, Derived Armor = body + 10
-    - Mind: Derived Lore = floor(mind / 3)
-    - Spirit: Derived Gather Essence Uses = floor(spirit / 3)
-*/
 window.Stats = {
   currentStats: {
     body: 0,
@@ -22,168 +12,125 @@ window.Stats = {
   },
 
   /**
-   * Get the total value of a stat including locked and current.
-   * @param {string} statName
-   * @returns {number} Total value.
+   * Returns total value of a core stat (locked + current).
    */
-  getTotal: function (statName) {
+  getTotal(statName) {
     return (this.lockedStats[statName] || 0) + (this.currentStats[statName] || 0);
   },
 
   /**
-   * Modify a core stat. Applies to currentStats only.
-   * @param {string} statName
-   * @param {number} value
+   * Locks a stat bonus (from race selection).
    */
-  modifyStat: function (statName, value) {
-    if (this.currentStats[statName] !== undefined) {
-      this.currentStats[statName] += value;
-    }
+  lockStat(statName, value) {
+    this.lockedStats[statName] = (this.lockedStats[statName] || 0) + value;
+  },
+
+  resetStats() {
+    this.currentStats = { body: 0, mind: 0, spirit: 0 };
+    this.lockedStats = { body: 0, mind: 0, spirit: 0 };
   },
 
   /**
-   * Lock a core stat bonus (typically from race selection).
-   * @param {string} statName
-   * @param {number} value
+   * Get cost to increase a stat based on current value and level.
    */
-  lockStat: function (statName, value) {
-    if (this.lockedStats[statName] !== undefined) {
-      this.lockedStats[statName] += value;
-    }
-  },
+  getStatCost(statName, statCountOffset=0) {
+    const current = this.getTotal(statName) + statCountOffset;
+    const level = Layers.getCurrentLevel();
 
-  /**
-   * Reset all stats, used when starting over.
-   */
-  resetStats: function () {
-    this.currentStats = {
-      body: 0,
-      mind: 0,
-      spirit: 0,
-    };
-    this.lockedStats = {
-      body: 0,
-      mind: 0,
-      spirit: 0,
-    };
-  },
-
-  /**
-   * Increases a core stat if build points are available.
-   * @param {string} statName - The name of the stat to increase.
-   */
-  increaseStat: function(statName) {
-    const currentValue = this.getTotal(statName);
-    const currentLevel = Layers.getCurrentLevel();
-    const cost = this.getStatCost(currentLevel, currentValue);
-
-    if (!Layers.spendPoints("stats", statName, cost)) return false;
-  
-    if (!Layers.currentLayer.stats[statName]) {
-      Layers.currentLayer.stats[statName] = 0;
-    }
-    Layers.currentLayer.stats[statName] += 1;
-  
-    this.currentStats[statName]++;
-    UI.updateStatsUI();
-    return true;
-  },
-
-  canDecrease: function (statName) {
-    const current = this.getTotal(statName);
-  
-    // Never allow going below 0
-    if (current <= 0) {
-        alert("Cannot go below starting value")
-        return false;
-    }
-  
-    // 🧠 MIND → prevent refunding spent lore
-    if (statName === "mind") {
-      console.log("Checking if can decrease mind")
-      const newMind = current - 1;
-      const newEarnedLores = Math.floor(newMind / 3);
-      const spentLores = Object.values(Lores.getSelectedLores()).reduce((sum, v) => sum + v, 0);
-  
-      if (newEarnedLores < spentLores) {
-        alert("You cannot decrease your Mind stat further because you have already spent lore points. Please unassign a lore first.");
-        return false;
-      }
-    }
-  
-    // 🧪 SPIRIT → prevent removing Gather Essence use (if you're tracking it similarly)
-    if (statName === "spirit") {
-      const newSpirit = current - 1;
-      const newUses = Math.floor(newSpirit / 3);
-      const activeUses = Abilities.getDerivedGatherEssenceUses(); // assumes this exists
-  
-      if (newUses < activeUses) {
-        alert("You cannot decrease Spirit because it would remove a Gather Essence use you've already gained.");
-        return false;
-      }
-    }
-  
-    // BODY doesn't have conditional constraints (unless you want one)
-    return true;
-  },
-
-  /**
-   * Decreases a core stat and refunds build points.
-   * @param {string} statName - The name of the stat to decrease.
-   */
-  decreaseStat: function(statName) {
-    const currentValue = this.getTotal(statName);
-    const currentLevel = Layers.getCurrentLevel();
-    const cost = this.getStatCost(currentLevel, currentValue - 1); // What you're undoing
-
-    if (!Layers.currentLayer.stats[statName] || Layers.currentLayer.stats[statName] <= 0) {
-      console.warn("No stat points to refund for", statName);
-      return false;
-    }
-  
-    Layers.refundPoints("stats", statName, cost);
-    Layers.currentLayer.stats[statName] -= 1;
-  
-    if (Layers.currentLayer.stats[statName] === 0) {
-      delete Layers.currentLayer.stats[statName];
-    }
-  
-    this.currentStats[statName]--;
-    UI.updateStatsUI();
-    return true;
-  },
-
-  /**
-   * Returns the cost to increase a stat based on the current level.
-   * @param {string} statName - The stat name (body, mind, spirit).
-   * @returns {number} Build points required to increase the stat.
-   */
-  getStatCost: function (statName) {
-    const currentStat = this.getTotal(statName);
-    const currentLevel = Layers.getCurrentLevel(); // Check this line
-  
-    if (currentLevel <= 2) {
-      if (currentStat < 6) return 2;
-      if (currentStat <= 20) return 3;
+    if (level <= 2) {
+      if (current < 6) return 2;
+      if (current <= 20) return 3;
       return 5;
-    } else if (currentLevel <= 6) {
-      if (currentStat < 6) return 3;
-      if (currentStat <= 20) return 5;
+    } else if (level <= 6) {
+      if (current < 6) return 3;
+      if (current <= 20) return 5;
       return 6;
-    } else if (currentLevel <= 12) {
-      if (currentStat < 6) return 5;
-      if (currentStat <= 20) return 6;
+    } else if (level <= 12) {
+      if (current < 6) return 5;
+      if (current <= 20) return 6;
       return 8;
-    } else if (currentLevel <= 18) {
-      if (currentStat < 6) return 6;
-      if (currentStat <= 20) return 8;
+    } else if (level <= 18) {
+      if (current < 6) return 6;
+      if (current <= 20) return 8;
       return 10;
     } else {
-      if (currentStat < 6) return 8;
-      if (currentStat <= 20) return 10;
+      if (current < 6) return 8;
+      if (current <= 20) return 10;
       return 12;
     }
   },
 
-};
+  increaseStat(statName) {
+    console.log("debug: Increasing Stat: ", statName);
+    const cost = this.getStatCost(statName);
+    console.log("debug: It will cost: ", cost, " BP");
+    if (!Layers.spendPoints("stats", statName, cost)) return false;
 
+    this.currentStats[statName] = (this.currentStats[statName] || 0) + 1;
+
+    // Derived ability update (Spirit → Gather Essence)
+    if (statName === "spirit") {
+      const derived = Math.floor(this.getTotal("spirit") / 3);
+      Abilities.setDerivedAbility("gather_essence", derived);
+    }
+
+    UI.updateStatsUI();
+    UI.updateDerivedAbilities();
+    UI.updateLayerPreview();
+    return true;
+  },
+
+  decreaseStat(statName) {
+    if (!this.canDecrease(statName)) {
+      console.log("Unable to decrease stat '", statName, "'");
+      return false;
+    }
+
+    const cost = this.getStatCost(statName, -1);
+    if (!Layers.refundPoints("stats", statName, cost)) {
+      console.warn("Unable to refund points for stat '", statName, "'");
+      return false;
+    }
+
+    console.log("Stat '", statName, "' current value = '", this.currentStats[statName], "'");
+    this.currentStats[statName]--;
+    console.log("After refund Stat '", statName, "' current value = '", this.currentStats[statName], "'");
+
+    if (statName === "spirit") {
+      const derived = Math.floor(this.getTotal("spirit") / 3);
+      Abilities.setDerivedAbility("gather_essence", derived);
+    }
+
+    UI.updateStatsUI();
+    UI.updateDerivedAbilities();
+    UI.updateLayerPreview();
+    return true;
+  },
+
+  canDecrease(statName) {
+    const current = this.getTotal(statName);
+
+    if (current <= 0 || this.currentStats[statName] <= 0) {
+      alert("Cannot decrease this stat below zero.");
+      return false;
+    }
+
+    if (statName === "mind") {
+      const nextMind = current - 1;
+      const maxLores = Math.floor(nextMind / 3);
+      const spent = Object.values(Lores.getSelectedLores()).reduce((sum, v) => sum + v, 0);
+      if (spent > maxLores) {
+        alert("Unassign lores before decreasing Mind.");
+        return false;
+      }
+    }
+
+    if (statName === "spirit") {
+      const nextSpirit = current - 1;
+      const newUses = Math.floor(nextSpirit / 3);
+      const activeUses = Abilities.getDerivedUses("gather_essence");
+    }
+
+    return true;
+  },
+};

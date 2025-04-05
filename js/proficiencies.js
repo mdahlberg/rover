@@ -1,3 +1,5 @@
+// proficiencies.js - Manages proficiency selection and build point tracking
+
 window.Proficiencies = {
   availableProficiencies: {
     small_weapons: {
@@ -62,49 +64,32 @@ window.Proficiencies = {
     },
   },
 
-  // Keeps track of purchased proficiencies
-  purchasedProficiencies: {},
+  purchased: {},
 
-  /**
-   * Purchase a proficiency if enough points are available.
-   * @param {string} profId - ID of the proficiency
-   * @returns {boolean} Success or failure
-   */
-  purchaseProficiency: function (profId) {
-    const proficiency = this.availableProficiencies[profId];
-    if (!proficiency || Layers.getRemainingPoints() < proficiency.cost) {
-      alert("Not enough build points or invalid proficiency.");
-      return false;
-    }
-    if (!this.purchasedProficiencies[profId]) {
-      this.purchasedProficiencies[profId] = true; // Only allow purchase once
-    } else {
-      console.warn("Proficiency already purchased.");
-      return false;
-    }
-    Layers.spendPoints("proficiencies", profId, proficiency.cost);
+  purchaseProficiency: function (id) {
+    const prof = this.availableProficiencies[id];
+    if (!prof || this.purchased[id]) return false;
+
+    if (!Layers.spendPoints("proficiencies", id, prof.cost)) return false;
+    this.purchased[id] = true;
+
     UI.updateProficiencyUI();
     return true;
   },
 
-  /**
-   * Refund and remove a proficiency purchased at the current level.
-   * @param {string} profId - ID of the proficiency to remove
-   */
-  removeProficiency: function (profId) {
-    if (!this.purchasedProficiencies[profId]) return;
-    const proficiency = this.availableProficiencies[profId];
-    delete this.purchasedProficiencies[profId];
-    Layers.refundPoints("proficiencies", profId, proficiency.cost);
+  removeProficiency: function (id) {
+    if (!this.purchased[id]) return false;
+
+    const prof = this.availableProficiencies[id];
+    Layers.refundPoints("proficiencies", id, prof.cost);
+    delete this.purchased[id];
+
     UI.updateProficiencyUI();
+    return true;
   },
 
-  /**
-   * Check if a proficiency is purchased.
-   * @param {string} profId
-   * @returns {boolean}
-   */
-  isProficiencyPurchased: function (profId) {
-    return !!this.purchasedProficiencies[profId];
-  },
+  isPurchased: function (id) {
+    return !!this.purchased[id];
+  }
 };
+

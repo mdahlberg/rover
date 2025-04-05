@@ -299,6 +299,12 @@ header {
   padding: 0.5rem 0;
 }
 
+.ability-entry.derived {
+  background: #eef6ff;
+  border-left: 3px solid #2980b9;
+  opacity: 0.9;
+}
+
 .ability-item {
   background-color: #1e293b;
   border-radius: 8px;

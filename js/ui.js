@@ -20,6 +20,21 @@ window.UI = {
     UI.updateEssenceSlotUI();
   },
 
+  // Special handling for Gather Essence
+
+  updateDerivedAbilities: function () {
+    const count = Abilities.getDerivedUses("gather_essence");
+    Abilities.derivedAbilities = { gather_essence: count };
+
+    const derivedId = "gather_essence";
+  
+    // Remove old derived (in case we lost a spirit point)
+    Abilities.derivedAbilities = Abilities.derivedAbilities || {};
+    Abilities.derivedAbilities[derivedId] = count;
+  
+    UI.updateAbilityUI(); // re-render entire list with new values
+  },
+
   updateLayerPreview: function () {
     const list = document.getElementById("current-layer-display");
     if (!list) {
@@ -44,7 +59,20 @@ window.UI = {
   
         for (const id in entries) {
           const li = document.createElement("li");
-          li.textContent = `• ${id} (${entries[id]} pts)`;
+        
+          if (domain === "stats") {
+            const cost = entries[id]; // this is total BP spent
+            li.textContent = `• ${id} (${cost} BP)`;
+          } else {
+            const item = 
+              Abilities.getAbilityById?.(id) ||
+              Proficiencies.getProficiencyById?.(id) ||
+              null;
+            const cost = item?.cost || 1;
+            const count = entries[id];
+            li.textContent = `• ${id} x${count} (${count * cost} BP)`;
+          }
+        
           list.appendChild(li);
         }
       }
@@ -72,7 +100,9 @@ window.UI = {
   
       const cost = EssenceSlots.getCost(level);
       const canBuy = EssenceSlots.canPurchase(level);
-      const isRefundable = Layers.currentLayer.essenceSlots?.[level] > 0;
+      const isRefundable = EssenceSlots.isRefundable(level);
+
+      console.log("Calling canPurchase for level ", level, " canBuy = ", canBuy, " canRefund = ", isRefundable);
   
       const addBtn = document.createElement("button");
       addBtn.textContent = cost !== null ? `+ (${cost} BP)` : "+";
@@ -171,17 +201,21 @@ window.UI = {
     ["body", "mind", "spirit"].forEach((statName) => {
       const increaseButton = document.querySelector(`.stat-increase[data-stat="${statName}"]`);
       const decreaseButton = document.querySelector(`.stat-decrease[data-stat="${statName}"]`);
-  
+
       if (increaseButton) {
+        // Get the cost of the next level up
         const statCost = Stats.getStatCost(statName);
         increaseButton.innerHTML = `Increase (+${statCost} pts)`;
       }
       
       if (decreaseButton) {
-        const statCost = Stats.getStatCost(statName); // You might not need this, but just in case
+        // Refund the cost of the next level down
+        const statCost = Stats.getStatCost(statName, -1);
         decreaseButton.innerHTML = `Decrease (-${statCost} pts)`;
       }
 
+      const currentStatValue = Stats.getTotal(statName)
+      console.log("Updating '", statName, "' value to '", currentStatValue, "'");
       document.getElementById(`${statName}-value`).innerText = Stats.getTotal(statName);
 
     });
@@ -247,15 +281,56 @@ window.UI = {
     summaryContainer.innerHTML = content || "<p>No purchases this level.</p>";
   },
 
-  /**
+  /** 
    * Update the ability shop UI.
    */
   updateAbilityUI: function () {
     const abilityContainer = document.getElementById("ability-shop");
-    abilityContainer.innerHTML = "";
+    abilityContainer.innerHTML = ""; 
   
-    Object.keys(Abilities.availableAbilities).forEach((abilityId) => {
-      const ability = Abilities.availableAbilities[abilityId];
+    const allAbilities = Abilities.availableAbilities;
+  
+    // ===== Render Derived Abilities First =====
+    Object.entries(Abilities.derivedAbilities || {}).forEach(([id, count]) => {
+      const ability = allAbilities[id];
+      if (!ability) return;
+
+      const item = document.createElement("div");
+      item.className = "ability-item derived";
+
+      // Header
+      const header = document.createElement("div");
+      header.className = "ability-header";
+
+      const name = document.createElement("strong");
+      name.className = "ability-name";
+      name.textContent = ability.name;
+      name.title = ability.description;
+
+      const badge = document.createElement("span");
+      badge.className = "ability-badge";
+      badge.textContent = `x${count}`;
+
+      header.appendChild(badge);
+      header.appendChild(name);
+
+      // Description
+      const description = document.createElement("div");
+      description.className = "ability-description";
+      description.textContent = ability.description;
+
+      item.appendChild(header);
+      item.appendChild(description);
+
+      abilityContainer.appendChild(item);
+    });
+
+    // ===== Render Regular Abilities =====
+    Object.keys(allAbilities).forEach((abilityId) => {
+      const ability = allAbilities[abilityId];
+  
+      // Skip derived abilities in the main shop list
+      if (ability.derived === true) return;
   
       const item = document.createElement("div");
       item.className = "ability-item";
@@ -268,16 +343,15 @@ window.UI = {
       name.className = "ability-name";
       name.textContent = ability.name;
       name.title = ability.description;
-
-      // Show badge stacking
+  
       const badge = document.createElement("span");
       badge.className = "ability-badge";
-
-      const count = Abilities.getPurchaseCount(abilityId)
+  
+      const count = Abilities.getPurchaseCount(abilityId);
       badge.textContent = `x${count}`;
       if (count === 0) badge.classList.add("muted");
       header.appendChild(badge);
-
+  
       const cost = document.createElement("span");
       cost.className = "ability-cost";
       cost.textContent = `(${ability.cost} BP)`;
@@ -290,10 +364,10 @@ window.UI = {
       description.className = "ability-description";
       description.textContent = ability.description;
   
-      // Action buttons
+      // Actions
       const actions = document.createElement("div");
       actions.className = "ability-actions";
-
+  
       const plus = document.createElement("button");
       plus.textContent = "+";
       plus.disabled = Layers.getRemainingPoints() < ability.cost;
@@ -301,7 +375,7 @@ window.UI = {
         Abilities.purchaseAbility(abilityId, ability.cost);
         UI.refreshAll();
       };
-      
+  
       const minus = document.createElement("button");
       minus.textContent = "-";
       minus.disabled = count === 0;
@@ -309,7 +383,7 @@ window.UI = {
         Abilities.removeAbility(abilityId);
         UI.refreshAll();
       };
-      
+  
       actions.appendChild(minus);
       actions.appendChild(plus);
   
@@ -359,7 +433,7 @@ window.UI = {
   
       const button = document.createElement("button");
   
-      if (Proficiencies.isProficiencyPurchased(id)) {
+      if (Proficiencies.isPurchased(id)) {
         button.textContent = "Remove";
         button.onclick = () => {
           Proficiencies.removeProficiency(id);
