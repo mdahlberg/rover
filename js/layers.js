@@ -133,10 +133,17 @@ window.Layers = {
    */
   resetLayer() {
     this.layers.push(structuredClone(this.currentLayer));
+
     this.currentLayer = {
       pointsSpent: 0,
-      points: {}
+      points: {},
+      stats: {},
+      abilities: {},
+      lores: {},
+      proficiencies: {},
+      essenceSlots: {},
     };
+
   },
 
   /**
