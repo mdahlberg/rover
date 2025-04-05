@@ -100,7 +100,8 @@ window.UI = {
   
       const cost = EssenceSlots.getCost(level);
       const canBuy = EssenceSlots.canPurchase(level);
-      const isRefundable = Layers.currentLayer.points.essenceSlots?.[level] > 0;
+      const isRefundable = EssenceSlots.isRefundable(level);
+
       console.log("Calling canPurchase for level ", level, " canBuy = ", canBuy, " canRefund = ", isRefundable);
   
       const addBtn = document.createElement("button");

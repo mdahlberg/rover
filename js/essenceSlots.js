@@ -59,6 +59,24 @@ window.EssenceSlots = {
     return prevLevelCount > thisLevelCount;
   },
 
+  isRefundable: function (level) {
+    const levelIndex = this.levels.indexOf(level);
+    if (levelIndex === -1) return false;
+  
+    // You must have at least one slot to refund
+    if (this.getSlotCount(level) <= 0) return false;
+  
+    // You can't refund if doing so would break pyramid structure
+    for (let i = levelIndex + 1; i < this.levels.length; i++) {
+      const higher = this.levels[i];
+      const higherCount = this.getTotalSlotsForLevel(higher);
+      const thisCount = this.getTotalSlotsForLevel(level);
+      if (higherCount > thisCount - 1) return false;
+    }
+  
+    return true;
+  },
+
   purchaseSlot: function (level) {
     levelKey = String(level)
     const cost = this.getCost(levelKey);
