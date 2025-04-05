@@ -112,4 +112,9 @@ window.Abilities = {
   isAbilityPurchased(id) {
     return !!this.purchasedAbilities[id];
   },
+
+  getAbilityById: function (id) {
+    return this.availableAbilities?.[id] || null;
+  },
+
 };

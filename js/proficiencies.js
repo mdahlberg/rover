@@ -90,6 +90,11 @@ window.Proficiencies = {
 
   isPurchased: function (id) {
     return !!this.purchased[id];
-  }
+  },
+
+  getProficiencyById: function (id) {
+    return this.availableProficiencies?.[id] || null;
+  },
+
 };
 
