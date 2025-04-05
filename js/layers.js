@@ -1,107 +1,146 @@
-
 // layers.js - Centralized Build Point Management
 
 window.Layers = {
+  totalPoints: 50,
   layers: [],
 
   currentLayer: {
     pointsSpent: 0,
-    stats: {},
-    abilities: {},
-    proficiencies: {},
-    lores: {},
-    essenceSlots: EssenceSlots.getBlankEssenceSlot(),
+    points: {}, // { domain: { id: totalPointsSpent } }
   },
 
-  totalPoints: 50, // Initial points for level 1
+  /**
+   * Get the current level (starts at 1, increases with each level up).
+   * @returns {number}
+   */
+  getCurrentLevel() {
+    return this.layers.length + 1;
+  },
 
   /**
-   * Get remaining unspent points.
-   * @returns {number} Available build points.
+   * Get how many total build points are remaining for the current layer.
+   * @returns {number}
    */
-  getRemainingPoints: function () {
+  getRemainingPoints() {
     return this.totalPoints - this.currentLayer.pointsSpent;
   },
 
   /**
-   * Spend points on a specific domain.
-   * @param {string} domain - "stats", "abilities", "proficiencies", "lores"
-   * @param {string} id - ID of the item being purchased.
-   * @param {number} points - Number of points to spend.
+   * Get how many points were spent in total this layer.
+   * @returns {number}
    */
-  spendPoints: function(domain, id, points) {
-    if (typeof points !== "number" || isNaN(points)) {
-      console.error("Invalid point value passed to spendPoints:", points);
+  getSpentPoints() {
+    return this.currentLayer.pointsSpent;
+  },
+
+  /**
+   * Get the total count of a specific item across all layers.
+   * @param {string} domain - "stats", "abilities", "proficiencies", "lores", "essenceSlots"
+   * @param {string} id - The ID of the item
+   * @returns {number} Total count
+   */
+  getTotalCount: function (domain, id) {
+    let total = 0;
+
+    // Include finalized layers
+    this.layers.forEach(layer => {
+      if (layer[domain] && layer[domain][id]) {
+        total += layer[domain][id];
+      }
+    });
+
+    // Include current layer
+    if (this.currentLayer[domain] && this.currentLayer[domain][id]) {
+      total += this.currentLayer[domain][id];
+    }
+
+    return total;
+  },
+
+  /**
+   * Spend points on a domain+id pair.
+   * @param {string} domain - e.g., "stats", "abilities"
+   * @param {string} id - e.g., "body", "strike_from_behind"
+   * @param {number} cost
+   * @returns {boolean} success
+   */
+  spendPoints: function(domain, id, cost) {
+    console.log("debug: spending points. Domain: ", domain, ". ID: ", id, ". Cost: ", cost);
+    remainingPoints = this.getRemainingPoints();
+    console.log("debug: We have, ", remainingPoints, " remaining");
+    if (this.getRemainingPoints() < cost) {
+      console.warn("Not enough points available.");
       return false;
     }
 
-    if (this.getRemainingPoints() < points) {
-      console.error("Not enough points.");
-      return false;
+    if (!this.currentLayer.points[domain]) {
+      console.log("debug: this is the first ", domain, " point for the current layer");
+      this.currentLayer.points[domain] = {};
     }
-  
-    // Track cost for book-keeping only
-    if (!this.currentLayer[domain]) {
-      this.currentLayer[domain] = {};
-    }
-  
-    this.currentLayer[domain][id] = (this.currentLayer[domain][id] || 0); // don't increase count
-    this.currentLayer.pointsSpent += points;
-  
+
+    this.currentLayer.points[domain][id] = (this.currentLayer.points[domain][id] || 0) + cost;
+    console.log("Current layer.points[", domain, "][", id, "] now equals: ", this.currentLayer.points[domain][id]);
+    this.currentLayer.pointsSpent += cost;
+    console.log("You have now spent", this.currentLayer.pointsSpent, " points in this layer");
+    console.log("Current Layer = ", this.currentLayer.points.stats);
     return true;
   },
 
   /**
-   * Refund build points for an item in a specific domain.
-   * @param {string} domain - The domain (e.g. "stats", "abilities", etc.)
-   * @param {string} id - The identifier of the item
-   * @param {number} cost - The amount of points to refund
+   * Refund points from a domain+id pair.
+   * @param {string} domain
+   * @param {string} id
+   * @param {number} cost
    */
   refundPoints(domain, id, cost) {
-    const spent = this.currentLayer[domain]?.[id];
-  
-    if (typeof spent === "undefined") {
-      console.warn(`Nothing to refund for ${id}`);
-      return;
+    console.log("debug: refunding points. Domain: ", domain, ". ID: ", id, ". Cost: ", cost);
+    current_layer_points = this.currentLayer.points[domain];
+    console.log("Current '", domain, " 'layer = ", current_layer_points);
+    if (!this.currentLayer.points[domain] || typeof this.currentLayer.points[domain][id] === 'undefined') {
+      console.warn(`Nothing to refund for ${domain}.${id}`);
+      return false;
     }
-  
-    if (this.currentLayer.pointsSpent < cost) {
-      console.warn(`Attempted to refund more points than were spent on ${id}`);
-      return;
+    console.log("The stat exists, not sure what the next if statement is");
+
+    if (this.currentLayer.points[domain][id] < cost) {
+      // TODO - this is bad, not sure a warning is enough - maybe we should calulate
+      // the cost rather than passing it"
+      console.warn(`Attempted to refund more points than were spent on ${domain}.${id}`);
+      return false;
     }
-  
+
+    console.log("Subtracting: ", this.currentLayer.points[domain][id], " -= ", cost);
+    this.currentLayer.points[domain][id] -= cost;
+    console.log("New value =: ", this.currentLayer.points[domain][id]);
+    if (this.currentLayer.points[domain][id] === 0) {
+      console.log("The value reached zero, deleting it");
+      delete this.currentLayer.points[domain][id];
+    }
+
     this.currentLayer.pointsSpent -= cost;
-  
-    // Decrease or delete the entry
-    if (spent === 1) {
-      delete this.currentLayer[domain][id];
-    } else {
-      this.currentLayer[domain][id] -= 1;
-    }
+    console.log("Dalhberg what is this? ", this.currentLayer.points.stats);
+
+    return true;
   },
 
   /**
-   * Reset current layer on level up.
+   * Called when the user levels up — freeze the current layer and start fresh.
    */
-  resetLayer: function () {
+  resetLayer() {
+    this.layers.push(structuredClone(this.currentLayer));
     this.currentLayer = {
       pointsSpent: 0,
-      stats: {},
-      abilities: {},
-      proficiencies: {},
-      lores: {},
-      essenceSlots: EssenceSlots.getBlankEssenceSlot(),
+      points: {}
     };
-    UI.updateLayerHistory();
   },
 
   /**
-   * Returns the current character level.
-   * Level is based on the number of layers added + 1.
-   * @returns {number} Current level.
+   * Get how many points were spent on a given domain/id during this layer.
+   * @param {string} domain
+   * @param {string} id
+   * @returns {number}
    */
-  getCurrentLevel: function () {
-    return this.layers.length + 1; // Level starts at 1, increment with each new layer
-  },
-
+  getPointsSpentOn(domain, id) {
+    return this.currentLayer.points[domain]?.[id] || 0;
+  }
 };

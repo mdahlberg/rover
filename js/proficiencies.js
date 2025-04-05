@@ -1,3 +1,5 @@
+// proficiencies.js - Manages proficiency selection and build point tracking
+
 window.Proficiencies = {
   availableProficiencies: {
     small_weapons: {
@@ -62,9 +64,6 @@ window.Proficiencies = {
     },
   },
 
-  // Keeps track of purchased proficiencies
-  purchasedProficiencies: {},
-
   /**
    * Purchase a proficiency if enough points are available.
    * @param {string} profId - ID of the proficiency
@@ -72,17 +71,14 @@ window.Proficiencies = {
    */
   purchaseProficiency: function (profId) {
     const proficiency = this.availableProficiencies[profId];
-    if (!proficiency || Layers.getRemainingPoints() < proficiency.cost) {
-      alert("Not enough build points or invalid proficiency.");
-      return false;
-    }
-    if (!this.purchasedProficiencies[profId]) {
-      this.purchasedProficiencies[profId] = true; // Only allow purchase once
-    } else {
-      console.warn("Proficiency already purchased.");
-      return false;
-    }
-    Layers.spendPoints("proficiencies", profId, proficiency.cost);
+    if (!proficiency) return false;
+
+    const cost = proficiency.cost;
+    if (this.isProficiencyPurchased(profId)) return false;
+
+    const success = Layers.spendPoints("proficiencies", profId, cost);
+    if (!success) return false;
+
     UI.updateProficiencyUI();
     return true;
   },
@@ -92,19 +88,27 @@ window.Proficiencies = {
    * @param {string} profId - ID of the proficiency to remove
    */
   removeProficiency: function (profId) {
-    if (!this.purchasedProficiencies[profId]) return;
-    const proficiency = this.availableProficiencies[profId];
-    delete this.purchasedProficiencies[profId];
-    Layers.refundPoints("proficiencies", profId, proficiency.cost);
+    const wasPurchasedInLayer = Layers.currentLayer.proficiencies?.[profId];
+    if (!wasPurchasedInLayer) {
+      alert("This proficiency is locked in and cannot be removed.");
+      return;
+    }
+
+    const cost = this.availableProficiencies[profId].cost;
+    Layers.refundPoints("proficiencies", profId, cost);
     UI.updateProficiencyUI();
   },
 
   /**
-   * Check if a proficiency is purchased.
+   * Check if a proficiency is purchased across all levels.
    * @param {string} profId
    * @returns {boolean}
    */
   isProficiencyPurchased: function (profId) {
-    return !!this.purchasedProficiencies[profId];
+    // Check current layer and locked layers
+    return (
+      !!Layers.currentLayer.proficiencies?.[profId] ||
+      Layers.layers.some((layer) => layer.proficiencies?.[profId])
+    );
   },
 };
