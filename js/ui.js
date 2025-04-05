@@ -100,7 +100,8 @@ window.UI = {
   
       const cost = EssenceSlots.getCost(level);
       const canBuy = EssenceSlots.canPurchase(level);
-      const isRefundable = Layers.currentLayer.essenceSlots?.[level] > 0;
+      const isRefundable = Layers.currentLayer.points.essenceSlots?.[level] > 0;
+      console.log("Calling canPurchase for level ", level, " canBuy = ", canBuy, " canRefund = ", isRefundable);
   
       const addBtn = document.createElement("button");
       addBtn.textContent = cost !== null ? `+ (${cost} BP)` : "+";
@@ -431,7 +432,7 @@ window.UI = {
   
       const button = document.createElement("button");
   
-      if (Proficiencies.isProficiencyPurchased(id)) {
+      if (Proficiencies.isPurchased(id)) {
         button.textContent = "Remove";
         button.onclick = () => {
           Proficiencies.removeProficiency(id);

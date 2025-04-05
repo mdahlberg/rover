@@ -42,34 +42,58 @@ window.EssenceSlots = {
   getDisplayLabel: function (levelId) {
     if (levelId === "master") return "Master Slot";
     const levelNum = parseInt(levelId.replace("slot_", ""));
-    return `Level ${levelNum + 1}`;
+    return `Level ${levelNum}`;
   },
 
   canPurchase: function (level) {
     const cost = this.getCost(level);
-    if (cost === null) return false;
+    if (cost === null || Layers.getRemainingPoints() < cost) {
+      return false;
+    }
 
-    const levelIndex = this.levels.indexOf(level);
-    if (levelIndex === -1) return false;
-    if (levelIndex === 0) return true; // Slot 1 has no requirement
+    if (level === "1") return true; // Slot 1 is always allowed
 
-    const previous = this.levels[levelIndex - 1];
-    return this.getTotalSlotsForLevel(previous) >= this.getTotalSlotsForLevel(level);
+    const prevLevelCount = this.getTotalSlotsForLevel(level - 1);
+    const thisLevelCount = this.getTotalSlotsForLevel(level);
+
+    return prevLevelCount > thisLevelCount;
   },
 
   purchaseSlot: function (level) {
-    const cost = this.getCost(level);
-    if (!this.canPurchase(level)) return false;
-    if (!Layers.spendPoints("essenceSlots", level, cost)) return false;
+    levelKey = String(level)
+    const cost = this.getCost(levelKey);
+    if (!this.canPurchase(levelKey)) return false;
+  
+    if (!Layers.spendPoints("essenceSlots", levelKey, cost)) return false;
+  
+    // ✅ Increment the number of slots purchased for this level
+    console.log("CURRENT LAYER = ", Layers.currentLayer);
+    if (!Layers.currentLayer.essenceSlots) {
+      Layers.currentLayer.essenceSlots = {};
+      if (!Layers.currentLayer.essenceSlots[levelKey]) {
+        Layers.currentLayer.essenceSlots[levelKey] = 0
+      }
+    }
+  
+    Layers.currentLayer.essenceSlots[levelKey] = (Layers.currentLayer.essenceSlots[levelKey] || 0) + 1;
+  
     UI.updateEssenceSlotUI();
+    UI.updateBuildPoints();
+    UI.updateLayerPreview();
     return true;
   },
 
   refundSlot: function (level) {
+    console.log("Refund slot - level = ", level);
     const levelIndex = this.levels.indexOf(level);
-    if (levelIndex === -1) return;
+    console.log("LEvel index = ", levelIndex);
+    if (levelIndex === -1) {
+      console.log("Level index is negative one for some reason??")
+      return;
+    }
 
     const current = this.getSlotCount(level);
+    console.log("current = ", current);
     if (current <= 0) return;
 
     const next = this.levels[levelIndex + 1];
@@ -79,7 +103,21 @@ window.EssenceSlots = {
     }
 
     const cost = this.getCost(level);
+
+    // Refund BP
     Layers.refundPoints("essenceSlots", level, cost);
+
+    // Decrement the local display/purchase tracker
+    if (Layers.currentLayer.essenceSlots?.[level]) {
+      Layers.currentLayer.essenceSlots[level]--;
+      if (Layers.currentLayer.essenceSlots[level] <= 0) {
+        delete Layers.currentLayer.essenceSlots[level];
+      }
+    }
+
+    // Re-render
     UI.updateEssenceSlotUI();
+    UI.updateBuildPoints();
+    UI.updateLayerPreview();
   },
 };

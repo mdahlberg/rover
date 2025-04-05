@@ -64,51 +64,32 @@ window.Proficiencies = {
     },
   },
 
-  /**
-   * Purchase a proficiency if enough points are available.
-   * @param {string} profId - ID of the proficiency
-   * @returns {boolean} Success or failure
-   */
-  purchaseProficiency: function (profId) {
-    const proficiency = this.availableProficiencies[profId];
-    if (!proficiency) return false;
+  purchased: {},
 
-    const cost = proficiency.cost;
-    if (this.isProficiencyPurchased(profId)) return false;
+  purchaseProficiency: function (id) {
+    const prof = this.availableProficiencies[id];
+    if (!prof || this.purchased[id]) return false;
 
-    const success = Layers.spendPoints("proficiencies", profId, cost);
-    if (!success) return false;
+    if (!Layers.spendPoints("proficiencies", id, prof.cost)) return false;
+    this.purchased[id] = true;
 
     UI.updateProficiencyUI();
     return true;
   },
 
-  /**
-   * Refund and remove a proficiency purchased at the current level.
-   * @param {string} profId - ID of the proficiency to remove
-   */
-  removeProficiency: function (profId) {
-    const wasPurchasedInLayer = Layers.currentLayer.proficiencies?.[profId];
-    if (!wasPurchasedInLayer) {
-      alert("This proficiency is locked in and cannot be removed.");
-      return;
-    }
+  removeProficiency: function (id) {
+    if (!this.purchased[id]) return false;
 
-    const cost = this.availableProficiencies[profId].cost;
-    Layers.refundPoints("proficiencies", profId, cost);
+    const prof = this.availableProficiencies[id];
+    Layers.refundPoints("proficiencies", id, prof.cost);
+    delete this.purchased[id];
+
     UI.updateProficiencyUI();
+    return true;
   },
 
-  /**
-   * Check if a proficiency is purchased across all levels.
-   * @param {string} profId
-   * @returns {boolean}
-   */
-  isProficiencyPurchased: function (profId) {
-    // Check current layer and locked layers
-    return (
-      !!Layers.currentLayer.proficiencies?.[profId] ||
-      Layers.layers.some((layer) => layer.proficiencies?.[profId])
-    );
-  },
+  isPurchased: function (id) {
+    return !!this.purchased[id];
+  }
 };
+

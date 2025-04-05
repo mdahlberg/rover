@@ -33,6 +33,10 @@ window.Layers = {
     return this.currentLayer.pointsSpent;
   },
 
+  getCurrentLayerCount: function (domain, id) {
+    return this.currentLayer[domain]?.[id] || 0;
+  },
+
   /**
    * Get the total count of a specific item across all layers.
    * @param {string} domain - "stats", "abilities", "proficiencies", "lores", "essenceSlots"
@@ -82,7 +86,7 @@ window.Layers = {
     console.log("Current layer.points[", domain, "][", id, "] now equals: ", this.currentLayer.points[domain][id]);
     this.currentLayer.pointsSpent += cost;
     console.log("You have now spent", this.currentLayer.pointsSpent, " points in this layer");
-    console.log("Current Layer = ", this.currentLayer.points.stats);
+    console.log("Current Layer = ", this.currentLayer.points[domain]);
     return true;
   },
 
@@ -93,6 +97,7 @@ window.Layers = {
    * @param {number} cost
    */
   refundPoints(domain, id, cost) {
+    console.log("Dalhberg current layer before refund  ", this.currentLayer);
     console.log("debug: refunding points. Domain: ", domain, ". ID: ", id, ". Cost: ", cost);
     current_layer_points = this.currentLayer.points[domain];
     console.log("Current '", domain, " 'layer = ", current_layer_points);
@@ -118,7 +123,7 @@ window.Layers = {
     }
 
     this.currentLayer.pointsSpent -= cost;
-    console.log("Dalhberg what is this? ", this.currentLayer.points.stats);
+    console.log("Dalhberg current layer after refund  ", this.currentLayer);
 
     return true;
   },
