@@ -129,10 +129,6 @@ window.Stats = {
       const nextSpirit = current - 1;
       const newUses = Math.floor(nextSpirit / 3);
       const activeUses = Abilities.getDerivedUses("gather_essence");
-      if (newUses < activeUses) {
-        alert("Decrease would remove Gather Essence uses already granted.");
-        return false;
-      }
     }
 
     return true;
