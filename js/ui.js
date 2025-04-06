@@ -74,8 +74,10 @@ window.UI = {
         const ability = Abilities.getAbilityById?.(id);
         const name = ability?.name || id;
         const cost = ability?.cost || 0;
+        const isRacial = window.RacialLocks?.abilities?.has(id);
+        const tag = isRacial ? " - Race Bonus" : "";
         const li = document.createElement("li");
-        li.textContent = `• ${name} x${count} (${count * cost} BP)`;
+        li.textContent = `• ${name} x${count} (${count * cost} BP)${tag}`;
         fragments.push(li);
       }
     }
@@ -150,8 +152,6 @@ window.UI = {
       const cost = EssenceSlots.getCost(level);
       const canBuy = EssenceSlots.canPurchase(level);
       const isRefundable = EssenceSlots.isRefundable(level);
-
-      console.log("Calling canPurchase for level ", level, " canBuy = ", canBuy, " canRefund = ", isRefundable);
 
       const addBtn = document.createElement("button");
       addBtn.textContent = cost !== null ? `+ (${cost} BP)` : "+";
@@ -398,6 +398,7 @@ window.UI = {
     // ===== Render Regular Abilities =====
     Object.keys(allAbilities).forEach((abilityId) => {
       const ability = allAbilities[abilityId];
+      const isRacial = window.RacialLocks?.abilities?.has(abilityId);
 
       // Skip derived abilities in the main shop list
       if (ability.derived === true) return;
@@ -413,6 +414,16 @@ window.UI = {
       name.className = "ability-name";
       name.textContent = ability.name;
       name.title = ability.description;
+
+      if (isRacial) {
+        item.classList.add("racial-ability");
+        const racialTag = document.createElement("span");
+        racialTag.className = "racial-tag";
+
+        // TODO - I don't love this but oh well
+        racialTag.textContent = "(Racial)";
+        name.appendChild(racialTag);
+      }
 
       const badge = document.createElement("span");
       badge.className = "ability-badge";
@@ -476,8 +487,20 @@ window.UI = {
     container.innerHTML = "";
 
     Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
+      const isRacial = window.RacialLocks?.proficiencies?.has(id);
+
       const item = document.createElement("div");
+      const label = document.createElement("strong");
+
+      label.title = prof.description;
+
       item.className = "ability-item";
+
+      if (isRacial) {
+        item.classList.add("racial-proficiency");
+        label.innerHTML += ' <span class="racial-tag">(Racial)</span>';
+        item.appendChild(label);
+      }
 
       const header = document.createElement("div");
       header.className = "ability-header";

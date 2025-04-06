@@ -66,14 +66,19 @@ window.Proficiencies = {
 
   purchased: {},
 
-  purchaseProficiency: function (id) {
+  purchaseProficiency: function (id, overrideCost) {
     const prof = this.availableProficiencies[id];
+
+    const cost = overrideCost ?? prof.cost
+
     if (!prof || this.purchased[id]) return false;
 
-    if (!Layers.spendPoints("proficiencies", id, prof.cost)) return false;
+    if (!Layers.spendPoints("proficiencies", id, cost)) return false;
+
     if (!Layers.currentLayer.proficiencies) {
       Layers.currentLayer.proficiencies = {}
     }
+
     Layers.currentLayer.proficiencies[id] = 1;
     this.purchased[id] = true;
 
@@ -82,7 +87,13 @@ window.Proficiencies = {
   },
 
   canRefund: function(id) {
+    // Can't return from previous level
     if (!Layers.currentLayer.proficiencies?.[id]) {
+      return false;
+    }
+
+    // Can't return starting stuff
+    if (window.RacialLocks?.proficiencies?.has(id)) {
       return false;
     }
 
@@ -91,6 +102,11 @@ window.Proficiencies = {
 
   removeProficiency: function (id) {
     if (!this.purchased[id] || !Layers.currentLayer.proficiencies?.[id]) return false;
+
+    if (window.RacialLocks?.proficiencies?.has(id)) {
+      console.warn("Cannot remove starting proficiency: ", id);
+      return false;
+    }
 
     const prof = this.availableProficiencies[id];
     Layers.refundPoints("proficiencies", id, prof.cost);
@@ -109,5 +125,14 @@ window.Proficiencies = {
     return this.availableProficiencies?.[id] || null;
   },
 
+  initializeRacialProficiencies: function () {
+    const racial = JSON.parse(localStorage.getItem("racialProficiencies") || "[]");
+    racial.forEach((id) => {
+      if (!this.purchasedProficiencies[id]) {
+        this.purchasedProficiencies[id] = "racial";
+      }
+    });
+  },
+  
 };
 

@@ -102,11 +102,11 @@ window.Abilities = {
    *
    */
   canRefund: function(id) {
-    if (!this.currentLayerPurchasedAbilities?.[id]) {
-      return false;
-    }
+    const purchased = this.currentLayerPurchasedAbilities?.[id] || 0;
+    const racial = window.RacialLocks?.abilities?.has(id) ? 1 : 0;
 
-    return true;
+    // Can only refund if you have purchased one this round
+    return purchased > racial;
   },
 
   /**

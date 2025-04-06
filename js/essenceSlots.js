@@ -85,7 +85,6 @@ window.EssenceSlots = {
     if (!Layers.spendPoints("essenceSlots", levelKey, cost)) return false;
   
     // ✅ Increment the number of slots purchased for this level
-    console.log("CURRENT LAYER = ", Layers.currentLayer);
     if (!Layers.currentLayer.essenceSlots) {
       Layers.currentLayer.essenceSlots = {};
       if (!Layers.currentLayer.essenceSlots[levelKey]) {
@@ -102,16 +101,12 @@ window.EssenceSlots = {
   },
 
   refundSlot: function (level) {
-    console.log("Refund slot - level = ", level);
     const levelIndex = this.levels.indexOf(level);
-    console.log("LEvel index = ", levelIndex);
     if (levelIndex === -1) {
-      console.log("Level index is negative one for some reason??")
       return;
     }
 
     const current = this.getSlotCount(level);
-    console.log("current = ", current);
     if (current <= 0) return;
 
     const next = this.levels[levelIndex + 1];

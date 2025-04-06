@@ -170,14 +170,16 @@
   </div>
 
   <!-- Scripts: Load splash.js first, then the rest -->
-  <script src="js/splash.js"></script>
-  <script src="js/essenceSlots.js"></script>
-  <script src="js/layers.js"></script>
-  <script src="js/stats.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/abilities.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/lores.js"></script>
-  <script src="js/proficiencies.js"></script>
+  <script src="js/layers.js"></script>         <!-- Foundation: Build point tracking -->
+  <script src="js/stats.js"></script>          <!-- Depends on layers -->
+  <script src="js/abilities.js"></script>      <!-- Uses Stats / Layers -->
+  <script src="js/proficiencies.js"></script>  <!-- Uses Layers -->
+  <script src="js/lores.js"></script>          <!-- Uses Layers -->
+  <script src="js/essenceSlots.js"></script>   <!-- Uses Stats, Layers -->
+  <script src="js/races.js"></script>          <!-- Data only, safe to go here -->
+  <script src="js/ui.js"></script>             <!-- Uses all above modules -->
+  <script src="js/main.js"></script>           <!-- Entry point: sets RacialLocks, calls UI updates -->
+  <script src="js/splash.js"></script>         <!-- Splash needs Races and Stats, can go last -->
+
 </body>
 </html>

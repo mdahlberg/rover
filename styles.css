@@ -64,6 +64,18 @@ body {
   }
 }
 
+.racial-tag {
+  font-size: 0.8em;
+  color: #888;
+  font-style: italic;
+  margin-left: 6px;
+}
+
+.racial-proficiency {
+  background-color: #f5f5f5;
+  border-left: 4px solid #ccc;
+}
+
 .race-selection {
   width: 80%;
   max-width: 1000px;
@@ -292,6 +304,12 @@ header {
 }
 
 /* Ability Shop Layout */
+
+.racial-ability {
+  border-left: 4px solid gold;
+  background-color: #fdf6e3;
+}
+
 #ability-shop {
   display: flex;
   flex-direction: column;

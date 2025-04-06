@@ -1,7 +1,7 @@
 // layers.js - Centralized Build Point Management
 
 window.Layers = {
-  totalPoints: 50,
+  totalPoints: parseInt(localStorage.getItem("startingBP") || "50"),
   layers: [],
 
   currentLayer: {
