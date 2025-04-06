@@ -99,9 +99,25 @@ window.Abilities = {
   },
 
   /**
+   *
+   */
+  canRefund: function(id) {
+    if (!this.currentLayerPurchasedAbilities?.[id]) {
+      return false;
+    }
+
+    return true;
+  },
+
+  /**
    * Remove/refund a purchased ability.
    */
   removeAbility(id) {
+    if (!this.currentLayerPurchasedAbilities?.[id]) {
+      console.warn("This ability was not purchased this level and cannot be refunded.");
+      return false;
+    }
+
     const ability = this.availableAbilities[id];
     if (!ability || ability.derived) {
       console.warn("Cannot remove derived ability:", id);

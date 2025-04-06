@@ -448,7 +448,7 @@ window.UI = {
 
       const minus = document.createElement("button");
       minus.textContent = "-";
-      minus.disabled = count === 0;
+      minus.disabled = count === 0 || !Abilities.canRefund(abilityId);
       minus.onclick = () => {
         Abilities.removeAbility(abilityId);
         UI.refreshAll();
@@ -505,6 +505,7 @@ window.UI = {
 
       if (Proficiencies.isPurchased(id)) {
         button.textContent = "Remove";
+        button.disabled = !Proficiencies.canRefund(id);
         button.onclick = () => {
           Proficiencies.removeProficiency(id);
           UI.refreshAll();
