@@ -81,8 +81,16 @@ window.Proficiencies = {
     return true;
   },
 
+  canRefund: function(id) {
+    if (!Layers.currentLayer.proficiencies?.[id]) {
+      return false;
+    }
+
+    return true;
+  },
+
   removeProficiency: function (id) {
-    if (!this.purchased[id]) return false;
+    if (!this.purchased[id] || !Layers.currentLayer.proficiencies?.[id]) return false;
 
     const prof = this.availableProficiencies[id];
     Layers.refundPoints("proficiencies", id, prof.cost);
