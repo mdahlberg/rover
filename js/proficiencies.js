@@ -71,6 +71,10 @@ window.Proficiencies = {
     if (!prof || this.purchased[id]) return false;
 
     if (!Layers.spendPoints("proficiencies", id, prof.cost)) return false;
+    if (!Layers.currentLayer.proficiencies) {
+      Layers.currentLayer.proficiencies = {}
+    }
+    Layers.currentLayer.proficiencies[id] = 1;
     this.purchased[id] = true;
 
     UI.updateProficiencyUI();
@@ -82,6 +86,7 @@ window.Proficiencies = {
 
     const prof = this.availableProficiencies[id];
     Layers.refundPoints("proficiencies", id, prof.cost);
+    delete Layers.currentLayer.proficiencies?.[id];
     delete this.purchased[id];
 
     UI.updateProficiencyUI();

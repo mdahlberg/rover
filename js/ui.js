@@ -52,21 +52,25 @@ window.UI = {
       const header = document.createElement("li");
       header.innerHTML = `<strong>Stats</strong>`;
       fragments.push(header);
+    
       for (const stat in points.stats) {
         const li = document.createElement("li");
-        li.textContent = `• ${stat} (${points.stats[stat]} BP)`;
+    
+        const totalBP = points.stats[stat]; // This is the total cost already stored
+        const purchaseCount = Stats.currentLayerStats?.[stat] || 0; // How many times it was bought this layer
+    
+        li.textContent = `• ${stat} x${purchaseCount} (${totalBP} BP)`;
         fragments.push(li);
       }
     }
   
     // Abilities preview
-    console.log("DAHLBERH ABILITY DEBUG: ", points.abilities)
     if (points.abilities && Object.keys(points.abilities).length > 0) {
       const header = document.createElement("li");
       header.innerHTML = `<strong>Abilities</strong>`;
       fragments.push(header);
       for (const id in points.abilities) {
-        const count = Abilities.getPurchaseCount?.(id) || 0;
+        const count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
         const ability = Abilities.getAbilityById?.(id);
         const name = ability?.name || id;
         const cost = ability?.cost || 0;
@@ -179,36 +183,31 @@ window.UI = {
       const item = document.createElement("li");
       item.className = "layer-history-item";
   
-      const stats = Object.entries(points.stats || {})
+      const stats = Object.entries(layer.stats || {})
         .map(([k, v]) => `${k}: +${v}`)
         .join(", ") || "None";
   
-      const abilities = Object.keys(points.abilities || {})
+      const abilities = Object.keys(layer.abilities || {})
         .map((k) => {
-          const ability = Abilities.availableAbilities[k];
-          const name = ability?.name || k;
-          const count = (layer.abilities?.[k] ?? (points.abilities?.[k] / (ability?.cost || 1))) || 0;
+          const name = Abilities.availableAbilities[k]?.name || k;
+          const count = layer.abilities[k];
           return `${name} x${count}`;
         })
         .join(", ") || "None";
   
-      const proficiencies = Object.keys(points.proficiencies || {})
+      const proficiencies = Object.keys(layer.proficiencies || {})
         .map((k) => Proficiencies.availableProficiencies[k]?.name || k)
         .join(", ") || "None";
   
-      const lores = Object.entries(points.lores || {})
+      const lores = Object.entries(layer.lores || {})
         .map(([k, v]) => {
-          const lore = Lores.availableLores.find(l => l.id === k);
-          const name = lore?.name || k;
+          const name = Lores.availableLores.find(l => l.id === k)?.name || k;
           return `${name} x${v}`;
         })
         .join(", ") || "None";
   
-      const essence = Object.keys(points.essenceSlots || {})
-        .map((k) => {
-          const count = layer.essenceSlots?.[k] || 0;
-          return `Lvl ${k} x${count}`;
-        })
+      const essence = Object.entries(layer.essenceSlots || {})
+        .map(([k, v]) => `Lvl ${k} x${v}`)
         .join(", ") || "None";
   
       item.innerHTML = `

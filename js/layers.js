@@ -132,6 +132,9 @@ window.Layers = {
    * Called when the user levels up — freeze the current layer and start fresh.
    */
   resetLayer() {
+    // TODO - refactor curentLayer to always hold this info
+    this.currentLayer.stats = structuredClone(Stats.currentLayerStats);
+    this.currentLayer.abilities = structuredClone(Abilities.currentLayerPurchasedAbilities);
     this.layers.push(structuredClone(this.currentLayer));
 
     this.currentLayer = {
@@ -143,6 +146,9 @@ window.Layers = {
       proficiencies: {},
       essenceSlots: {},
     };
+
+    Stats.resetLayerStats();
+    Abilities.currentLayerPurchasedAbilities = {};
 
   },
 

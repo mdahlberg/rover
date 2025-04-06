@@ -48,8 +48,13 @@ window.Abilities = {
     },
   },
 
+  currentLayerPurchasedAbilities: {}, // Tracks purchases for this layer only
   purchasedAbilities: {},  // Tracks normal purchases
   derivedAbilities: {},    // Tracks derived ones like Gather Essence
+
+  getCurrentLayerPurchaseCount(id) {
+    return this.currentLayerPurchasedAbilities[id] || 0;
+  },
 
   getPurchaseCount(id) {
     return this.purchasedAbilities[id] || 0;
@@ -57,6 +62,10 @@ window.Abilities = {
 
   getDerivedUses(id) {
     return this.derivedAbilities[id] || 0;
+  },
+
+  resetCurrentLayerPurchasedAbilities: function() {
+    currentLayerPurchasedAbilities = {};
   },
 
   /**
@@ -85,6 +94,7 @@ window.Abilities = {
     if (!Layers.spendPoints("abilities", id, cost)) return false;
 
     this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + 1;
+    this.currentLayerPurchasedAbilities[id] = (this.currentLayerPurchasedAbilities[id] || 0) + 1;
     return true;
   },
 
@@ -101,8 +111,10 @@ window.Abilities = {
     if (!this.purchasedAbilities[id]) return false;
 
     this.purchasedAbilities[id] -= 1;
+    this.currentLayerPurchasedAbilities[id] -= 1;
     if (this.purchasedAbilities[id] <= 0) {
       delete this.purchasedAbilities[id];
+      delete this.currentLayerPurchasedAbilities[id];
     }
 
     Layers.refundPoints("abilities", id, ability.cost);
