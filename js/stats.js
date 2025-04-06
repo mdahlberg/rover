@@ -10,6 +10,11 @@ window.Stats = {
     mind: 0,
     spirit: 0,
   },
+  currentLayerStats: {
+    body: 0,
+    mind: 0,
+    spirit: 0,
+  },
 
   /**
    * Returns total value of a core stat (locked + current).
@@ -25,9 +30,8 @@ window.Stats = {
     this.lockedStats[statName] = (this.lockedStats[statName] || 0) + value;
   },
 
-  resetStats() {
-    this.currentStats = { body: 0, mind: 0, spirit: 0 };
-    this.lockedStats = { body: 0, mind: 0, spirit: 0 };
+  resetLayerStats() {
+    this.currentLayerStats = { body: 0, mind: 0, spirit: 0 };
   },
 
   /**
@@ -61,12 +65,11 @@ window.Stats = {
   },
 
   increaseStat(statName) {
-    console.log("debug: Increasing Stat: ", statName);
     const cost = this.getStatCost(statName);
-    console.log("debug: It will cost: ", cost, " BP");
     if (!Layers.spendPoints("stats", statName, cost)) return false;
 
     this.currentStats[statName] = (this.currentStats[statName] || 0) + 1;
+    this.currentLayerStats[statName] = (this.currentLayerStats[statName] || 0) + 1;
 
     // Derived ability update (Spirit → Gather Essence)
     if (statName === "spirit") {
@@ -94,6 +97,7 @@ window.Stats = {
 
     console.log("Stat '", statName, "' current value = '", this.currentStats[statName], "'");
     this.currentStats[statName]--;
+    this.currentLayerStats[statName]--;
     console.log("After refund Stat '", statName, "' current value = '", this.currentStats[statName], "'");
 
     if (statName === "spirit") {

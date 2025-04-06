@@ -37,57 +37,95 @@ window.UI = {
 
   updateLayerPreview: function () {
     const list = document.getElementById("current-layer-display");
-    if (!list) {
-      console.log("Not on the character planner page yet");
-      return;
-    }
-
-    console.log("Updating layer preview");
-
-    list.innerHTML = ""; // Clear previous content
-
+    if (!list) return;
+  
+    list.innerHTML = "";
+  
     const layer = Layers.currentLayer;
-    const domains = ["stats", "abilities", "proficiencies", "lores", "essenceSlots"];
-
-    domains.forEach(domain => {
-      const entries = layer.points?.[domain];
-      if (entries && Object.keys(entries).length > 0) {
-        const domainHeader = document.createElement("li");
-        domainHeader.innerHTML = `<strong>${domain.charAt(0).toUpperCase() + domain.slice(1)}</strong>`;
-        list.appendChild(domainHeader);
-
-        for (const id in entries) {
-          const li = document.createElement("li");
-
-          if (domain === "stats") {
-            const bpSpent = entries[id]; // already BP
-            li.textContent = `• ${id} (${bpSpent} BP)`;
-
-          } else if (domain === "essenceSlots") {
-            const count = entries[id];
-            const cost = EssenceSlots.getCost(id) || 0;
-            li.textContent = `• Level ${id} x${count} (${count * cost} BP)`;
-
-          } else {
-            const count = entries[id];
-            let item = null;
-
-            if (domain === "abilities") {
-              item = Abilities.getAbilityById?.(id);
-            } else if (domain === "proficiencies") {
-              item = Proficiencies.getProficiencyById?.(id);
-            } else if (domain === "lores") {
-              item = Lores.getLoreById?.(id);
-            }
-
-            const cost = item?.cost || 1;
-            li.textContent = `• ${item?.name || id} x${count} (${count * cost} BP)`;
-          }
-
-          list.appendChild(li);
-        }
+    const points = layer.points || {};
+  
+    // Defer to each system's own renderer
+    const fragments = [];
+  
+    // Stats preview
+    if (points.stats && Object.keys(points.stats).length > 0) {
+      const header = document.createElement("li");
+      header.innerHTML = `<strong>Stats</strong>`;
+      fragments.push(header);
+    
+      for (const stat in points.stats) {
+        const li = document.createElement("li");
+    
+        const totalBP = points.stats[stat]; // This is the total cost already stored
+        const purchaseCount = Stats.currentLayerStats?.[stat] || 0; // How many times it was bought this layer
+    
+        li.textContent = `• ${stat} x${purchaseCount} (${totalBP} BP)`;
+        fragments.push(li);
       }
-    });
+    }
+  
+    // Abilities preview
+    if (points.abilities && Object.keys(points.abilities).length > 0) {
+      const header = document.createElement("li");
+      header.innerHTML = `<strong>Abilities</strong>`;
+      fragments.push(header);
+      for (const id in points.abilities) {
+        const count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
+        const ability = Abilities.getAbilityById?.(id);
+        const name = ability?.name || id;
+        const cost = ability?.cost || 0;
+        const li = document.createElement("li");
+        li.textContent = `• ${name} x${count} (${count * cost} BP)`;
+        fragments.push(li);
+      }
+    }
+  
+    // Proficiencies preview
+    if (points.proficiencies && Object.keys(points.proficiencies).length > 0) {
+      const header = document.createElement("li");
+      header.innerHTML = `<strong>Proficiencies</strong>`;
+      fragments.push(header);
+      for (const id in points.proficiencies) {
+        const prof = Proficiencies.getProficiencyById?.(id);
+        const name = prof?.name || id;
+        const cost = prof?.cost || 0;
+        const li = document.createElement("li");
+        li.textContent = `• ${name} (${cost} BP)`;
+        fragments.push(li);
+      }
+    }
+  
+    // Lores preview
+    if (points.lores && Object.keys(points.lores).length > 0) {
+      const header = document.createElement("li");
+      header.innerHTML = `<strong>Lores</strong>`;
+      fragments.push(header);
+      for (const id in points.lores) {
+        const count = points.lores[id];
+        const lore = Lores.availableLores.find(l => l.id === id);
+        const name = lore?.name || id;
+        const li = document.createElement("li");
+        li.textContent = `• ${name} x${count}`;
+        fragments.push(li);
+      }
+    }
+  
+    // Essence slots preview
+    if (points.essenceSlots && Object.keys(points.essenceSlots).length > 0) {
+      const header = document.createElement("li");
+      header.innerHTML = `<strong>EssenceSlots</strong>`;
+      fragments.push(header);
+      for (const id in points.essenceSlots) {
+        const count = EssenceSlots.getSlotCount?.(id) || 0;
+        const cost = EssenceSlots.getCost(id) || 0;
+        const li = document.createElement("li");
+        li.textContent = `• Essence Slot Lvl ${id} x${count} (${count * cost} BP)`;
+        fragments.push(li);
+      }
+    }
+  
+    // Append all items to the DOM
+    fragments.forEach(el => list.appendChild(el));
   },
 
   // ui.js - UI rendering and interaction logic
@@ -133,36 +171,57 @@ window.UI = {
     });
   },
 
-
   updateLayerHistory: function () {
-    console.log("Updating layer history")
+    console.log("Updating layer history");
     const historyList = document.getElementById("layer-history");
     if (!historyList) return;
-
+  
     historyList.innerHTML = "";
-
+  
     Layers.layers.forEach((layer, index) => {
+      const points = layer.points || {};
       const item = document.createElement("li");
       item.className = "layer-history-item";
+  
+      const stats = Object.entries(layer.stats || {})
+        .map(([k, v]) => `${k}: +${v}`)
+        .join(", ") || "None";
+  
+      const abilities = Object.keys(layer.abilities || {})
+        .map((k) => {
+          const name = Abilities.availableAbilities[k]?.name || k;
+          const count = layer.abilities[k];
+          return `${name} x${count}`;
+        })
+        .join(", ") || "None";
+  
+      const proficiencies = Object.keys(layer.proficiencies || {})
+        .map((k) => Proficiencies.availableProficiencies[k]?.name || k)
+        .join(", ") || "None";
+  
+      const lores = Object.entries(layer.lores || {})
+        .map(([k, v]) => {
+          const name = Lores.availableLores.find(l => l.id === k)?.name || k;
+          return `${name} x${v}`;
+        })
+        .join(", ") || "None";
+  
+      const essence = Object.entries(layer.essenceSlots || {})
+        .map(([k, v]) => `Lvl ${k} x${v}`)
+        .join(", ") || "None";
+  
       item.innerHTML = `
         <strong>Level ${index + 1}</strong><br>
-        <em>Stats:</em> ${Object.entries(layer.stats || {})
-          .map(([k, v]) => `${k}: +${v}`)
-          .join(", ") || "None"}<br>
-        <em>Abilities:</em> ${Object.entries(layer.abilities || {})
-          .map(([k, v]) => `${Abilities.availableAbilities[k]?.name || k} x${v}`)
-          .join(", ") || "None"}<br>
-        <em>Proficiencies:</em> ${Object.keys(layer.proficiencies || {})
-          .map((k) => Proficiencies.availableProficiencies[k]?.name || k)
-          .join(", ") || "None"}<br>
-        <em>Lores:</em> ${Object.entries(layer.lores || {})
-          .map(([k, v]) => `${Lores.availableLores.find(l => l.id === k)?.name || k} x${v}`)
-          .join(", ") || "None"}
+        <em>Stats:</em> ${stats}<br>
+        <em>Abilities:</em> ${abilities}<br>
+        <em>Proficiencies:</em> ${proficiencies}<br>
+        <em>Lores:</em> ${lores}<br>
+        <em>Essence Slots:</em> ${essence}
       `;
+  
       historyList.appendChild(item);
     });
   },
-
 
   /**
    * Update the UI for available build points.
