@@ -517,18 +517,18 @@ ul ul {
 }
 
 /* Styles for Proficiency Shop */
-#proficiency-shop, #selected-proficiencies-card {
+#proficiency-shop {
   margin-top: 20px;
 }
 
-#proficiency-content li, #selected-proficiencies li {
+#proficiency-content li {
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-#proficiency-content button, #selected-proficiencies button {
+#proficiency-content button {
   padding: 4px 8px;
   background-color: #4a90e2;
   color: white;
@@ -537,7 +537,7 @@ ul ul {
   cursor: pointer;
 }
 
-#proficiency-content button:hover, #selected-proficiencies button:hover {
+#proficiency-content button:hover {
   background-color: #3c78c0;
 }
 

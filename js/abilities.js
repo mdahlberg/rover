@@ -50,7 +50,7 @@ window.Abilities = {
 
   currentLayerPurchasedAbilities: {}, // Tracks purchases for this layer only
   purchasedAbilities: {},  // Tracks normal purchases
-  derivedAbilities: {},    // Tracks derived ones like Gather Essence
+  derivedAbilities: {"gather_essence": 0},    // Tracks derived ones like Gather Essence
 
   getCurrentLayerPurchaseCount(id) {
     return this.currentLayerPurchasedAbilities[id] || 0;
