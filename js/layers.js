@@ -1,12 +1,15 @@
 // layers.js - Centralized Build Point Management
 
 window.Layers = {
-  totalPoints: parseInt(localStorage.getItem("startingBP") || "50"),
   layers: [],
 
   currentLayer: {
     pointsSpent: 0,
     points: {}, // { domain: { id: totalPointsSpent } }
+  },
+
+  getTotalPoints() {
+    return parseInt(localStorage.getItem("startingBP") || "50");
   },
 
   /**
@@ -22,7 +25,7 @@ window.Layers = {
    * @returns {number}
    */
   getRemainingPoints() {
-    return this.totalPoints - this.currentLayer.pointsSpent;
+    return this.getTotalPoints() - this.currentLayer.pointsSpent;
   },
 
   /**
