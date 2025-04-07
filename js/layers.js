@@ -72,24 +72,18 @@ window.Layers = {
    * @returns {boolean} success
    */
   spendPoints: function(domain, id, cost) {
-    console.log("debug: spending points. Domain: ", domain, ". ID: ", id, ". Cost: ", cost);
     remainingPoints = this.getRemainingPoints();
-    console.log("debug: We have, ", remainingPoints, " remaining");
     if (this.getRemainingPoints() < cost) {
       console.warn("Not enough points available.");
       return false;
     }
 
     if (!this.currentLayer.points[domain]) {
-      console.log("debug: this is the first ", domain, " point for the current layer");
       this.currentLayer.points[domain] = {};
     }
 
     this.currentLayer.points[domain][id] = (this.currentLayer.points[domain][id] || 0) + cost;
-    console.log("Current layer.points[", domain, "][", id, "] now equals: ", this.currentLayer.points[domain][id]);
     this.currentLayer.pointsSpent += cost;
-    console.log("You have now spent", this.currentLayer.pointsSpent, " points in this layer");
-    console.log("Current Layer = ", this.currentLayer.points[domain]);
     return true;
   },
 
