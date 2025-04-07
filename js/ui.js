@@ -70,14 +70,23 @@ window.UI = {
       header.innerHTML = `<strong>Abilities</strong>`;
       fragments.push(header);
       for (const id in points.abilities) {
-        const count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
+        let count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
         const ability = Abilities.getAbilityById?.(id);
         const name = ability?.name || id;
         const cost = ability?.cost || 0;
         const isRacial = window.RacialLocks?.abilities?.has(id);
         const tag = isRacial ? " - Race Bonus" : "";
+        let totalCost = 0;
+
+        if (count > 0 && isRacial && Layers.getCurrentLevel() === 1) {
+          // Take one off for the race
+          totalCost = (count - 1) * cost;
+        } else {
+          totalCost = count * cost;
+        }
+
         const li = document.createElement("li");
-        li.textContent = `• ${name} x${count} (${count * cost} BP)${tag}`;
+        li.textContent = `• ${name} x${count} (${totalCost} BP)${tag}`;
         fragments.push(li);
       }
     }
@@ -90,9 +99,12 @@ window.UI = {
       for (const id in points.proficiencies) {
         const prof = Proficiencies.getProficiencyById?.(id);
         const name = prof?.name || id;
-        const cost = prof?.cost || 0;
+        const cost = points.proficiencies[id];
+        isRacial = window.RacialLocks?.proficiencies?.has(id);
+        const badge = isRacial ? ' - Race Bonus' : "";
+
         const li = document.createElement("li");
-        li.textContent = `• ${name} (${cost} BP)`;
+        li.textContent = `• ${name} (${cost} BP)${badge}`;
         fragments.push(li);
       }
     }
