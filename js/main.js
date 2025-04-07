@@ -3,25 +3,41 @@
 console.log("main.js loaded");
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM fully loaded. Waiting for planner to load...");
+  console.log("DOM fully loaded. Checking race selection...");
 
-  // Delay initialization until the planner is visible
+  const selectedRace = localStorage.getItem("selectedRace");
+  const startingBP = localStorage.getItem("startingBP");
   const plannerContainer = document.getElementById("planner-container");
 
-  if (plannerContainer && !plannerContainer.classList.contains("hidden")) {
-    console.log("Planner is already visible. Initializing...");
+  if (selectedRace && startingBP) {
+    console.log("Detected existing race selection:", selectedRace);
+
+    // Apply race effects and racial bonuses (e.g., abilities, proficiencies)
+    applyRaceEffects(selectedRace);
+    applyRacialProficienciesAndAbilities();
+
+    // Set starting build points
+    Layers.totalPoints = parseInt(startingBP, 10);
+
+    // Show the planner
+    UI.showCharacterPlanner();
+
+    // Initialize full state
     Layers.loadFromStorage();
     Stats.loadFromStorage();
-
     UI.refreshAll();
-  } else {
-    console.log("Planner is not visible yet. Waiting for confirmation...");
-    document.getElementById("start-btn").addEventListener("click", function () {
-      console.log("Race confirmed! Initializing planner now...");
-      applyRacialProficienciesAndAbilities();
-      UI.refreshAll();
-    });
+
+    return;
   }
+
+  // Fallback: Wait for user to confirm race
+  console.log("No race selected yet. Waiting for splash confirmation...");
+
+  document.getElementById("start-btn").addEventListener("click", function () {
+    console.log("Race confirmed! Initializing planner...");
+    applyRacialProficienciesAndAbilities();
+    UI.refreshAll();
+  });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -48,12 +64,6 @@ function applyRacialProficienciesAndAbilities() {
   racialProfs.forEach((profId) => {
     if (!Proficiencies.purchased[profId]) {
       Proficiencies.purchaseProficiency(profId, 0);
-      // Proficiencies.purchased[profId] = 1;
-      // Layers.currentLayer.proficiencies ??= {};
-      // Layers.currentLayer.proficiencies[profId] = 1;
-      // Layers.currentLayer.points ??= {};
-      // Layers.currentLayer.points.proficiencies ??= {};
-      // Layers.currentLayer.points.proficiencies[profId] = 0; // 0 BP cost
     }
   });
 
@@ -62,12 +72,6 @@ function applyRacialProficienciesAndAbilities() {
     if (!Abilities.purchasedAbilities[abilityId]) {
       // Purchased for zero BP
       Abilities.purchaseAbility(abilityId, 0);
-      //Abilities.purchasedAbilities[abilityId] = 1;
-      //Layers.currentLayer.abilities ??= {};
-      //Layers.currentLayer.abilities[abilityId] = 1;
-      //Layers.currentLayer.points ??= {};
-      //Layers.currentLayer.points.abilities ??= {};
-      //Layers.currentLayer.points.abilities[abilityId] = 0; // 0 BP cost
     }
   });
 }
