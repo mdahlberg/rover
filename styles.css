@@ -305,6 +305,57 @@ header {
 
 /* Ability Shop Layout */
 
+.property-badges {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.property-badge {
+  background-color: #444;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px 0 10px 10px;
+  position: relative;
+  line-height: 1;
+  cursor: help;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.property-badge::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: #222;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Owned property (player has it) */
+.property-badge.owned {
+  background-color: #2ecc71;
+}
+
+.property-badge.owned::before {
+  background-color: #2ecc71;
+}
+
+/* Missing property */
+.property-badge.missing {
+  background-color: #888;
+}
+
+.property-badge.missing::before {
+  background-color: #888;
+}
+
 .racial-ability {
   border-left: 4px solid gold;
   background-color: #fdf6e3;

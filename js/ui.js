@@ -418,6 +418,26 @@ window.UI = {
       const item = document.createElement("div");
       item.className = "ability-item";
 
+      if (ability.weaponProperties && ability.weaponProperties.length > 0) {
+        const badgeContainer = document.createElement("div");
+        badgeContainer.className = "property-badges";
+      
+        ability.weaponProperties.forEach((propId) => {
+          const prop = WeaponProperties.availableProperties[propId];
+          const playerHas = WeaponProperties.getPlayerProperties().has(propId);
+      
+          const badge = document.createElement("span");
+          badge.className = "property-badge " + (playerHas ? "owned" : "missing");
+          badge.textContent = prop?.name || propId;
+          badge.title = prop?.description || "";
+      
+          badgeContainer.appendChild(badge);
+        });
+      
+        item.appendChild(badgeContainer);
+      }
+
+
       // Header with name and cost
       const header = document.createElement("div");
       header.className = "ability-header";
@@ -458,12 +478,13 @@ window.UI = {
       description.textContent = ability.description;
 
       // Actions
+      const canPurchase = Abilities.canPurchase(abilityId);
       const actions = document.createElement("div");
       actions.className = "ability-actions";
 
       const plus = document.createElement("button");
       plus.textContent = "+";
-      plus.disabled = Layers.getRemainingPoints() < ability.cost;
+      plus.disabled = Layers.getRemainingPoints() < ability.cost || !canPurchase;
       plus.onclick = () => {
         Abilities.purchaseAbility(abilityId, ability.cost);
         UI.refreshAll();

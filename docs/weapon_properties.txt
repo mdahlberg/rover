@@ -1,0 +1,48 @@
+property,small,short,long_blade,long_crushing,two_handed_blade,two_handed_crushing,bayonet,double_weapon,shield
+armor_destroyer,0,0,0,1,1,1,0,0,0
+assasin's_tools,1,0,0,0,0,0,0,0,0
+cutting_edge,0,1,1,0,1,0,1,0,0
+defender,0,0,0,0,0,0,0,1,1
+duelist,1,1,1,0,0,0,0,1,0
+heavy+,0,0,0,1,1,1,0,0,0
+light+,1,0,0,0,0,0,0,0,0
+piercing,0,0,1,0,1,0,0,0,0
+tricky,0,1,0,0,0,0,0,1,0
+unstoppable,0,0,0,0,0,1,0,0,0
+versatile+,0,0,1,1,0,0,0,0,0
+weighty_blows,0,1,0,1,0,1,0,0,0
+
++These weapon properties are passive and do not grant access to Abilities on their own.
+
+Passives: These combat abilities are intrinsic to this type of weapon and do not grant access to other combat abilities.
+Light
+This weapon is especially light and easy to use. As a result, it deals 1 less damage than normal, but this property cannot reduce the weapon’s damage below 1. Anyone can use a light weapon without training.
+Heavy
+These weapons are especially heavy and always deal 1 extra damage per swing. This stacks with any other damage bonuses such as Attack from Behind or Weapon Master.
+Slow Loading
+These weapons take longer to reload and fire. A player may not hold more than one packet at a time and must draw another packet from a pouch or pocket before firing again. Any packets retrieved from the ground must be placed in the pouch or pocket before being fired.
+Unstable
+These firearms are prone to being unreliable. If the firearm is struck by any weapon or packet, it cannot be fired again without an uninterrupted 60 count spent clearing and checking the weapon. If a player fires it again without clearing it, it will fire once but be broken afterwards and cannot be reused until repaired by a gunsmith.Versatile
+These weapons can be wielded either one or two handed. If the wielder uses two hands, they deal an additional 1 damage per swing.
+Armor Destroyer
+These weapons excel at quickly smashing their way through armored opponents. They grant access to the following combat abilities for purchase: Helm Crusher, Staggering Blows, Clear the Way, Sword Breaker
+Assassin’s Tools
+These weapons are small and easily concealed and grant access the following weapon feats for purchase: Lacerate, Opportunist, Strike from Behind, Assassin’s Strike
+Cutting Edge
+The sharp edges on these weapons make them dangerous to unarmored flesh and grant access the following weapon feats for purchase: Deep Wound, Rapid Riposte, Lacerate
+Defender
+These weapons excel at protecting both the wielder and others around them. They grant access the following weapon feats for purchase: Challenging Call, Stone Flesh, Iron Flesh, Mountain Stance
+Duelist
+These weapons are good at slipping past an enemy’s defenses and grant access the following weapon feats for purchase: Rapid Riposte, Disarming Strike, Total Defense
+Piercing
+These weapons are adept at bypassing enemy armor and directly harming their targets. They grant access the following weapon feats for purchase: Deep Wound, Weak Point, Pressure Points
+Trick Shot
+An adept bow user can do more than just damage an enemy, they can affect them in other ways as well. Trick shot grants access the following weapon feats for purchase: Disarming shot, Pinning Shot, Vital Shot, Arterial Shot, and Opportunist
+Tricky
+These weapons are difficult to predict, and allow the wielder to manipulate the battlefield to their advantage. They grant access the following weapon feats for purchase: Tripping strike, Rapid Riposte, Disarming Strike, Strike the Throat, Pressure Points
+Unstoppable
+These gigantic weapons are nearly impossible to block and bully their way through shields and defenses with ease. They grant access the following weapon feats for purchase:
+Massive Swings, Stunning Strike, Staggering Blow, Sword Breaker
+Weighty Blows
+These blunt weapons are good at disarming opponents and disabling their ability to defend themselves. They grant access the following weapon feats for purchase: Body Blow, Strike the Throat, Smite, Helm Crusher
+
