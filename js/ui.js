@@ -70,12 +70,23 @@ window.UI = {
       header.innerHTML = `<strong>Abilities</strong>`;
       fragments.push(header);
       for (const id in points.abilities) {
-        const count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
+        let count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
         const ability = Abilities.getAbilityById?.(id);
         const name = ability?.name || id;
         const cost = ability?.cost || 0;
+        const isRacial = window.RacialLocks?.abilities?.has(id);
+        const tag = isRacial ? " - Race Bonus" : "";
+        let totalCost = 0;
+
+        if (count > 0 && isRacial && Layers.getCurrentLevel() === 1) {
+          // Take one off for the race
+          totalCost = (count - 1) * cost;
+        } else {
+          totalCost = count * cost;
+        }
+
         const li = document.createElement("li");
-        li.textContent = `• ${name} x${count} (${count * cost} BP)`;
+        li.textContent = `• ${name} x${count} (${totalCost} BP)${tag}`;
         fragments.push(li);
       }
     }
@@ -88,9 +99,12 @@ window.UI = {
       for (const id in points.proficiencies) {
         const prof = Proficiencies.getProficiencyById?.(id);
         const name = prof?.name || id;
-        const cost = prof?.cost || 0;
+        const cost = points.proficiencies[id];
+        isRacial = window.RacialLocks?.proficiencies?.has(id);
+        const badge = isRacial ? ' - Race Bonus' : "";
+
         const li = document.createElement("li");
-        li.textContent = `• ${name} (${cost} BP)`;
+        li.textContent = `• ${name} (${cost} BP)${badge}`;
         fragments.push(li);
       }
     }
@@ -150,8 +164,6 @@ window.UI = {
       const cost = EssenceSlots.getCost(level);
       const canBuy = EssenceSlots.canPurchase(level);
       const isRefundable = EssenceSlots.isRefundable(level);
-
-      console.log("Calling canPurchase for level ", level, " canBuy = ", canBuy, " canRefund = ", isRefundable);
 
       const addBtn = document.createElement("button");
       addBtn.textContent = cost !== null ? `+ (${cost} BP)` : "+";
@@ -398,6 +410,7 @@ window.UI = {
     // ===== Render Regular Abilities =====
     Object.keys(allAbilities).forEach((abilityId) => {
       const ability = allAbilities[abilityId];
+      const isRacial = window.RacialLocks?.abilities?.has(abilityId);
 
       // Skip derived abilities in the main shop list
       if (ability.derived === true) return;
@@ -413,6 +426,16 @@ window.UI = {
       name.className = "ability-name";
       name.textContent = ability.name;
       name.title = ability.description;
+
+      if (isRacial) {
+        item.classList.add("racial-ability");
+        const racialTag = document.createElement("span");
+        racialTag.className = "racial-tag";
+
+        // TODO - I don't love this but oh well
+        racialTag.textContent = "(Racial)";
+        name.appendChild(racialTag);
+      }
 
       const badge = document.createElement("span");
       badge.className = "ability-badge";
@@ -476,8 +499,20 @@ window.UI = {
     container.innerHTML = "";
 
     Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
+      const isRacial = window.RacialLocks?.proficiencies?.has(id);
+
       const item = document.createElement("div");
+      const label = document.createElement("strong");
+
+      label.title = prof.description;
+
       item.className = "ability-item";
+
+      if (isRacial) {
+        item.classList.add("racial-proficiency");
+        label.innerHTML += ' <span class="racial-tag">(Racial)</span>';
+        item.appendChild(label);
+      }
 
       const header = document.createElement("div");
       header.className = "ability-header";

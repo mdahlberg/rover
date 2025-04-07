@@ -102,11 +102,18 @@ window.Abilities = {
    *
    */
   canRefund: function(id) {
-    if (!this.currentLayerPurchasedAbilities?.[id]) {
-      return false;
+    const purchased = this.currentLayerPurchasedAbilities?.[id] || 0;
+
+    // This is a little sticky, don't want refunding of racially provided
+    // abilities. Probably should be tracked different from the currentLayer but oh well.
+    if (Layers.getCurrentLevel() === 1) {
+      const racial = window.RacialLocks?.abilities?.has(id) ? 1 : 0;
+
+      // Can only refund if you have purchased one this round
+      return purchased > racial;
     }
 
-    return true;
+    return purchased > 0;
   },
 
   /**
