@@ -54,14 +54,18 @@ function applyRacialProficienciesAndAbilities() {
   const racialProfs = JSON.parse(localStorage.getItem("racialProficiencies") || "[]");
   const racialAbilities = JSON.parse(localStorage.getItem("racialAbilities") || "[]");
 
+  // Include small_weapons as a locked default
+  const defaultProfs = ["small_weapons"];
+  const allProfs = [...new Set([...racialProfs, ...defaultProfs])]; // avoid duplication
+
   // 🔐 Store racial locks globally
   window.RacialLocks = {
-    proficiencies: new Set(racialProfs),
+    proficiencies: new Set(allProfs),
     abilities: new Set(racialAbilities),
   };
 
   // ✅ Apply racial proficiencies
-  racialProfs.forEach((profId) => {
+  allProfs.forEach((profId) => {
     if (!Proficiencies.purchased[profId]) {
       Proficiencies.purchaseProficiency(profId, 0);
     }
