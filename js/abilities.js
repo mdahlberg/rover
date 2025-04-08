@@ -4,48 +4,195 @@ window.Abilities = {
       name: "Dual Wielder",
       cost: 10,
       description: "Allows you to wield a melee weapon in one hand and a short/small weapon in the other.",
+      weaponProperties: [],
     },
     weapon_mastery: {
       name: "Weapon Mastery",
       cost: 12,
       description: "Choose a weapon type you are proficient in. Deal 1 extra damage with that weapon type.",
+      weaponProperties: [],
     },
     strike_from_behind: {
       name: "Strike from Behind",
       cost: 8,
       description: "Striking from behind with small/short melee or thrown weapons deals 1 extra damage.",
+      weaponProperties: [],
     },
     parry: {
       name: "Parry",
       cost: 3,
       description: "When hit with any melee attack, call parry to cancel damage and effects.",
+      weaponProperties: [],
     },
     evade: {
       name: "Evade",
       cost: 5,
       description: "When struck with an attack or packet, call 'Evade!' to negate the attack.",
+      weaponProperties: [],
     },
     medical_training: {
       name: "Medical Training",
       cost: 5,
       description: "Gives access to First Aid and Diagnose to heal and assess conditions.",
+      weaponProperties: [],
     },
     healthy_body: {
       name: "Healthy Body",
       cost: 5,
       description: "Increases total health by 3 points. Can be purchased multiple times.",
+      weaponProperties: [],
     },
     combat_refit: {
       name: "Combat Refit",
       cost: 2,
       description: "Allows you to repair armor on the battlefield after a 60-second roleplay.",
+      weaponProperties: [],
     },
     gather_essence: {
       name: "Gather Essence",
       cost: 0,
       description: "Grants 1 use of Gather Essence for every 3 Spirit points. Cannot be purchased manually.",
-      derived: true
+      derived: true,
+      weaponProperties: [],
     },
+    tripping_strike: {
+      name: "Tripping Strike",
+      cost: 5,
+      description: "When you strike a target and are not blocked, call damage as normal, then add 'Immediate Collapse!'",
+      weaponProperties: ["tricky"],
+    },
+    massive_swings: {
+      name: "Massive Swings",
+      cost: 8,
+      description: "Concentrate 3 count. Next 5 swings are Massive. Missing counts. Lasts 1 min.",
+      weaponProperties: ["unstoppable"],
+    },
+    strike_the_throat: {
+      name: "Strike the Throat",
+      cost: 10,
+      description: "Concentrate 3 count. On hit, add 'Long Silence'. Lost on active defense. Lasts 1 min.",
+      weaponProperties: ["weighty_blows", "tricky"],
+    },
+    pressure_points: {
+      name: "Pressure Points",
+      cost: 15,
+      description: "Say 'Pressure Points targeted!'. On hit, add 'Long Weakness 2'. Lost on active defense. Lasts 1 min.",
+      weaponProperties: ["tricky", "piercing"],
+    },
+    body_blow: {
+      name: "Body Blow",
+      cost: 10,
+      description: "Activate and say 'Body Blow active!'. On hit, add 'Short Nauseate'. Lost on active defense.",
+      weaponProperties: ["weighty_blows"],
+    },
+    stone_flesh: {
+      name: "Stone Flesh",
+      cost: 8,
+      description: "Concentrate and count 'My flesh is stone!'. For every 2 counts (max 10), gain Guard 5.",
+      weaponProperties: ["defender"],
+    },
+    sword_breaker: {
+      name: "Sword Breaker",
+      cost: 10,
+      description: "Concentrate 3 count. Strike to call 'I Crack your [item]'. Use within 3 attacks.",
+      weaponProperties: ["unstoppable", "armor_destroyer"],
+    },
+    deep_wound: {
+      name: "Deep Wound",
+      cost: 20,
+      description: "Concentrate 3 count. Next damage is Piercing + Long Bleeding. Lost on active defense.",
+      weaponProperties: ["cutting_edge", "piercing"],
+    },
+    smite: {
+      name: "Smite",
+      cost: 15,
+      description: "Say 'Smite Active!'. Next melee attack deals +5 Power damage. Lost on active defense.",
+      weaponProperties: ["weighty_blows"],
+    },
+    weak_points: {
+      name: "Weak Points",
+      cost: 12,
+      description: "Concentrate 3 count. Next attack on target is Piercing +3. Lost if attacking another.",
+      weaponProperties: ["piercing"],
+    },
+    disarming_strike: {
+      name: "Disarming Strike",
+      cost: 5,
+      description: "If blocked by boffer or shield, call 'Disarm [item]'.",
+      weaponProperties: ["duelist", "tricky"],
+    },
+    rapid_riposte: {
+      name: "Rapid Riposte",
+      cost: 5,
+      description: "If struck in melee, call 'Riposte' to strike back. Still take original damage.",
+      weaponProperties: ["duelist", "tricky"],
+    },
+    total_defense: {
+      name: "Total Defense",
+      cost: 10,
+      description: "Activate. Next 3 melee hits are treated as blocked. Must hold weapon/shield.",
+      weaponProperties: ["duelist"],
+    },
+    iron_flesh: {
+      name: "Iron Flesh",
+      cost: 5,
+      description: "Concentrate 'Turning to Iron!'. Next 3 attacks reduce damage by 5. Unsteady during.",
+      weaponProperties: ["defender"],
+    },
+    mountain_stance: {
+      name: "Mountain Stance",
+      cost: 15,
+      description: "Concentrate 3 count. Until moving or 1 min, reduce all damage by 5, immune to push.",
+      weaponProperties: ["defender"],
+    },
+    challenging_call: {
+      name: "Challenging Call",
+      cost: 5,
+      description: "Call 'Face me!'. Enemy focuses you unless harmed by others. Mind-affecting.",
+      weaponProperties: ["defender"],
+    },
+    opportunist: {
+      name: "Opportunist",
+      cost: 5,
+      description: "Attack a distracted enemy from behind. Call 'Sneak attack [weapon+10]'.",
+      weaponProperties: ["assassins_tools", "trick_shot"],
+    },
+    assassins_strike: {
+      name: "Assassin's Strike",
+      cost: 12,
+      description: "Strike an unaware enemy from behind. Call 'Assassinate [weapon+20]'.",
+      weaponProperties: ["assassins_tools"],
+    },
+    stunning_strike: {
+      name: "Stunning Strike",
+      cost: 8,
+      description: "If strike not blocked, call 'Stunning Strike, Short Nauseate!'.",
+      weaponProperties: ["unstoppable"],
+    },
+    helm_crusher: {
+      name: "Helm Crusher",
+      cost: 12,
+      description: "Activate 'Helm Crusher active!'. On hit, add 'Short Concussion'. Lost after 1 min.",
+      weaponProperties: ["armor_destroyer", "weighty_blows"],
+    },
+    staggering_blow: {
+      name: "Staggering Blow",
+      cost: 10,
+      description: "Activate 'Staggering Blows active!'. Next 3 attacks add Smash. Use in 1 min.",
+      weaponProperties: ["armor_destroyer", "unstoppable"],
+    },
+    clear_the_way: {
+      name: "Clear the Way!",
+      cost: 15,
+      description: "Concentrate 3 count. For 1 min or 5 strikes, +1 damage + Massive + Smash.",
+      weaponProperties: ["armor_destroyer"],
+    },
+    lacerate: {
+      name: "Lacerate",
+      cost: 10,
+      description: "Activate 'One to Remember'. Must hit from behind. Double damage + Long Bleed.",
+      weaponProperties: ["cutting_edge"],
+    }
   },
 
   currentLayerPurchasedAbilities: {}, // Tracks purchases for this layer only
@@ -79,6 +226,23 @@ window.Abilities = {
     } else {
       this.derivedAbilities[id] = count;
     }
+  },
+
+  /**
+   * Boolean check if the ability is able to be purchased
+   * User must have sufficient build points and all necessary weapon properties owned
+   */
+  canPurchase: function(abilityId) {
+    const ability = Abilities.availableAbilities[abilityId];
+    const requiredProps = ability.weaponProperties || [];
+
+    if (requiredProps.length === 0) return true; // no property restriction
+
+    const playerProps = WeaponProperties.getPlayerProperties(); // returns a Set
+
+    // Return True if the user has at least one of the required trainings (weapon properties)
+    req_met = requiredProps.some(prop => playerProps.has(prop));
+    return requiredProps.some(prop => playerProps.has(prop));
   },
 
   /**
