@@ -1,4 +1,3 @@
-
 // main.js - Initializes Layers and UI on Page Load
 console.log("main.js loaded");
 
@@ -9,38 +8,25 @@ document.addEventListener("DOMContentLoaded", function () {
   const startingBP = localStorage.getItem("startingBP");
   const plannerContainer = document.getElementById("planner-container");
 
-  if (selectedRace && startingBP) {
-    console.log("Detected existing race selection:", selectedRace);
+  // ✅ Setup earned BP listener
+  const earnedInput = document.getElementById("earned-bp");
+  if (earnedInput) {
+    earnedInput.addEventListener("change", (e) => {
+      const bp = parseInt(e.target.value, 10);
+      if (!isNaN(bp)) {
+        BPLeveling.setEarnedBP(bp); // Will auto-check and prompt level-up if needed
+      }
+    });
 
-    // Apply race effects and racial bonuses (e.g., abilities, proficiencies)
-    applyRaceEffects(selectedRace);
-    applyRacialProficienciesAndAbilities();
-
-    // Set starting build points
-    Layers.totalPoints = parseInt(startingBP, 10);
-
-    // Show the planner
-    UI.showCharacterPlanner();
-
-    // Initialize full state
-    Layers.loadFromStorage();
-    Stats.loadFromStorage();
-    UI.refreshAll();
-
-    return;
+    // Optional: Load from storage
+    const saved = parseInt(localStorage.getItem("earnedBP") || "0", 10);
+    if (!isNaN(saved)) {
+      earnedInput.value = saved;
+      BPLeveling.setEarnedBP(saved);
+    }
   }
 
-  // Fallback: Wait for user to confirm race
-  console.log("No race selected yet. Waiting for splash confirmation...");
-
-  document.getElementById("start-btn").addEventListener("click", function () {
-    console.log("Race confirmed! Initializing planner...");
-    applyRacialProficienciesAndAbilities();
-    UI.refreshAll();
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
+  // ✅ Setup level up button
   const levelUpButton = document.getElementById("level-up-btn");
   if (levelUpButton) {
     levelUpButton.addEventListener("click", () => {
@@ -48,6 +34,30 @@ document.addEventListener("DOMContentLoaded", () => {
       UI.refreshAll();
     });
   }
+
+  // ✅ If race is already chosen, load the planner
+  if (selectedRace && startingBP) {
+    console.log("Detected existing race selection:", selectedRace);
+
+    applyRaceEffects(selectedRace);
+    applyRacialProficienciesAndAbilities();
+
+    UI.showCharacterPlanner();
+
+    Layers.loadFromStorage();
+    Stats.loadFromStorage();
+    UI.refreshAll();
+    UI.updateGlobalBuildPoints();
+    return;
+  }
+
+  // 🕹️ If race not selected yet, wait for splash confirmation
+  console.log("No race selected yet. Waiting for splash confirmation...");
+  document.getElementById("start-btn").addEventListener("click", function () {
+    console.log("Race confirmed! Initializing planner...");
+    applyRacialProficienciesAndAbilities();
+    UI.refreshAll();
+  });
 });
 
 function applyRacialProficienciesAndAbilities() {
@@ -74,22 +84,16 @@ function applyRacialProficienciesAndAbilities() {
   // ✅ Apply racial abilities
   racialAbilities.forEach((abilityId) => {
     if (!Abilities.purchasedAbilities[abilityId]) {
-      // Purchased for zero BP
       Abilities.purchaseAbility(abilityId, 0);
     }
   });
 }
 
-/**
- * Handles leveling up to create a new layer.
- */
 function levelUp() {
   console.log("Leveling up...");
-
   Layers.resetLayer(); // Lock in the previous layer and start a new one.
 
   const levelEl = document.getElementById("level-display");
-
   if (levelEl) {
     levelEl.innerText = Layers.getCurrentLevel();
   }
@@ -102,12 +106,9 @@ function startOver() {
   // Clear stored race, abilities, proficiencies, etc.
   localStorage.clear();
 
-  // Clear window-level globals (optional but good practice)
-  if (typeof Window !== "undefined") {
-    delete Window.RacialLocks;
-  }
+  // Clear window-level globals
+  delete window.RacialLocks;
 
-  // Redirect to splash or reload page depending on structure
+  // Redirect to splash
   window.location.href = "index.html";
 }
-

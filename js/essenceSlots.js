@@ -95,7 +95,7 @@ window.EssenceSlots = {
     Layers.currentLayer.essenceSlots[levelKey] = (Layers.currentLayer.essenceSlots[levelKey] || 0) + 1;
   
     UI.updateEssenceSlotUI();
-    UI.updateBuildPoints();
+    UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
     return true;
   },
@@ -130,7 +130,7 @@ window.EssenceSlots = {
 
     // Re-render
     UI.updateEssenceSlotUI();
-    UI.updateBuildPoints();
+    UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
   },
 };

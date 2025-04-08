@@ -2,14 +2,24 @@
 
 window.Layers = {
   layers: [],
+  totalPoints: 0,
+  earnedBP: 0, // optional if stored separately
 
   currentLayer: {
     pointsSpent: 0,
-    points: {}, // { domain: { id: totalPointsSpent } }
+    points: {},
   },
 
-  getTotalPoints() {
-    return parseInt(localStorage.getItem("startingBP") || "50");
+  getTotalPointsSpent() {
+    return this.layers.reduce((sum, layer) => sum + (layer.pointsSpent || 0), this.currentLayer.pointsSpent);
+  },
+
+  getRemainingPoints() {
+    return this.totalPoints - this.getTotalPointsSpent();
+  },
+
+  setTotalPoints: function(amount) {
+    this.totalPoints = parseInt(amount) || 0;
   },
 
   /**
@@ -21,18 +31,10 @@ window.Layers = {
   },
 
   /**
-   * Get how many total build points are remaining for the current layer.
-   * @returns {number}
-   */
-  getRemainingPoints() {
-    return this.getTotalPoints() - this.currentLayer.pointsSpent;
-  },
-
-  /**
    * Get how many points were spent in total this layer.
    * @returns {number}
    */
-  getSpentPoints() {
+  getCurrentPointsSpent() {
     return this.currentLayer.pointsSpent;
   },
 
@@ -94,15 +96,11 @@ window.Layers = {
    * @param {number} cost
    */
   refundPoints(domain, id, cost) {
-    console.log("Dalhberg current layer before refund  ", this.currentLayer);
-    console.log("debug: refunding points. Domain: ", domain, ". ID: ", id, ". Cost: ", cost);
     current_layer_points = this.currentLayer.points[domain];
-    console.log("Current '", domain, " 'layer = ", current_layer_points);
     if (!this.currentLayer.points[domain] || typeof this.currentLayer.points[domain][id] === 'undefined') {
       console.warn(`Nothing to refund for ${domain}.${id}`);
       return false;
     }
-    console.log("The stat exists, not sure what the next if statement is");
 
     if (this.currentLayer.points[domain][id] < cost) {
       // TODO - this is bad, not sure a warning is enough - maybe we should calulate
@@ -111,16 +109,12 @@ window.Layers = {
       return false;
     }
 
-    console.log("Subtracting: ", this.currentLayer.points[domain][id], " -= ", cost);
     this.currentLayer.points[domain][id] -= cost;
-    console.log("New value =: ", this.currentLayer.points[domain][id]);
     if (this.currentLayer.points[domain][id] === 0) {
-      console.log("The value reached zero, deleting it");
       delete this.currentLayer.points[domain][id];
     }
 
     this.currentLayer.pointsSpent -= cost;
-    console.log("Dalhberg current layer after refund  ", this.currentLayer);
 
     return true;
   },
@@ -157,5 +151,13 @@ window.Layers = {
    */
   getPointsSpentOn(domain, id) {
     return this.currentLayer.points[domain]?.[id] || 0;
-  }
+  },
+
+  /**
+   * Get all points spent in this layer
+   */
+  getCurrentPointsSpent: function () {
+    return this.currentLayer.pointsSpent || 0;
+  },
+
 };

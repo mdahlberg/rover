@@ -9,7 +9,6 @@ window.UI = {
       return;
     }
 
-    UI.updateBuildPoints();
     UI.updateStatsUI();
     UI.updateDerivedStats();
     UI.updateAbilityUI();
@@ -18,6 +17,7 @@ window.UI = {
     UI.updateLayerPreview();
     UI.updateLayerHistory();
     UI.updateEssenceSlotUI();
+    UI.updateGlobalBuildPoints();
   },
 
   // Special handling for Gather Essence
@@ -235,13 +235,6 @@ window.UI = {
     });
   },
 
-  /**
-   * Update the UI for available build points.
-   */
-  updateBuildPoints: function () {
-    document.getElementById("build-points").innerText = Layers.getRemainingPoints();
-  },
-
   showCharacterPlanner: function () {
     document.getElementById("splash-container").classList.add("hidden");
     document.getElementById("planner-container").classList.remove("hidden");
@@ -313,7 +306,7 @@ window.UI = {
     document.getElementById("health-value").innerText = Stats.getTotal("body") + 5;
     document.getElementById("armor-value").innerText = Stats.getTotal("body") + 10;
     document.getElementById("unspent-lores").innerText = Lores.getUnspentLores();
-    this.updateBuildPoints();
+    this.updateGlobalBuildPoints();
   },
 
   /**
@@ -509,7 +502,7 @@ window.UI = {
       abilityContainer.appendChild(item);
     });
 
-    this.updateBuildPoints();
+    this.updateGlobalBuildPoints();
   },
 
   /**
@@ -693,4 +686,15 @@ window.UI = {
     listItem.appendChild(label);
     return listItem;
   },
+
+  updateGlobalBuildPoints: function () {
+    const total = Layers.totalPoints;
+    const spent = Layers.getTotalPointsSpent();
+    const remaining = total - spent;
+
+    document.getElementById("total-bp").textContent = total;
+    document.getElementById("spent-bp").textContent = spent;
+    document.getElementById("remaining-bp").textContent = remaining;
+  },
 };
+
