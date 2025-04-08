@@ -38,32 +38,32 @@ window.UI = {
   updateLayerPreview: function () {
     const list = document.getElementById("current-layer-display");
     if (!list) return;
-  
+
     list.innerHTML = "";
-  
+
     const layer = Layers.currentLayer;
     const points = layer.points || {};
-  
+
     // Defer to each system's own renderer
     const fragments = [];
-  
+
     // Stats preview
     if (points.stats && Object.keys(points.stats).length > 0) {
       const header = document.createElement("li");
       header.innerHTML = `<strong>Stats</strong>`;
       fragments.push(header);
-    
+
       for (const stat in points.stats) {
         const li = document.createElement("li");
-    
+
         const totalBP = points.stats[stat]; // This is the total cost already stored
         const purchaseCount = Stats.currentLayerStats?.[stat] || 0; // How many times it was bought this layer
-    
+
         li.textContent = `• ${stat} x${purchaseCount} (${totalBP} BP)`;
         fragments.push(li);
       }
     }
-  
+
     // Abilities preview
     if (points.abilities && Object.keys(points.abilities).length > 0) {
       const header = document.createElement("li");
@@ -90,7 +90,7 @@ window.UI = {
         fragments.push(li);
       }
     }
-  
+
     // Proficiencies preview
     if (points.proficiencies && Object.keys(points.proficiencies).length > 0) {
       const header = document.createElement("li");
@@ -108,7 +108,7 @@ window.UI = {
         fragments.push(li);
       }
     }
-  
+
     // Lores preview
     if (points.lores && Object.keys(points.lores).length > 0) {
       const header = document.createElement("li");
@@ -123,7 +123,7 @@ window.UI = {
         fragments.push(li);
       }
     }
-  
+
     // Essence slots preview
     if (points.essenceSlots && Object.keys(points.essenceSlots).length > 0) {
       const header = document.createElement("li");
@@ -137,7 +137,7 @@ window.UI = {
         fragments.push(li);
       }
     }
-  
+
     // Append all items to the DOM
     fragments.forEach(el => list.appendChild(el));
   },
@@ -187,18 +187,18 @@ window.UI = {
     console.log("Updating layer history");
     const historyList = document.getElementById("layer-history");
     if (!historyList) return;
-  
+
     historyList.innerHTML = "";
-  
+
     Layers.layers.forEach((layer, index) => {
       const points = layer.points || {};
       const item = document.createElement("li");
       item.className = "layer-history-item";
-  
+
       const stats = Object.entries(layer.stats || {})
         .map(([k, v]) => `${k}: +${v}`)
         .join(", ") || "None";
-  
+
       const abilities = Object.keys(layer.abilities || {})
         .map((k) => {
           const name = Abilities.availableAbilities[k]?.name || k;
@@ -206,22 +206,22 @@ window.UI = {
           return `${name} x${count}`;
         })
         .join(", ") || "None";
-  
+
       const proficiencies = Object.keys(layer.proficiencies || {})
         .map((k) => Proficiencies.availableProficiencies[k]?.name || k)
         .join(", ") || "None";
-  
+
       const lores = Object.entries(layer.lores || {})
         .map(([k, v]) => {
           const name = Lores.availableLores.find(l => l.id === k)?.name || k;
           return `${name} x${v}`;
         })
         .join(", ") || "None";
-  
+
       const essence = Object.entries(layer.essenceSlots || {})
         .map(([k, v]) => `Lvl ${k} x${v}`)
         .join(", ") || "None";
-  
+
       item.innerHTML = `
         <strong>Level ${index + 1}</strong><br>
         <em>Stats:</em> ${stats}<br>
@@ -230,7 +230,7 @@ window.UI = {
         <em>Lores:</em> ${lores}<br>
         <em>Essence Slots:</em> ${essence}
       `;
-  
+
       historyList.appendChild(item);
     });
   },
@@ -421,19 +421,19 @@ window.UI = {
       if (ability.weaponProperties && ability.weaponProperties.length > 0) {
         const badgeContainer = document.createElement("div");
         badgeContainer.className = "property-badges";
-      
+
         ability.weaponProperties.forEach((propId) => {
           const prop = WeaponProperties.availableProperties[propId];
           const playerHas = WeaponProperties.getPlayerProperties().has(propId);
-      
+
           const badge = document.createElement("span");
           badge.className = "property-badge " + (playerHas ? "owned" : "missing");
           badge.textContent = prop?.name || propId;
           badge.title = prop?.description || "";
-      
+
           badgeContainer.appendChild(badge);
         });
-      
+
         item.appendChild(badgeContainer);
       }
 
@@ -522,6 +522,14 @@ window.UI = {
     Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
       const isRacial = window.RacialLocks?.proficiencies?.has(id);
 
+      // Add property badges
+      const grantedProps = [];
+      for (const [propId, prop] of Object.entries(WeaponProperties.availableProperties)) {
+        if (prop.grantedBy?.includes(id)) {
+          grantedProps.push({ id: propId, name: prop.name });
+        }
+      }
+
       const item = document.createElement("div");
       const label = document.createElement("strong");
 
@@ -559,7 +567,9 @@ window.UI = {
 
       const button = document.createElement("button");
 
+      let owned = false;
       if (Proficiencies.isPurchased(id)) {
+        owned = true;
         button.textContent = "Remove";
         button.disabled = !Proficiencies.canRefund(id);
         button.onclick = () => {
@@ -574,6 +584,22 @@ window.UI = {
           UI.refreshAll();
         };
       }
+
+      if (grantedProps.length > 0) {
+        const badgeContainer = document.createElement("div");
+        badgeContainer.className = "property-badges";
+
+        grantedProps.forEach((prop) => {
+          const badge = document.createElement("span");
+          badge.className = "property-badge " + (owned ? "owned" : "missing")
+          badge.textContent = prop.name;
+          badge.title = WeaponProperties.availableProperties[prop.id]?.description || prop.id;
+          badgeContainer.appendChild(badge);
+        });
+
+        item.appendChild(badgeContainer);
+      }
+
 
       actions.appendChild(button);
       item.appendChild(header);

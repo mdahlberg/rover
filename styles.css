@@ -312,6 +312,12 @@ header {
   gap: 4px;
 }
 
+.property-badge.granted {
+  background-color: #ddd;
+  color: #444;
+  border: 1px dashed #888;
+}
+
 .property-badge {
   background-color: #444;
   color: white;
