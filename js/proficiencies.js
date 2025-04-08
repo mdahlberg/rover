@@ -97,6 +97,34 @@ window.Proficiencies = {
       return false;
     }
 
+    // Check weapon property dependencies
+    const propertiesRemoved = new Set();
+
+    // See what properties this proficiency grants
+    for (const [propId, prop] of Object.entries(WeaponProperties.availableProperties)) {
+      if (prop.grantedBy?.includes(id)) {
+        propertiesRemoved.add(propId);
+      }
+    }
+
+    // Get the set of properties *after* refunding this proficiency
+    const stillOwnedProps = WeaponProperties.getPlayerProperties();
+    propertiesRemoved.forEach(p => stillOwnedProps.delete(p));
+
+    // Look through all currently purchased abilities
+    for (const [abilityId, count] of Object.entries(Abilities.purchasedAbilities)) {
+      if (count <= 0) continue;
+
+      const ability = Abilities.availableAbilities[abilityId];
+      const requiredProps = ability.weaponProperties || [];
+
+      const hasRequired = requiredProps.some(prop => stillOwnedProps.has(prop));
+      if (!hasRequired && requiredProps.length > 0) {
+        console.warn(`Cannot refund ${id} — it would invalidate purchased ability: ${ability.name}`);
+        return false;
+      }
+    }
+
     return true;
   },
 
