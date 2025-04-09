@@ -239,6 +239,18 @@ window.UI = {
     document.getElementById("splash-container").classList.add("hidden");
     document.getElementById("planner-container").classList.remove("hidden");
 
+    // ✅ Setup earned BP listener
+    const earnedInput = document.getElementById("earned-bp");
+    if (earnedInput) {
+      earnedInput.value = 0; // Set default
+      earnedInput.addEventListener("change", (e) => {
+        const bp = parseInt(e.target.value);
+        if (!isNaN(bp)) {
+          BPLeveling.addEarnedBP(bp); // Updates global total - calls updateGlobal
+        }
+      });
+    }
+
     // Initialize buttons and update UI
     UI.refreshAll();
     UI.setupStatButtons();
@@ -688,7 +700,7 @@ window.UI = {
   },
 
   updateGlobalBuildPoints: function () {
-    const total = Layers.totalPoints;
+    const total = BPLeveling.earnedBP;
     const spent = Layers.getTotalPointsSpent();
     const remaining = total - spent;
 

@@ -39,42 +39,25 @@ window.BPLeveling = {
     return level;
   },
 
-  // Call when user changes BP
-  handleEarnedBPChange(earnedBP) {
-    const startingBP = parseInt(localStorage.getItem("startingBP")) || 50;
-    const totalBP = startingBP + parseInt(earnedBP);
+  addEarnedBP: function(bp) {
+    this.earnedBP += parseInt(bp) || 0;
+    UI.updateGlobalBuildPoints();
 
+    this.checkForLevelUp();
+  },
+
+  getNextLevelThreshold() {
     const currentLevel = Layers.getCurrentLevel();
-    const eligibleLevel = this.getLevelFromBP(totalBP);
+    const next = this.thresholds.find(t => t.level === currentLevel + 1);
+    return next ? next.points : null;
+  },
 
-    if (eligibleLevel > currentLevel) {
-      const confirmLevelUp = confirm(
-        `You've earned enough BP to reach Level ${eligibleLevel}.\n\n` +
-        `This will lock in your current choices and start Level ${currentLevel + 1}.\n\nProceed?`
-      );
-
-      if (confirmLevelUp) {
-        Layers.resetLayer();
-        UI.refreshAll();
-      } else {
-        // Revert BP entry
-        document.getElementById("earned-bp").value = 0;
+  checkForLevelUp() {
+    const nextThreshold = this.getNextLevelThreshold();
+    if (nextThreshold !== null && Layers.totalPoints >= nextThreshold) {
+      if (confirm(`You've reached the threshold for the next level. Proceed to level ${Layers.getCurrentLevel() + 1}?`)) {
+        levelUp();
       }
     }
   },
-
-  setEarnedBP: function(bp) {
-    this.earnedBP = bp;
-  },
-
-  // Attach event listener to BP input
-  setupEarnedBPInput() {
-    const input = document.getElementById("earned-bp");
-    if (input) {
-      input.addEventListener("change", (e) => {
-        const earned = parseInt(e.target.value) || 0;
-        this.handleEarnedBPChange(earned);
-      });
-    }
-  }
 };

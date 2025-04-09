@@ -33,30 +33,33 @@ function confirmRace() {
     return;
   }
 
-  // Save the selected race in localStorage
-  localStorage.setItem('selectedRace', selectedRace);
+  // 🌟 Save and apply race
   console.log("Race confirmed:", selectedRace);
+  localStorage.setItem('selectedRace', selectedRace);
 
-  // Apply race effects and racial bonuses
   applyRaceEffects(selectedRace);
   applyRacialProficienciesAndAbilities();
 
-  // Set starting build points
-  const startingBP = parseInt(localStorage.getItem("startingBP") || "50");
-  console.warn("STARTING BP = ", startingBP);
+  // 🎯 Setup Build Point totals
+  //const startingBP = parseInt(localStorage.getItem("startingBP") || "50", 10);
+  const racialCost = parseInt(localStorage.getItem("racialBPSpent") || "0", 10);
 
-  Layers.totalPoints = parseInt(startingBP);
-  const racialCost = parseInt(localStorage.getItem("racialBPSpent") || "0");
-  console.warn("STARTING COST = ", racialCost);
-  Layers.currentLayer.pointsSpent = racialCost;
-  Layers.currentLayer.points = Layers.currentLayer.points || {};
+  BPLeveling.addEarnedBP(50);
 
+  // 🧼 Setup layer cleanly
+  Layers.currentLayer = {
+    pointsSpent: racialCost,
+    points: {},
+    stats: {},
+    abilities: {},
+    lores: {},
+    proficiencies: {},
+    essenceSlots: {},
+  };
 
-  // Show the planner and initialize everything
+  // Show planner and update display
   UI.showCharacterPlanner();
-  // Layers.loadFromStorage();
-  // Stats.loadFromStorage();
   UI.refreshAll();
-  // UI.updateGlobalBuildPoints();
+  UI.updateGlobalBuildPoints();
 }
 

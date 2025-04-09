@@ -64,7 +64,6 @@ window.applyRaceEffects = function (raceKey) {
   }
 
   localStorage.setItem("selectedRace", raceKey);
-  localStorage.setItem("startingBP", 50); // Always 50 at level 1
   localStorage.setItem("racialBPSpent", race.bpCost); // e.g., 5 for Espers
 
   Object.entries(race.lockedStats || {}).forEach(([stat, value]) => {
