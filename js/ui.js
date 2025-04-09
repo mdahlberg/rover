@@ -239,23 +239,45 @@ window.UI = {
     document.getElementById("splash-container").classList.add("hidden");
     document.getElementById("planner-container").classList.remove("hidden");
 
-    // ✅ Setup earned BP listener
-    const earnedInput = document.getElementById("earned-bp");
-    if (earnedInput) {
-      earnedInput.value = 0; // Set default
-      earnedInput.addEventListener("change", (e) => {
-        const bp = parseInt(e.target.value);
-        if (!isNaN(bp)) {
-          BPLeveling.addEarnedBP(bp); // Updates global total - calls updateGlobal
-        }
-      });
-    }
+    this.setupEarnedBPButton();
 
     // Initialize buttons and update UI
     UI.refreshAll();
     UI.setupStatButtons();
   },
 
+  /**
+   * Set up listener for earned BP button
+   */
+  setupEarnedBPButton: function() {
+    document.getElementById('add-earned-bp').addEventListener('click', () => {
+      const input = document.getElementById('earned-bp-input');
+      const feedback = document.getElementById('bp-add-feedback');
+      let amount = parseInt(input.value, 10);
+    
+      if (isNaN(amount) || amount <= 0) {
+        feedback.textContent = 'Enter a valid number!';
+        feedback.style.color = 'red';
+        feedback.classList.add('show');
+        setTimeout(() => feedback.classList.remove('show'), 2000);
+
+        return;
+      }
+    
+      // Update earned build points (assuming you have a function for this)
+      BPLeveling.addEarnedBP(amount); // Updates global totals and renders
+    
+      // Visual feedback
+      feedback.textContent = `+${amount} BP added!`;
+      feedback.style.color = 'green';
+      feedback.classList.add('show');
+      // Fade out after 2 seconds
+      setTimeout(() => {feedback.classList.remove('show');}, 2000);
+    
+      // Clear input
+      input.value = '';
+    });
+  },
 
   /**
    * Attaches event listeners to the stat increase/decrease buttons.

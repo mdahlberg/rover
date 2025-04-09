@@ -154,6 +154,15 @@ body {
   to { opacity: 1; }
 }
 
+#bp-add-feedback {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#bp-add-feedback.show {
+  opacity: 1;
+}
+
 /* Sticky header for the planner (reapplied for consistency) */
 header {
   position: sticky;
