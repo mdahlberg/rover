@@ -2,7 +2,7 @@ window.Races = {
   humans: {
     name: "Humans",
     description: "+1 to all core stats.",
-    startingBP: 50,
+    bpCost: 0,
     lockedStats: { body: 1, mind: 1, spirit: 1 },
     abilities: [],
   },
@@ -10,7 +10,7 @@ window.Races = {
   espers: {
     name: "Espers",
     description: "+2 Mind, +1 Spirit. Starts with Bows & Short Blades.",
-    startingBP: 45,
+    bpCost: 5,
     lockedStats: { mind: 2, spirit: 1 },
     proficiencies: ["bows_crossbows", "short_weapons"],
   },
@@ -18,7 +18,7 @@ window.Races = {
   grunt: {
     name: "Grunt",
     description: "+2 Body, +1 Spirit. Starts with Two-Handed Blades.",
-    startingBP: 45,
+    bpCost: 5,
     lockedStats: { body: 2, spirit: 1 },
     proficiencies: ["two_handed_blades"],
     bonuses: { strength: 1 },
@@ -27,7 +27,7 @@ window.Races = {
   duskers: {
     name: "Duskers",
     description: "+1 Mind, +1 Spirit, +1 of choice. Discount on Dual Wielder / Strike from Behind.",
-    startingBP: 40,
+    bpCost: 10,
     lockedStats: { mind: 1, spirit: 1, body: 1 }, // TODO: make one of choice
     proficiencies: ["short_weapons"],
     abilities: ["dual_wielder", "strike_from_behind"],
@@ -40,7 +40,7 @@ window.Races = {
   harrowed: {
     name: "Harrowed",
     description: "+2 Body, +2 Spirit. Starts with Shields and Double Weapons.",
-    startingBP: 35,
+    bpCost: 15,
     lockedStats: { body: 2, spirit: 2 },
     proficiencies: ["shields", "double_weapons"],
   },
@@ -48,7 +48,7 @@ window.Races = {
   morphs: {
     name: "Morphs",
     description: "+1 to two of choice. Free Weapon Proficiency. Custom traits.",
-    startingBP: 40,
+    bpCost: 10,
     lockedStats: { body: 1, mind: 1 }, // TODO: Make two selectable
     abilities: ["Free Weapon Proficiency"],
     traits: [],
@@ -64,7 +64,7 @@ window.applyRaceEffects = function (raceKey) {
   }
 
   localStorage.setItem("selectedRace", raceKey);
-  localStorage.setItem("startingBP", race.startingBP ?? 50);
+  localStorage.setItem("racialBPSpent", race.bpCost); // e.g., 5 for Espers
 
   Object.entries(race.lockedStats || {}).forEach(([stat, value]) => {
     Stats.lockedStats[stat] = (Stats.lockedStats[stat] || 0) + value;

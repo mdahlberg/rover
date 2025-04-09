@@ -9,7 +9,6 @@ window.UI = {
       return;
     }
 
-    UI.updateBuildPoints();
     UI.updateStatsUI();
     UI.updateDerivedStats();
     UI.updateAbilityUI();
@@ -18,6 +17,7 @@ window.UI = {
     UI.updateLayerPreview();
     UI.updateLayerHistory();
     UI.updateEssenceSlotUI();
+    UI.updateGlobalBuildPoints();
   },
 
   // Special handling for Gather Essence
@@ -235,22 +235,54 @@ window.UI = {
     });
   },
 
-  /**
-   * Update the UI for available build points.
-   */
-  updateBuildPoints: function () {
-    document.getElementById("build-points").innerText = Layers.getRemainingPoints();
-  },
-
   showCharacterPlanner: function () {
     document.getElementById("splash-container").classList.add("hidden");
     document.getElementById("planner-container").classList.remove("hidden");
+
+    this.setupEarnedBPButton();
 
     // Initialize buttons and update UI
     UI.refreshAll();
     UI.setupStatButtons();
   },
 
+  /**
+   * Set up listener for earned BP button
+   */
+  setupEarnedBPButton: function() {
+    document.getElementById('add-earned-bp').addEventListener('click', () => {
+      const input = document.getElementById('earned-bp-input');
+      const feedback = document.getElementById('bp-add-feedback');
+      let amount = parseInt(input.value, 10);
+    
+      if (isNaN(amount) || amount <= 0) {
+        feedback.textContent = 'Enter a valid number!';
+        feedback.style.color = 'red';
+        feedback.classList.add('show');
+        setTimeout(() => feedback.classList.remove('show'), 2000);
+
+        return;
+      }
+    
+      // Update earned build points (assuming you have a function for this)
+      applied = BPLeveling.addEarnedBP(amount); // Updates global totals and renders
+
+      // If the amount added prompted for a level up, but the user chose to cancel then do not
+      // display bp added text
+      if (!applied) {
+        return;
+      }
+      // Visual feedback
+      feedback.textContent = `+${amount} BP added!`;
+      feedback.style.color = 'green';
+      feedback.classList.add('show');
+      // Fade out after 2 seconds
+      setTimeout(() => {feedback.classList.remove('show');}, 2000);
+    
+      // Clear input
+      input.value = '';
+    });
+  },
 
   /**
    * Attaches event listeners to the stat increase/decrease buttons.
@@ -297,7 +329,6 @@ window.UI = {
       }
 
       const currentStatValue = Stats.getTotal(statName)
-      console.log("Updating '", statName, "' value to '", currentStatValue, "'");
       document.getElementById(`${statName}-value`).innerText = Stats.getTotal(statName);
 
     });
@@ -313,7 +344,7 @@ window.UI = {
     document.getElementById("health-value").innerText = Stats.getTotal("body") + 5;
     document.getElementById("armor-value").innerText = Stats.getTotal("body") + 10;
     document.getElementById("unspent-lores").innerText = Lores.getUnspentLores();
-    this.updateBuildPoints();
+    this.updateGlobalBuildPoints();
   },
 
   /**
@@ -509,7 +540,7 @@ window.UI = {
       abilityContainer.appendChild(item);
     });
 
-    this.updateBuildPoints();
+    this.updateGlobalBuildPoints();
   },
 
   /**
@@ -693,4 +724,17 @@ window.UI = {
     listItem.appendChild(label);
     return listItem;
   },
+
+  updateGlobalBuildPoints: function () {
+    const total = BPLeveling.earnedBP;
+    const spent = Layers.getTotalPointsSpent();
+    const remaining = total - spent;
+    const toLevel = BPLeveling.getBPToLevel();
+
+    document.getElementById("total-bp").textContent = total;
+    document.getElementById("spent-bp").textContent = spent;
+    document.getElementById("remaining-bp").textContent = remaining;
+    document.getElementById("to-level-bp").textContent = toLevel;
+  },
 };
+

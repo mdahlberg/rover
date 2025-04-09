@@ -32,13 +32,34 @@ function confirmRace() {
     alert('Please select a race before proceeding!');
     return;
   }
-  // Save the selected race in localStorage.
+
+  // 🌟 Save and apply race
+  console.log("Race confirmed:", selectedRace);
   localStorage.setItem('selectedRace', selectedRace);
-  console.log("Race confirmed:", selectedRace); // Debug
 
-  // Apply race effects (e.g., deduct build points, modify locked stats, add racial abilities).
   applyRaceEffects(selectedRace);
+  applyRacialProficienciesAndAbilities();
 
-  UI.showCharacterPlanner()
+  // 🎯 Setup Build Point totals
+  //const startingBP = parseInt(localStorage.getItem("startingBP") || "50", 10);
+  const racialCost = parseInt(localStorage.getItem("racialBPSpent") || "0", 10);
+
+  BPLeveling.addEarnedBP(50);
+
+  // 🧼 Setup layer cleanly
+  Layers.currentLayer = {
+    pointsSpent: racialCost,
+    points: {},
+    stats: {},
+    abilities: {},
+    lores: {},
+    proficiencies: {},
+    essenceSlots: {},
+  };
+
+  // Show planner and update display
+  UI.showCharacterPlanner();
+  UI.refreshAll();
+  UI.updateGlobalBuildPoints();
 }
 
