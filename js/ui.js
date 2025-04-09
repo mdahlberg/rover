@@ -265,8 +265,13 @@ window.UI = {
       }
     
       // Update earned build points (assuming you have a function for this)
-      BPLeveling.addEarnedBP(amount); // Updates global totals and renders
-    
+      applied = BPLeveling.addEarnedBP(amount); // Updates global totals and renders
+
+      // If the amount added prompted for a level up, but the user chose to cancel then do not
+      // display bp added text
+      if (!applied) {
+        return;
+      }
       // Visual feedback
       feedback.textContent = `+${amount} BP added!`;
       feedback.style.color = 'green';

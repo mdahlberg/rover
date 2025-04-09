@@ -40,10 +40,18 @@ window.BPLeveling = {
   },
 
   addEarnedBP: function(bp) {
-    this.earnedBP += parseInt(bp) || 0;
+    // Calculate and check level up before applying
+    newTotalBP = this.earnedBP + parseInt(bp, 10) || 0;
+
+    // Check if this amount will cause the user to level up
+    if (!this.checkForLevelUp(newTotalBP)) {
+      return false;
+    }
+
+    this.earnedBP = newTotalBP;
     UI.updateGlobalBuildPoints();
 
-    this.checkForLevelUp();
+    return true;
   },
 
   getNextLevelThreshold() {
@@ -52,12 +60,16 @@ window.BPLeveling = {
     return next ? next.points : null;
   },
 
-  checkForLevelUp() {
+  checkForLevelUp(bp) {
     const nextThreshold = this.getNextLevelThreshold();
-    if (nextThreshold !== null && Layers.totalPoints >= nextThreshold) {
+    if (nextThreshold !== null && bp >= nextThreshold) {
       if (confirm(`You've reached the threshold for the next level. Proceed to level ${Layers.getCurrentLevel() + 1}?`)) {
         levelUp();
+      } else {
+        return false;
       }
     }
+
+    return true
   },
 };

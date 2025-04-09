@@ -2,7 +2,6 @@
 
 window.Layers = {
   layers: [],
-  totalPoints: 0,
 
   currentLayer: {
     pointsSpent: 0,
