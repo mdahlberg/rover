@@ -3,23 +3,24 @@
 window.Layers = {
   layers: [],
   totalPoints: 0,
-  earnedBP: 0, // optional if stored separately
 
   currentLayer: {
     pointsSpent: 0,
     points: {},
   },
 
+  /**
+   * Scan across all layers (including current) to sum points spent
+   */
   getTotalPointsSpent() {
     return this.layers.reduce((sum, layer) => sum + (layer.pointsSpent || 0), this.currentLayer.pointsSpent);
   },
 
+  /**
+   * Total earned minus total spent
+   */
   getRemainingPoints() {
-    return this.totalPoints - this.getTotalPointsSpent();
-  },
-
-  setTotalPoints: function(amount) {
-    this.totalPoints = parseInt(amount) || 0;
+    return BPLeveling.earnedBP - this.getTotalPointsSpent();
   },
 
   /**
@@ -74,7 +75,6 @@ window.Layers = {
    * @returns {boolean} success
    */
   spendPoints: function(domain, id, cost) {
-    remainingPoints = this.getRemainingPoints();
     if (this.getRemainingPoints() < cost) {
       console.warn("Not enough points available.");
       return false;

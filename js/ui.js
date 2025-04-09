@@ -302,7 +302,6 @@ window.UI = {
       }
 
       const currentStatValue = Stats.getTotal(statName)
-      console.log("Updating '", statName, "' value to '", currentStatValue, "'");
       document.getElementById(`${statName}-value`).innerText = Stats.getTotal(statName);
 
     });
