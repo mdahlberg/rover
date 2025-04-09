@@ -95,3 +95,49 @@ function startOver() {
   delete window.RacialLocks;
   window.location.href = "index.html";
 }
+
+function adjustTooltipPosition(tooltip) {
+  const rect = tooltip.getBoundingClientRect();
+  const padding = 8; // give it a little buffer from the edge
+
+  if (rect.right > window.innerWidth - padding) {
+    tooltip.style.left = 'auto';
+    tooltip.style.right = '0';
+    tooltip.style.transform = 'none';
+  } else if (rect.left < padding) {
+    tooltip.style.left = '0';
+    tooltip.style.right = 'auto';
+    tooltip.style.transform = 'none';
+  } else {
+    tooltip.style.left = '50%';
+    tooltip.style.right = 'auto';
+    tooltip.style.transform = 'translateX(-50%)';
+  }
+}
+
+// Hook tooltips on hover
+// TODO - FIXME: Tooltip rebels when hovered from the East
+document.querySelectorAll('.info-wrapper').forEach(wrapper => {
+  const tooltip = wrapper.querySelector('.tooltip');
+  if (tooltip) {
+    wrapper.addEventListener('mouseenter', () => {
+      requestAnimationFrame(() => {
+        // Make it temporarily visible so we can measure
+        tooltip.style.visibility = 'hidden';
+        tooltip.style.opacity = '1';
+        tooltip.style.display = 'block';
+
+        // Wait a tick for layout engine to settle
+        requestAnimationFrame(() => {
+          adjustTooltipPosition(tooltip);
+
+          // Reset visibility to normal
+          tooltip.style.visibility = '';
+          tooltip.style.opacity = '';
+          tooltip.style.display = '';
+        });
+      });
+    });
+  }
+});
+

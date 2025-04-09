@@ -78,16 +78,40 @@
         <button id="start-over-btn" onclick="startOver()">Start Over</button>
       </div>
       <div id="global-bp-summary">
-        <p><strong>Total BP:</strong> <span id="total-bp">50</span></p>
-        <p><strong>Spent:</strong> <span id="spent-bp">5</span></p>
-        <p><strong>Remaining:</strong> <span id="remaining-bp">45</span></p>
+        <div class="bp-line">
+          <strong>Total BP:</strong>
+          <span id="total-bp">0</span>
+        </div>
+        <div class="bp-line">
+          <strong>Spent:</strong>
+          <span id="spent-bp">0</span>
+        </div>
+        <div class="bp-line">
+          <strong>Remaining:</strong>
+          <span id="remaining-bp">0</span>
+        </div>
+        <div class="bp-line with-tooltip">
+          <strong>BP To Next Level:</strong>
+          <span id="to-level-bp">0</span>
+          <div class="info-wrapper">
+            <span class="info-icon">ℹ️</span>
+            <div class="tooltip">
+              This is how many build points you need to spend before you can level up.
+              <br><br>
+              <strong>Tip:</strong> Add earned build points until you are one away from leveling.
+              Then make all final purchases for your current level before increasing points to level up.
+            </div>
+          </div>
+        </div>
       </div>
+      
       <div id="earned-bp-container">
         <label for="earned-bp">Earned Build Points:</label>
         <input type="number" id="earned-bp-input" min="0" step="1" />
         <button id="add-earned-bp">Add BP</button>
         <span id="bp-add-feedback" style="margin-left: 1em; color: green;"></span>
       </div>
+
 
     </header>
 

@@ -24,6 +24,127 @@ body {
   padding: 20px;
 }
 
+.info-wrapper {
+  display: inline-block;
+  position: relative;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.info-icon {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  max-width: 280px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 5px;
+  padding: 0.75em;
+  position: absolute;
+  z-index: 100;
+  top: 125%;
+  left: auto;
+  right: 0;
+  transform: none;
+  transition: opacity 0.3s ease;
+  font-size: 0.85rem;
+  pointer-events: none;
+  box-shadow: 0 0 5px rgba(0,0,0,0.25);
+}
+
+.info-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Adjust position if tooltip overflows the right edge */
+@media (max-width: 600px) {
+  .tooltip {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+}
+
+.bp-to-level-container {
+  display: flex;
+  align-items: center;
+  gap: 0.4em; /* spacing between icon and text */
+  margin-top: 0.5em;
+}
+
+.bp-to-level-container .info-icon {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.bp-to-level-container .tooltip {
+  bottom: auto;
+  top: 125%; /* show below the icon instead of above */
+}
+
+#global-bp-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  margin-bottom: 1em;
+}
+
+.bp-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 1rem;
+}
+
+.with-tooltip {
+  position: relative;
+}
+
+.with-tooltip .info-wrapper {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.with-tooltip .info-icon {
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.with-tooltip .tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: 280px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 5px;
+  padding: 0.75em;
+  position: absolute;
+  z-index: 10;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease;
+  font-size: 0.85rem;
+  pointer-events: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+}
+
+.with-tooltip .info-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
 /* ===================================================
    Splash Page Styles
 =================================================== */

@@ -729,10 +729,12 @@ window.UI = {
     const total = BPLeveling.earnedBP;
     const spent = Layers.getTotalPointsSpent();
     const remaining = total - spent;
+    const toLevel = BPLeveling.getBPToLevel();
 
     document.getElementById("total-bp").textContent = total;
     document.getElementById("spent-bp").textContent = spent;
     document.getElementById("remaining-bp").textContent = remaining;
+    document.getElementById("to-level-bp").textContent = toLevel;
   },
 };
 

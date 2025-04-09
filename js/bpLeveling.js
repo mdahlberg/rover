@@ -60,6 +60,11 @@ window.BPLeveling = {
     return next ? next.points : null;
   },
 
+  getBPToLevel() {
+    threshold = this.getNextLevelThreshold();
+    return threshold - this.earnedBP;
+  },
+
   checkForLevelUp(bp) {
     const nextThreshold = this.getNextLevelThreshold();
     if (nextThreshold !== null && bp >= nextThreshold) {
