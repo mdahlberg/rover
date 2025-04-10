@@ -39,6 +39,15 @@ window.BPLeveling = {
     return level;
   },
 
+  getMaxSafeEarnedBP: function() {
+    const totalEarned = BPLeveling.earnedBP;
+    const nextNextThreshold = BPLeveling.getNextLevelThreshold(1); // 2 levels ahead
+
+    if (!nextNextThreshold) return 0;
+        
+    return Math.max(0, nextNextThreshold - totalEarned -1);
+  },
+
   addEarnedBP: function(bp) {
     // Calculate and check level up before applying
     newTotalBP = this.earnedBP + parseInt(bp, 10) || 0;
@@ -54,8 +63,8 @@ window.BPLeveling = {
     return true;
   },
 
-  getNextLevelThreshold() {
-    const currentLevel = Layers.getCurrentLevel();
+  getNextLevelThreshold(modifier=0) {
+    const currentLevel = Layers.getCurrentLevel() + modifier;
     const next = this.thresholds.find(t => t.level === currentLevel + 1);
     return next ? next.points : null;
   },
@@ -67,7 +76,13 @@ window.BPLeveling = {
 
   checkForLevelUp(bp) {
     const nextThreshold = this.getNextLevelThreshold();
-    if (nextThreshold !== null && bp >= nextThreshold) {
+
+    if (nextThreshold === null) {
+      alert("You have reached the max level, no more build points may be earned");
+      return false;
+    }
+
+    if (bp >= nextThreshold) {
       if (confirm(`You've reached the threshold for the next level. Proceed to level ${Layers.getCurrentLevel() + 1}?`)) {
         levelUp();
       } else {

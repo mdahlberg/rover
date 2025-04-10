@@ -249,38 +249,61 @@ window.UI = {
   /**
    * Set up listener for earned BP button
    */
-  setupEarnedBPButton: function() {
+  setupEarnedBPButton: function () {
+    const input = document.getElementById('earned-bp-input');
+    const feedback = document.getElementById('bp-add-feedback');
+    const warning = document.getElementById('bp-warning');
+  
+    // On input, set max allowed based on level threshold logic
+    input.addEventListener('input', () => {
+      const value = parseInt(input.value, 10) || 0;
+      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
+  
+      input.max = maxSafe;
+  
+      if (value > maxSafe) {
+        warning.classList.remove('hidden');
+        warning.textContent = `⚠️ Max allowed is ${maxSafe} to avoid leveling up more than once. Add more BP after leveling.`;
+      } else {
+        warning.classList.add('hidden');
+        warning.textContent = '';
+      }
+    });
+  
+    // On Add BP button click
     document.getElementById('add-earned-bp').addEventListener('click', () => {
-      const input = document.getElementById('earned-bp-input');
-      const feedback = document.getElementById('bp-add-feedback');
       let amount = parseInt(input.value, 10);
-    
+  
       if (isNaN(amount) || amount <= 0) {
         feedback.textContent = 'Enter a valid number!';
         feedback.style.color = 'red';
         feedback.classList.add('show');
         setTimeout(() => feedback.classList.remove('show'), 2000);
-
         return;
       }
-    
-      // Update earned build points (assuming you have a function for this)
-      applied = BPLeveling.addEarnedBP(amount); // Updates global totals and renders
-
-      // If the amount added prompted for a level up, but the user chose to cancel then do not
-      // display bp added text
-      if (!applied) {
-        return;
+  
+      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
+  
+      if (amount > maxSafe) {
+        // We already have a warning displayed, just cancel the op
+        amount = maxSafe;
+        return ;
       }
-      // Visual feedback
+
+      // Apply BP and update state
+      const applied = BPLeveling.addEarnedBP(amount);
+  
+      if (!applied) return;
+
       feedback.textContent = `+${amount} BP added!`;
       feedback.style.color = 'green';
       feedback.classList.add('show');
-      // Fade out after 2 seconds
-      setTimeout(() => {feedback.classList.remove('show');}, 2000);
-    
-      // Clear input
+      setTimeout(() => feedback.classList.remove('show'), 2000);
+  
+      // Clear input + warning
       input.value = '';
+      warning.classList.add('hidden');
+      warning.textContent = '';
     });
   },
 
