@@ -197,7 +197,6 @@ window.Stats = {
       this.startingBonuses[stat] = (this.startingStats[stat] || 0) + value;
     });
 
-    /*
     if (race.proficiencies) {
       localStorage.setItem("racialProficiencies", JSON.stringify(race.proficiencies));
     }
@@ -217,6 +216,5 @@ window.Stats = {
     if (race.traits) {
       localStorage.setItem("morphTraits", JSON.stringify(race.traits));
     }
-    */
   },
 };

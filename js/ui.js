@@ -559,7 +559,7 @@ window.UI = {
 
       const cost = document.createElement("span");
       cost.className = "ability-cost";
-      cost.textContent = `(${ability.cost} BP)`;
+      cost.textContent = `(${Abilities.getCost(ability)} BP)`;
 
       header.appendChild(name);
       header.appendChild(cost);
@@ -576,9 +576,9 @@ window.UI = {
 
       const plus = document.createElement("button");
       plus.textContent = "+";
-      plus.disabled = Layers.getRemainingPoints() < ability.cost || !canPurchase;
+      plus.disabled = Layers.getRemainingPoints() < Abilities.getCost(ability) || !canPurchase;
       plus.onclick = () => {
-        Abilities.purchaseAbility(abilityId, ability.cost);
+        Abilities.purchaseAbility(abilityId, Abilities.getCost(ability));
         UI.refreshAll();
       };
 

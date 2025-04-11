@@ -32,9 +32,11 @@ window.Races = {
     proficiencies: ["short_weapons"],
     abilities: ["dual_wielder", "strike_from_behind"],
     discounts: {
-      dual_wielder: 0.5,
-      strike_from_behind: 0.5,
-    },
+        abilities: [
+          {name: "dual_wielder", uses: 1, factor: 0.5},
+          {name: "strike_from_behind", uses: -1, factor: 0.5}
+        ]
+    }
   },
 
   harrowed: {

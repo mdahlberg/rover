@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function applyRacialProficienciesAndAbilities() {
   const racialProfs = JSON.parse(localStorage.getItem("racialProficiencies") || "[]");
   const racialAbilities = JSON.parse(localStorage.getItem("racialAbilities") || "[]");
+  const racialDiscounts = JSON.parse(localStorage.getItem("racialDiscounts") || "[]");
 
   // Include small_weapons as a locked default
   const defaultProfs = ["small_weapons"];
@@ -75,6 +76,17 @@ function applyRacialProficienciesAndAbilities() {
       Abilities.purchaseAbility(abilityId, 0);
     }
   });
+
+  console.warn(racialDiscounts);
+  for (const type in racialDiscounts) {
+    if (type === "abilities") {
+      // A list of objects {name: str, uses: int, factor: float}
+      console.warn(racialDiscounts[type]);
+      Abilities.applyDiscounts(racialDiscounts[type]);
+    } else {
+      alert("Only Ability Discounts are available");
+    }
+  }
 }
 
 function levelUp() {
