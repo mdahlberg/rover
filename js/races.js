@@ -54,39 +54,3 @@ window.Races = {
     traits: [],
   },
 };
-
-// Apply race effects based on the selected race key
-window.applyRaceEffects = function (raceKey) {
-  const race = window.Races?.[raceKey];
-  if (!race) {
-    console.warn("Invalid race selected:", raceKey);
-    return;
-  }
-
-  localStorage.setItem("selectedRace", raceKey);
-  localStorage.setItem("racialBPSpent", race.bpCost); // e.g., 5 for Espers
-
-  Object.entries(race.startingStats || {}).forEach(([stat, value]) => {
-    Stats.startingStats[stat] = (Stats.startingStats[stat] || 0) + value;
-  });
-
-  if (race.proficiencies) {
-    localStorage.setItem("racialProficiencies", JSON.stringify(race.proficiencies));
-  }
-
-  if (race.abilities) {
-    localStorage.setItem("racialAbilities", JSON.stringify(race.abilities));
-  }
-
-  if (race.discounts) {
-    localStorage.setItem("racialDiscounts", JSON.stringify(race.discounts));
-  }
-
-  if (race.bonuses) {
-    localStorage.setItem("racialBonuses", JSON.stringify(race.bonuses));
-  }
-
-  if (race.traits) {
-    localStorage.setItem("morphTraits", JSON.stringify(race.traits));
-  }
-};

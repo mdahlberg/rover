@@ -401,7 +401,7 @@ window.UI = {
    * Update the UI for core stats and derived stats.
    */
   updateDerivedStats: function () {
-    document.getElementById("strength-value").innerText = Math.floor(Stats.getTotal("body") / 4);
+    document.getElementById("strength-value").innerText = Stats.getStrength();
     document.getElementById("health-value").innerText = Stats.getTotal("body") + 5;
     document.getElementById("armor-value").innerText = Stats.getTotal("body") + 10;
     document.getElementById("unspent-lores").innerText = Lores.getUnspentLores();

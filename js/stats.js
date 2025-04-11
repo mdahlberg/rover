@@ -10,12 +10,17 @@ window.Stats = {
     mind: 0,
     spirit: 0,
   },
+
+  startingBonuses: {
+    strength: 0
+  },
+
   currentLayerStats: {
     body: 0,
     mind: 0,
     spirit: 0,
   },
-  
+
   lockedStats: {
     body: false,
     mind: false,
@@ -27,6 +32,10 @@ window.Stats = {
    */
   getTotal(statName) {
     return (this.startingStats[statName] || 0) + (this.currentStats[statName] || 0);
+  },
+
+  getStrength() {
+    return Math.floor(Stats.getTotal("body") / 4) + this.startingBonuses.strength;
   },
 
   /**
@@ -170,4 +179,44 @@ window.Stats = {
     return true;
   },
 
+  applyRaceEffects: function (raceKey) {
+    const race = window.Races?.[raceKey];
+    if (!race) {
+      console.warn("Invalid race selected:", raceKey);
+      return;
+    }
+
+    localStorage.setItem("selectedRace", raceKey);
+    localStorage.setItem("racialBPSpent", race.bpCost); // e.g., 5 for Espers
+
+    Object.entries(race.startingStats || {}).forEach(([stat, value]) => {
+      this.startingStats[stat] = (this.startingStats[stat] || 0) + value;
+    });
+
+    Object.entries(race.bonuses || {}).forEach(([stat, value]) => {
+      this.startingBonuses[stat] = (this.startingStats[stat] || 0) + value;
+    });
+
+    /*
+    if (race.proficiencies) {
+      localStorage.setItem("racialProficiencies", JSON.stringify(race.proficiencies));
+    }
+
+    if (race.abilities) {
+      localStorage.setItem("racialAbilities", JSON.stringify(race.abilities));
+    }
+
+    if (race.discounts) {
+      localStorage.setItem("racialDiscounts", JSON.stringify(race.discounts));
+    }
+
+    if (race.bonuses) {
+      localStorage.setItem("racialBonuses", JSON.stringify(race.bonuses));
+    }
+
+    if (race.traits) {
+      localStorage.setItem("morphTraits", JSON.stringify(race.traits));
+    }
+    */
+  },
 };
