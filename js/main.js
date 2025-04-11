@@ -77,11 +77,9 @@ function applyRacialProficienciesAndAbilities() {
     }
   });
 
-  console.warn(racialDiscounts);
   for (const type in racialDiscounts) {
     if (type === "abilities") {
       // A list of objects {name: str, uses: int, factor: float}
-      console.warn(racialDiscounts[type]);
       Abilities.applyDiscounts(racialDiscounts[type]);
     } else {
       alert("Only Ability Discounts are available");

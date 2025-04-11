@@ -275,7 +275,6 @@ window.Abilities = {
       ability.discount.uses--;
       ability.discount.used++;
     }
-    console.warn(ability?.discount || {});
 
     this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + 1;
     this.currentLayerPurchasedAbilities[id] = (this.currentLayerPurchasedAbilities[id] || 0) + 1;

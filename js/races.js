@@ -30,7 +30,6 @@ window.Races = {
     bpCost: 10,
     startingStats: { mind: 1, spirit: 1, body: 1 }, // TODO: make one of choice
     proficiencies: ["short_weapons"],
-    abilities: ["dual_wielder", "strike_from_behind"],
     discounts: {
         abilities: [
           {name: "dual_wielder", uses: 1, factor: 0.5},
