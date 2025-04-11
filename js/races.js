@@ -33,7 +33,7 @@ window.Races = {
     discounts: {
         abilities: [
           {name: "dual_wielder", uses: 1, factor: 0.5},
-          {name: "strike_from_behind", uses: -1, factor: 0.5}
+          {name: "strike_from_behind", uses: 1, factor: 0.5}
         ]
     }
   },
