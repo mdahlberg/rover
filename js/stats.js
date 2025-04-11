@@ -5,7 +5,7 @@ window.Stats = {
     spirit: 0,
   },
 
-  lockedStats: {
+  startingStats: {
     body: 0,
     mind: 0,
     spirit: 0,
@@ -15,23 +15,32 @@ window.Stats = {
     mind: 0,
     spirit: 0,
   },
+  
+  lockedStats: {
+    body: false,
+    mind: false,
+    spirit: false
+  },
 
   /**
    * Returns total value of a core stat (locked + current).
    */
   getTotal(statName) {
-    return (this.lockedStats[statName] || 0) + (this.currentStats[statName] || 0);
+    return (this.startingStats[statName] || 0) + (this.currentStats[statName] || 0);
   },
 
   /**
    * Locks a stat bonus (from race selection).
    */
   lockStat(statName, value) {
-    this.lockedStats[statName] = (this.lockedStats[statName] || 0) + value;
+    this.startingStats[statName] = (this.startingStats[statName] || 0) + value;
   },
 
   resetLayerStats() {
     this.currentLayerStats = { body: 0, mind: 0, spirit: 0 };
+    this.lockedStats.body = false;
+    this.lockedStats.mind = false;
+    this.lockedStats.spirit = false;
   },
 
   /**
@@ -64,7 +73,58 @@ window.Stats = {
     }
   },
 
+  canIncrease(statName) {
+    const cost = this.getStatCost(statName);
+    if (Layers.getRemainingPoints() < cost) {
+      return {allowed: false, reason: "Not enough BP"};
+    }
+
+    if (this.lockedStats[statName]) {
+      return {allowed: false, reason: "You cannot alter Mind after purchasing Essence Slots. Refund essence slots first"};
+    }
+
+    return {allowed: true, reason: ""};
+  },
+
+  canDecrease(statName) {
+    const current = this.getTotal(statName);
+
+    if (current <= 0 || this.currentStats[statName] <= 0) {
+      return {allowed: false, reason: "Cannot decrease this stat below starting value"};
+    }
+
+    // If nothing purchased this layer, don't allow refund
+    if (!this.currentLayerStats[statName] || this.currentLayerStats[statName] <= 0) {
+      return { allowed: false, reason: "Cannot refund stats gained in previous levels" };
+    }
+
+    // TODO - this only applies to mind and is not dynamic across stats!
+    // Locked stat logic (e.g., Mind after Essence)
+    if (this.lockedStats[statName]) {
+      return {allowed: false, reason: "You cannot alter Mind after purchasing Essence Slots. Refund essence slots first"};
+    }
+
+    // 🧠 Mind → Lore check
+    if (statName === "mind") {
+      const nextMind = current - 1;
+      const maxLores = Math.floor(nextMind / 3);
+      const spent = Object.values(Lores.getSelectedLores()).reduce((sum, v) => sum + v, 0);
+      if (spent > maxLores) {
+        return {allowed: false, reason: "Spent Lores must be refunded prior to decreasing Mind"};
+      }
+    }
+
+    return {allowed: true, reason: ""};
+  },
+
   increaseStat(statName) {
+    const status = this.canIncrease(statName);
+
+    if (!status.allowed) {
+      console.log("Unable to increase. ", status.reason);
+      return false;
+    }
+
     const cost = this.getStatCost(statName);
     if (!Layers.spendPoints("stats", statName, cost)) return false;
 
@@ -84,8 +144,9 @@ window.Stats = {
   },
 
   decreaseStat(statName) {
-    if (!this.canDecrease(statName)) {
-      console.log("Unable to decrease stat '", statName, "'");
+    const status = this.canDecrease(statName);
+    if (!status.allowed) {
+      console.log("Unable to decrease. ", status.reason);
       return false;
     }
 
@@ -95,10 +156,8 @@ window.Stats = {
       return false;
     }
 
-    console.log("Stat '", statName, "' current value = '", this.currentStats[statName], "'");
     this.currentStats[statName]--;
     this.currentLayerStats[statName]--;
-    console.log("After refund Stat '", statName, "' current value = '", this.currentStats[statName], "'");
 
     if (statName === "spirit") {
       const derived = Math.floor(this.getTotal("spirit") / 3);
@@ -111,30 +170,4 @@ window.Stats = {
     return true;
   },
 
-  canDecrease(statName) {
-    const current = this.getTotal(statName);
-
-    if (current <= 0 || this.currentStats[statName] <= 0) {
-      alert("Cannot decrease this stat below zero.");
-      return false;
-    }
-
-    if (statName === "mind") {
-      const nextMind = current - 1;
-      const maxLores = Math.floor(nextMind / 3);
-      const spent = Object.values(Lores.getSelectedLores()).reduce((sum, v) => sum + v, 0);
-      if (spent > maxLores) {
-        alert("Unassign lores before decreasing Mind.");
-        return false;
-      }
-    }
-
-    if (statName === "spirit") {
-      const nextSpirit = current - 1;
-      const newUses = Math.floor(nextSpirit / 3);
-      const activeUses = Abilities.getDerivedUses("gather_essence");
-    }
-
-    return true;
-  },
 };

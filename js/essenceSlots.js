@@ -93,10 +93,13 @@ window.EssenceSlots = {
     }
   
     Layers.currentLayer.essenceSlots[levelKey] = (Layers.currentLayer.essenceSlots[levelKey] || 0) + 1;
+
+    Stats.lockedStats.mind = true;
   
     UI.updateEssenceSlotUI();
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
+    UI.updateStatsUI();
     return true;
   },
 
@@ -128,9 +131,14 @@ window.EssenceSlots = {
       }
     }
 
+    if ((Layers.currentLayer?.essenceSlots?.length || 0) === 0) {
+      Stats.lockedStats.mind = false;
+    }
+
     // Re-render
     UI.updateEssenceSlotUI();
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
+    UI.updateStatsUI();
   },
 };

@@ -426,6 +426,36 @@ header {
   margin: 4px 0;
 }
 
+.stat-increase,
+.stat-decrease {
+  background-color: #444;
+  border: 1px solid #888;
+  color: #fff;
+  padding: 0.4em 0.75em;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+}
+
+/* Only apply hover styles when button is enabled */
+.stat-increase:hover:not(:disabled),
+.stat-decrease:hover:not(:disabled) {
+  background-color: #666;
+  border-color: #aaa;
+}
+
+/* Disabled buttons stay quiet on hover */
+.stat-increase:disabled,
+.stat-decrease:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #ccc;
+  border: 1px solid #999;
+  color: #666;
+  pointer-events: all; /* keep tooltip working */
+}
+
 /* General Shop Layout */
 .shop-grid {
   display: flex;
