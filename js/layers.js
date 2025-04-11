@@ -104,7 +104,7 @@ window.Layers = {
     if (this.currentLayer.points[domain][id] < cost) {
       // TODO - this is bad, not sure a warning is enough - maybe we should calulate
       // the cost rather than passing it"
-      console.warn(`Attempted to refund more points than were spent on ${domain}.${id}`);
+      console.warn(`Attempted to refund more points than were spent on ${domain}.${id} - refund: ${cost}"`);
       return false;
     }
 

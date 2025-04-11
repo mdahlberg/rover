@@ -316,6 +316,9 @@ window.Abilities = {
 
     if (!this.purchasedAbilities[id]) return false;
 
+    // Restore spent points
+    cost = this.getRefund(id);
+
     // Remove one usage from total and current
     this.purchasedAbilities[id] -= 1;
     this.currentLayerPurchasedAbilities[id] -= 1;
@@ -326,8 +329,6 @@ window.Abilities = {
       delete this.currentLayerPurchasedAbilities[id];
     }
 
-    // Restore spent points
-    cost = this.getRefund(id);
     Layers.refundPoints("abilities", id, cost);
     return true;
   },
@@ -340,13 +341,14 @@ window.Abilities = {
       ability.discount.used--;
       ability.discount.uses++;
       // Return cost with factor applied
-      console.warn("Refunding discounted ability purchase and restoring discount use");
+      console.log("Refunding discounted ability purchase and restoring discount use");
       return ability.cost * ability.discount.factor;
     }
 
+    // Unlimited
     if ((ability?.discount?.uses || 0) < 0) {
       // Return cost with factor applied
-      console.warn("Refunding discounted ability purchase and restoring discount use");
+      console.log("Refunding discounted ability purchase and restoring discount use");
       return ability.cost * ability.discount.factor;
     }
 
@@ -355,7 +357,7 @@ window.Abilities = {
       ability.discount.used--;
       ability.discount.uses++;
       //Return cost with factor applied
-      console.warn("Refunding discounted ability purchase and restoring discount use");
+      console.log("Refunding discounted ability purchase and restoring discount use");
       return ability.cost * ability.discount.factor;
     }
 
