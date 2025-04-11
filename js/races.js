@@ -30,11 +30,12 @@ window.Races = {
     bpCost: 10,
     startingStats: { mind: 1, spirit: 1, body: 1 }, // TODO: make one of choice
     proficiencies: ["short_weapons"],
-    abilities: ["dual_wielder", "strike_from_behind"],
     discounts: {
-      dual_wielder: 0.5,
-      strike_from_behind: 0.5,
-    },
+        abilities: [
+          {name: "dual_wielder", uses: 1, factor: 0.5},
+          {name: "strike_from_behind", uses: -1, factor: 0.5}
+        ]
+    }
   },
 
   harrowed: {
@@ -53,40 +54,4 @@ window.Races = {
     abilities: ["Free Weapon Proficiency"],
     traits: [],
   },
-};
-
-// Apply race effects based on the selected race key
-window.applyRaceEffects = function (raceKey) {
-  const race = window.Races?.[raceKey];
-  if (!race) {
-    console.warn("Invalid race selected:", raceKey);
-    return;
-  }
-
-  localStorage.setItem("selectedRace", raceKey);
-  localStorage.setItem("racialBPSpent", race.bpCost); // e.g., 5 for Espers
-
-  Object.entries(race.startingStats || {}).forEach(([stat, value]) => {
-    Stats.startingStats[stat] = (Stats.startingStats[stat] || 0) + value;
-  });
-
-  if (race.proficiencies) {
-    localStorage.setItem("racialProficiencies", JSON.stringify(race.proficiencies));
-  }
-
-  if (race.abilities) {
-    localStorage.setItem("racialAbilities", JSON.stringify(race.abilities));
-  }
-
-  if (race.discounts) {
-    localStorage.setItem("racialDiscounts", JSON.stringify(race.discounts));
-  }
-
-  if (race.bonuses) {
-    localStorage.setItem("racialBonuses", JSON.stringify(race.bonuses));
-  }
-
-  if (race.traits) {
-    localStorage.setItem("morphTraits", JSON.stringify(race.traits));
-  }
 };

@@ -245,6 +245,20 @@ window.Abilities = {
     return requiredProps.some(prop => playerProps.has(prop));
   },
 
+  getCost(ability) {
+    const baseCost = ability?.cost || 0;
+
+    // Factor defaults to 1 for safety
+    const discountFactor = ability?.discount?.factor || 1;
+
+    // -1 means infinite, greater than 1 means we have it, so anything but zero
+    const discountUses = ability?.discount?.uses || 0;
+
+    hasDiscount = discountUses !== 0;
+
+    return Math.floor(baseCost * (hasDiscount ? discountFactor : 1));
+  },
+
   /**
    * Purchase a standard ability (not derived).
    */
@@ -256,6 +270,11 @@ window.Abilities = {
     }
 
     if (!Layers.spendPoints("abilities", id, cost)) return false;
+
+    if (cost < ability.cost && ability?.discount?.uses > 0) {
+      ability.discount.uses--;
+      ability.discount.used++;
+    }
 
     this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + 1;
     this.currentLayerPurchasedAbilities[id] = (this.currentLayerPurchasedAbilities[id] || 0) + 1;
@@ -273,7 +292,7 @@ window.Abilities = {
     if (Layers.getCurrentLevel() === 1) {
       const racial = window.RacialLocks?.abilities?.has(id) ? 1 : 0;
 
-      // Can only refund if you have purchased one this round
+      // Can only refund if you have purchased at least one this round
       return purchased > racial;
     }
 
@@ -297,15 +316,51 @@ window.Abilities = {
 
     if (!this.purchasedAbilities[id]) return false;
 
+    // Remove one usage from total and current
     this.purchasedAbilities[id] -= 1;
     this.currentLayerPurchasedAbilities[id] -= 1;
+
+    // If this was the last one then delete it from our tracking (better preview and layer history)
     if (this.purchasedAbilities[id] <= 0) {
       delete this.purchasedAbilities[id];
       delete this.currentLayerPurchasedAbilities[id];
     }
 
-    Layers.refundPoints("abilities", id, ability.cost);
+    // Restore spent points
+    cost = this.getRefund(id);
+    Layers.refundPoints("abilities", id, cost);
     return true;
+  },
+
+  getRefund(id) {
+    const ability = this.availableAbilities[id];
+
+    // If you have discount uses then this was purchased at a discount
+    if ((ability?.discount?.uses || 0) > 0) {
+      ability.discount.used--;
+      ability.discount.uses++;
+      // Return cost with factor applied
+      console.warn("Refunding discounted ability purchase and restoring discount use");
+      return ability.cost * ability.discount.factor;
+    }
+
+    if ((ability?.discount?.uses || 0) < 0) {
+      // Return cost with factor applied
+      console.warn("Refunding discounted ability purchase and restoring discount use");
+      return ability.cost * ability.discount.factor;
+    }
+
+    // if totalPurchased <= used then restore a discount and refund a factored cost
+    if (this.purchasedAbilities[id] <= (ability?.discount?.used || 0)) {
+      ability.discount.used--;
+      ability.discount.uses++;
+      //Return cost with factor applied
+      console.warn("Refunding discounted ability purchase and restoring discount use");
+      return ability.cost * ability.discount.factor;
+    }
+
+    // This was not purchased at a discount, refund full amount
+    return ability.cost;
   },
 
   isAbilityPurchased(id) {
@@ -314,6 +369,21 @@ window.Abilities = {
 
   getAbilityById: function (id) {
     return this.availableAbilities?.[id] || null;
+  },
+
+  applyDiscounts: function(discounts) {
+    for (const discount of discounts) {
+      name = discount.name;
+      uses = discount.uses;
+      factor = discount.factor;
+
+      ability = this.availableAbilities[name];
+
+      // Track uses. -1 means unlimited
+      // Factor is discount factor such as 0.5
+      // Used is to track how many have been used - for refund tracking
+      this.availableAbilities[name].discount = {uses: uses, factor: factor, used: 0};
+    }
   },
 
 };

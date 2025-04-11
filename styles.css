@@ -563,8 +563,26 @@ header {
 }
 
 .ability-cost {
-  font-size: 0.9rem;
-  color: #94a3b8;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.original-cost {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.discounted-cost {
+  color: #4df04d;
+  font-weight: bold;
+}
+
+.discount-tag {
+  font-size: 0.7em;
+  color: #aaa;
+  font-style: italic;
 }
 
 .ability-description {

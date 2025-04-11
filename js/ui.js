@@ -401,7 +401,7 @@ window.UI = {
    * Update the UI for core stats and derived stats.
    */
   updateDerivedStats: function () {
-    document.getElementById("strength-value").innerText = Math.floor(Stats.getTotal("body") / 4);
+    document.getElementById("strength-value").innerText = Stats.getStrength();
     document.getElementById("health-value").innerText = Stats.getTotal("body") + 5;
     document.getElementById("armor-value").innerText = Stats.getTotal("body") + 10;
     document.getElementById("unspent-lores").innerText = Lores.getUnspentLores();
@@ -455,152 +455,137 @@ window.UI = {
     summaryContainer.innerHTML = content || "<p>No purchases this level.</p>";
   },
 
-  /** 
-   * Update the ability shop UI.
-   */
   updateAbilityUI: function () {
-    const abilityContainer = document.getElementById("ability-shop");
-    abilityContainer.innerHTML = ""; 
-
+    const container = document.getElementById("ability-shop");
+    container.innerHTML = "";
+  
     const allAbilities = Abilities.availableAbilities;
-
-    // ===== Render Derived Abilities First =====
-    Object.entries(Abilities.derivedAbilities || {}).forEach(([id, count]) => {
-      const ability = allAbilities[id];
-      if (!ability) return;
-
+    const derivedAbilities = Abilities.derivedAbilities || {};
+  
+    // Helper to create ability DOM
+    function createAbilityCard(abilityId, ability, count, isDerived = false) {
       const item = document.createElement("div");
-      item.className = "ability-item derived";
-
-      // Header
+      item.className = "ability-item" + (isDerived ? " derived" : "");
+  
       const header = document.createElement("div");
       header.className = "ability-header";
-
+  
       const name = document.createElement("strong");
       name.className = "ability-name";
       name.textContent = ability.name;
       name.title = ability.description;
-
+  
       const badge = document.createElement("span");
       badge.className = "ability-badge";
-      badge.textContent = `x${count}`;
-
-      header.appendChild(badge);
-      header.appendChild(name);
-
-      // Description
-      const description = document.createElement("div");
-      description.className = "ability-description";
-      description.textContent = ability.description;
-
-      item.appendChild(header);
-      item.appendChild(description);
-
-      abilityContainer.appendChild(item);
-    });
-
-    // ===== Render Regular Abilities =====
-    Object.keys(allAbilities).forEach((abilityId) => {
-      const ability = allAbilities[abilityId];
-      const isRacial = window.RacialLocks?.abilities?.has(abilityId);
-
-      // Skip derived abilities in the main shop list
-      if (ability.derived === true) return;
-
-      const item = document.createElement("div");
-      item.className = "ability-item";
-
-      if (ability.weaponProperties && ability.weaponProperties.length > 0) {
-        const badgeContainer = document.createElement("div");
-        badgeContainer.className = "property-badges";
-
-        ability.weaponProperties.forEach((propId) => {
-          const prop = WeaponProperties.availableProperties[propId];
-          const playerHas = WeaponProperties.getPlayerProperties().has(propId);
-
-          const badge = document.createElement("span");
-          badge.className = "property-badge " + (playerHas ? "owned" : "missing");
-          badge.textContent = prop?.name || propId;
-          badge.title = prop?.description || "";
-
-          badgeContainer.appendChild(badge);
-        });
-
-        item.appendChild(badgeContainer);
-      }
-
-
-      // Header with name and cost
-      const header = document.createElement("div");
-      header.className = "ability-header";
-
-      const name = document.createElement("strong");
-      name.className = "ability-name";
-      name.textContent = ability.name;
-      name.title = ability.description;
-
-      if (isRacial) {
-        item.classList.add("racial-ability");
-        const racialTag = document.createElement("span");
-        racialTag.className = "racial-tag";
-
-        // TODO - I don't love this but oh well
-        racialTag.textContent = "(Racial)";
-        name.appendChild(racialTag);
-      }
-
-      const badge = document.createElement("span");
-      badge.className = "ability-badge";
-
-      const count = Abilities.getPurchaseCount(abilityId);
       badge.textContent = `x${count}`;
       if (count === 0) badge.classList.add("muted");
+  
       header.appendChild(badge);
-
-      const cost = document.createElement("span");
-      cost.className = "ability-cost";
-      cost.textContent = `(${ability.cost} BP)`;
-
       header.appendChild(name);
-      header.appendChild(cost);
-
-      // Description
+  
+      if (!isDerived) {
+        const costWrapper = document.createElement("span");
+        costWrapper.className = "ability-cost";
+      
+        const base = ability.cost;
+        const actual = Abilities.getCost(ability);
+        const isDiscounted = actual < base;
+      
+        if (isDiscounted) {
+          const original = document.createElement("span");
+          original.className = "original-cost";
+          original.textContent = `${base} BP`;
+      
+          const discounted = document.createElement("span");
+          discounted.className = "discounted-cost";
+          discounted.textContent = `${actual} BP`;
+      
+          const tag = document.createElement("span");
+          tag.className = "discount-tag";
+          tag.title = "Racial bonus applies to first purchase";
+          tag.textContent = " (discount)";
+      
+          costWrapper.appendChild(original);
+          costWrapper.appendChild(discounted);
+          costWrapper.appendChild(tag);
+        } else {
+          costWrapper.textContent = `(${base} BP)`;
+        }
+      
+        header.appendChild(costWrapper);
+      }
+  
       const description = document.createElement("div");
       description.className = "ability-description";
       description.textContent = ability.description;
-
-      // Actions
-      const canPurchase = Abilities.canPurchase(abilityId);
-      const actions = document.createElement("div");
-      actions.className = "ability-actions";
-
-      const plus = document.createElement("button");
-      plus.textContent = "+";
-      plus.disabled = Layers.getRemainingPoints() < ability.cost || !canPurchase;
-      plus.onclick = () => {
-        Abilities.purchaseAbility(abilityId, ability.cost);
-        UI.refreshAll();
-      };
-
-      const minus = document.createElement("button");
-      minus.textContent = "-";
-      minus.disabled = count === 0 || !Abilities.canRefund(abilityId);
-      minus.onclick = () => {
-        Abilities.removeAbility(abilityId);
-        UI.refreshAll();
-      };
-
-      actions.appendChild(minus);
-      actions.appendChild(plus);
-
-      // Assemble the item
+  
       item.appendChild(header);
       item.appendChild(description);
-      item.appendChild(actions);
-
-      abilityContainer.appendChild(item);
+  
+      // Weapon property badges
+      if (!isDerived && ability.weaponProperties?.length) {
+        const badgeContainer = document.createElement("div");
+        badgeContainer.className = "property-badges";
+  
+        ability.weaponProperties.forEach((propId) => {
+          const prop = WeaponProperties.availableProperties[propId];
+          const hasIt = WeaponProperties.getPlayerProperties().has(propId);
+  
+          const badge = document.createElement("span");
+          badge.className = "property-badge " + (hasIt ? "owned" : "missing");
+          badge.textContent = prop?.name || propId;
+          badge.title = prop?.description || "";
+          badgeContainer.appendChild(badge);
+        });
+  
+        item.appendChild(badgeContainer);
+      }
+  
+      // Action buttons
+      if (!isDerived) {
+        const actions = document.createElement("div");
+        actions.className = "ability-actions";
+  
+        const cost = Abilities.getCost(ability);
+        const canPurchase = Abilities.canPurchase(abilityId);
+  
+        const plus = document.createElement("button");
+        plus.textContent = "+";
+        plus.disabled = Layers.getRemainingPoints() < cost || !canPurchase;
+        plus.onclick = () => {
+          Abilities.purchaseAbility(abilityId, cost);
+          UI.refreshAll();
+        };
+  
+        const minus = document.createElement("button");
+        minus.textContent = "-";
+        minus.disabled = count === 0 || !Abilities.canRefund(abilityId);
+        minus.onclick = () => {
+          Abilities.removeAbility(abilityId);
+          UI.refreshAll();
+        };
+  
+        actions.appendChild(minus);
+        actions.appendChild(plus);
+        item.appendChild(actions);
+      }
+  
+      return item;
+    }
+  
+    // Render Derived First
+    Object.entries(derivedAbilities).forEach(([id, count]) => {
+      const ability = allAbilities[id];
+      if (ability) container.appendChild(createAbilityCard(id, ability, count, true));
     });
-
+  
+    // Then Normal Abilities
+    Object.entries(allAbilities).forEach(([id, ability]) => {
+      if (ability.derived) return; // skip
+      const count = Abilities.getPurchaseCount(id);
+      container.appendChild(createAbilityCard(id, ability, count));
+    });
+  
     this.updateGlobalBuildPoints();
   },
 

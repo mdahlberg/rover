@@ -37,7 +37,7 @@ function confirmRace() {
   console.log("Race confirmed:", selectedRace);
   localStorage.setItem('selectedRace', selectedRace);
 
-  applyRaceEffects(selectedRace);
+  Stats.applyRaceEffects(selectedRace);
   applyRacialProficienciesAndAbilities();
 
   // 🎯 Setup Build Point totals
