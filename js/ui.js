@@ -35,6 +35,26 @@ window.UI = {
     UI.updateAbilityUI(); // re-render entire list with new values
   },
 
+  flashWarning: function(message, duration = 3000) {
+    console.warn("call flash warning")
+    const warningEl = document.getElementById('global-warning');
+    if (!warningEl) return;
+  
+    warningEl.textContent = message;
+    warningEl.classList.remove('hidden');
+  
+    // Optional: Add a fade-in effect
+    warningEl.style.opacity = '1';
+  
+    setTimeout(() => {
+      warningEl.style.opacity = '0';
+      setTimeout(() => {
+        warningEl.classList.add('hidden');
+        warningEl.textContent = '';
+      }, 300); // wait for fade-out to finish
+    }, duration);
+  },
+
   updateLayerPreview: function () {
     const list = document.getElementById("current-layer-display");
     if (!list) return;
@@ -343,12 +363,30 @@ window.UI = {
         // Get the cost of the next level up
         const statCost = Stats.getStatCost(statName);
         increaseButton.innerHTML = `Increase (+${statCost} pts)`;
+
+        const status = Stats.canIncrease(statName);
+        if (!status.allowed) {
+          increaseButton.disabled = true;
+          increaseButton.title = status.reason;
+        } else {
+          increaseButton.disabled = false;
+          increaseButton.title = "";
+        }
       }
 
       if (decreaseButton) {
         // Refund the cost of the next level down
         const statCost = Stats.getStatCost(statName, -1);
         decreaseButton.innerHTML = `Decrease (-${statCost} pts)`;
+
+        const status = Stats.canDecrease(statName);
+        if (!status.allowed) {
+          decreaseButton.disabled = true;
+          decreaseButton.title = status.reason;
+        } else {
+          decreaseButton.disabled = false;
+          decreaseButton.title = "";
+        }
       }
 
       const currentStatValue = Stats.getTotal(statName)
