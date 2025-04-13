@@ -19,6 +19,10 @@ function selectRace(race) {
   if (selectedCard) {
     selectedCard.classList.add('selected');
   }
+
+  if (selectedRace === "morphs") {
+    MorphSelector.open();
+  }
   
   // Show the confirm button.
   document.getElementById('start-button-container').classList.remove('hidden');

@@ -143,6 +143,83 @@ body {
 }
 
 
+/* ===================================================
+   Morph Modal Styles
+=================================================== */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  overflow: auto; /* allow scrolling if needed */
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 600px;
+  width: 90%;
+  color: #fff;
+
+  max-height: 90vh;           /* prevent from overflowing screen */
+  overflow-y: auto;           /* scrollable content inside modal */
+  box-sizing: border-box;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 600px;
+  width: 90%;
+  color: #fff;
+}
+
+.trait-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.trait-card {
+  background: #333;
+  padding: 1rem;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: border 0.2s;
+}
+
+.trait-card.selected {
+  border-color: #00c896;
+  background: #2b3c2b;
+}
+
+.trait-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.modal-actions {
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+}
 
 
 /* ===================================================

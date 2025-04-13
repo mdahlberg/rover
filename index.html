@@ -67,6 +67,24 @@
     </div>
   </div>
 
+  <!-- Morph Modal It's Morphin Time -->
+  <div id="morph-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>🧬 Choose Your Morph Traits</h2>
+      <p>Select <strong>exactly two</strong> traits. These are free and permanent.</p>
+      <p>Selected: <span id="morph-selected-count">0</span> / 2</p>
+  
+      <div id="morph-trait-grid" class="trait-grid">
+        <!-- Trait cards go here -->
+      </div>
+  
+      <div class="modal-actions">
+        <button id="morph-cancel">Cancel</button>
+        <button id="morph-confirm" disabled>Confirm ✔</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Planner Section -->
   <div id="planner-container" class="hidden">
     <!-- Header: Sticky header remains the same -->
@@ -213,6 +231,8 @@
   <script src="js/races.js"></script>            <!-- Data only, safe to go here -->
   <script src="js/ui.js"></script>               <!-- Uses all above modules -->
   <script src="js/main.js"></script>             <!-- Entry point: sets RacialLocks, calls UI updates -->
+  <script src="js/morphAbilities.js"></script>   <!-- Splash needs Races and Stats, can go last -->
+  <script src="js/morphSelector.js"></script>    <!-- Splash needs Races and Stats, can go last -->
   <script src="js/splash.js"></script>           <!-- Splash needs Races and Stats, can go last -->
 
 </body>

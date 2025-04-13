@@ -47,7 +47,7 @@ window.Races = {
   },
 
   morphs: {
-    name: "Morphs",
+    name: "Morph",
     description: "+1 to two of choice. Free Weapon Proficiency. Custom traits.",
     bpCost: 10,
     startingStats: { body: 1, mind: 1 }, // TODO: Make two selectable

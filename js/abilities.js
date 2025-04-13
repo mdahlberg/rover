@@ -236,6 +236,21 @@ window.Abilities = {
     const ability = Abilities.availableAbilities[abilityId];
     const requiredProps = ability.weaponProperties || [];
 
+    // Morph abilities can only be purchased at character creation time
+    if ((ability?.isMorph || false) && Layers.getCurrentLevel() > 1) {
+      console.warn("Can't purchase morph abilities after level one");
+      return false;
+    }
+
+    // If the ability has a max limit
+    maxPurchases = (ability?.maxPurchases || 0)
+
+    // If we have already purchased the max then we cannot purchase again
+    // TODO - return reason to display on disabled purchase button
+    if (maxPurchases > 0 && this.getPurchaseCount(abilityId) >= maxPurchases) {
+      return false;
+    }
+
     if (requiredProps.length === 0) return true; // no property restriction
 
     const playerProps = WeaponProperties.getPlayerProperties(); // returns a Set
@@ -291,9 +306,10 @@ window.Abilities = {
     // abilities. Probably should be tracked different from the currentLayer but oh well.
     if (Layers.getCurrentLevel() === 1) {
       const racial = window.RacialLocks?.abilities?.has(id) ? 1 : 0;
+      const morph = window.MorphLocks?.has(id) ? 1 : 0;
 
       // Can only refund if you have purchased at least one this round
-      return purchased > racial;
+      return purchased > racial + morph;
     }
 
     return purchased > 0;
