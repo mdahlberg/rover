@@ -199,6 +199,7 @@ body {
   border-radius: 0.5rem;
   cursor: pointer;
   transition: border 0.2s;
+  position: relative;
 }
 
 .trait-card.selected {
@@ -209,6 +210,29 @@ body {
 .trait-card.disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.trait-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: #fff;
+}
+
+.trait-meta {
+  font-size: 0.9rem;
+  color: #ccc;
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+}
+
+.trait-cost {
+  color: #9be09b;
+}
+
+.trait-uses {
+  color: #c9c9ff;
 }
 
 .modal-actions {

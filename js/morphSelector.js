@@ -14,7 +14,17 @@ window.MorphSelector = {
     Object.entries(MorphAbilities).forEach(([id, trait]) => {
       const card = document.createElement("div");
       card.className = "trait-card";
-      card.innerHTML = `<strong>${trait.name}</strong><p>${trait.description}</p>`;
+      card.title = trait.description;
+      card.innerHTML = `
+        <div class="trait-header">
+          <strong>${trait.name}</strong>
+        </div>
+        <div class="trait-meta">
+          <span class="trait-cost">Cost: ${trait.cost} BP</span>
+          <span class="trait-uses">Max Uses: ${trait.maxPurchases}</span>
+        </div>
+      `;
+
       card.dataset.id = id;
 
       card.onclick = () => {
