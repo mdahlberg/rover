@@ -349,7 +349,7 @@ window.Abilities = {
     if ((ability?.discount?.uses || 0) < 0) {
       // Return cost with factor applied
       console.log("Refunding discounted ability purchase and restoring discount use");
-      return ability.cost * ability.discount.factor;
+      return Math,floor(ability.cost * ability.discount.factor);
     }
 
     // if totalPurchased <= used then restore a discount and refund a factored cost
@@ -358,7 +358,7 @@ window.Abilities = {
       ability.discount.uses++;
       //Return cost with factor applied
       console.log("Refunding discounted ability purchase and restoring discount use");
-      return ability.cost * ability.discount.factor;
+      return Math.floor(ability.cost * ability.discount.factor);
     }
 
     // This was not purchased at a discount, refund full amount
