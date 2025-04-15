@@ -41,7 +41,6 @@ window.ConfirmationModal = {
 
     if (reset) {
       this.resetCharacterCreation();
-      // UI.showSplashScreen();
     }
   },
 
@@ -69,6 +68,7 @@ document.getElementById("confirmation-cancel").onclick = () => {
  * Confirms the race selection, applies race effects, and redirects to the planner.
  */
 function confirmRace() {
+  selectedRace = localStorage.getItem("selectedRace");
   if (!selectedRace) {
     alert('Please select a race before proceeding!');
     return;
@@ -76,7 +76,6 @@ function confirmRace() {
 
   // 🌟 Save and apply race
   console.log("Race confirmed:", selectedRace);
-  localStorage.setItem('selectedRace', selectedRace);
 
   Stats.applyRaceEffects(selectedRace);
   applyRacialProficienciesAndAbilities();

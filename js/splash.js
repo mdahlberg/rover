@@ -22,6 +22,7 @@ function selectRace(race) {
   }
 
   // Pop-up modal(s) to choose special abilities
+  localStorage.setItem("selectedRace", race);
   runModalFlow(race);
   
   // Show the confirm button.
