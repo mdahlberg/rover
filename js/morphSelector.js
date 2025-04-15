@@ -1,13 +1,14 @@
 window.MorphSelector = {
   selected: new Set(),
+  onConfirm: null,
 
-  open() {
+  open: function () {
     const modal = document.getElementById("morph-modal");
     const grid = document.getElementById("morph-trait-grid");
     const countDisplay = document.getElementById("morph-selected-count");
-    const confirm = document.getElementById("morph-confirm");
+    const confirmBtn = document.getElementById("morph-confirm");
 
-    modal.classList.remove("hidden");
+    // Reset selections and UI
     this.selected.clear();
     grid.innerHTML = "";
 
@@ -24,7 +25,6 @@ window.MorphSelector = {
           <span class="trait-uses">Max Uses: ${trait.maxPurchases}</span>
         </div>
       `;
-
       card.dataset.id = id;
 
       card.onclick = () => {
@@ -36,11 +36,10 @@ window.MorphSelector = {
           this.selected.add(id);
         }
 
-        // Update display + button state
         countDisplay.textContent = this.selected.size;
-        confirm.disabled = this.selected.size !== 2;
+        confirmBtn.disabled = this.selected.size !== 2;
 
-        // Optional: disable unselected cards if already 2 chosen
+        // Visually disable unselected cards if maxed
         document.querySelectorAll(".trait-card").forEach(c => {
           if (!c.classList.contains("selected")) {
             c.classList.toggle("disabled", this.selected.size >= 2);
@@ -51,40 +50,53 @@ window.MorphSelector = {
       grid.appendChild(card);
     });
 
-    // Cancel handler
-    document.getElementById("morph-cancel").onclick = () => {
-      modal.classList.add("hidden");
-    };
-
-    // Confirm handler
-    confirm.onclick = () => {
-      this.applySelectedTraits();
-      modal.classList.add("hidden");
-    };
+    // Show modal
+    modal.classList.remove("hidden");
+    setTimeout(() => modal.classList.add("show"), 10);
   },
 
-  applySelectedTraits() {
+  confirm: function () {
+    const modal = document.getElementById("morph-modal");
+
+    if (this.selected.size !== 2) {
+      alert("Please select exactly two traits.");
+      return;
+    }
+
     window.MorphLocks = new Set();
 
     this.selected.forEach(id => {
       const abilityId = `morph_${id}`;
       const trait = MorphAbilities[id];
+
       window.MorphLocks.add(abilityId);
 
-      // Inject into availableAbilities if not already there
       Abilities.availableAbilities[abilityId] = {
         ...trait,
         isMorph: true,
         weaponProperties: [],
       };
 
-      Abilities.purchaseAbility(abilityId, 0); // Free
+      Abilities.purchaseAbility(abilityId, 0); // free
     });
 
-    this.selected.forEach(id => {
-      const morphId = `morph_${id}`;
-    });
+    localStorage.setItem("morphTraits", JSON.stringify([...this.selected]));
 
-    confirmRace();
+    // Hide modal
+    modal.classList.remove("show");
+    setTimeout(() => modal.classList.add("hidden"), 300);
+
+    // Notify continuation
+    if (typeof this.onConfirm === "function") this.onConfirm([...this.selected]);
   }
 };
+
+// Confirm & cancel wiring (do this once on load)
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("morph-confirm").onclick = () => MorphSelector.confirm();
+
+  document.getElementById("morph-cancel").onclick = () => {
+    if (!confirm("Cancel character creation?")) return;
+    ConfirmationModal.cancelModal("morph-modal", true); // Or just hide it if preferred
+  };
+});

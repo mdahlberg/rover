@@ -30,6 +30,7 @@ window.Races = {
     bpCost: 10,
     startingStats: { mind: 1, spirit: 1, body: 1 }, // TODO: make one of choice
     proficiencies: ["short_weapons"],
+    selectStat: 1, // Choose 1 stat to boost
     discounts: {
         abilities: [
           {name: "dual_wielder", uses: 1, factor: 0.5},
@@ -50,8 +51,9 @@ window.Races = {
     name: "Morph",
     description: "+1 to two of choice. Free Weapon Proficiency. Custom traits.",
     bpCost: 10,
-    startingStats: { body: 1, mind: 1 }, // TODO: Make two selectable
-    abilities: ["Free Weapon Proficiency"],
+    startingStats: {},
+    selectStat: 2, // Choose 2 stats to boost
     traits: [],
+    selectProficiency: 1, // Choose 1 proficiency
   },
 };
