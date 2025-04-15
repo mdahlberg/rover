@@ -79,14 +79,41 @@
   </div>
 
   <-- Stat Selection modal -->
-  <div id="stat-selection-modal" class="modal hidden">
+  <div id="stat-modal" class="modal hidden">
     <div class="modal-content">
-      <h2 id="stat-selection-title">Choose Your Stat Bonus</h2>
-      <div id="stat-selection-list" class="button-group"></div>
-      <button id="stat-cancel" class="modal-cancel-button">Cancel</button>
-      <button id="confirm-stat-selection" disabled>Confirm</button>
+      <h2>Select Stat Bonuses</h2>
+      <p>Choose You Starting Stat Bonus.</p>
+
+      <div id="stat-choice-buttons">
+        <div class="stat-choice">
+          <span>Body</span>
+          <button class="stat-minus" data-stat="body">−</button>
+          <span id="stat-body-count">0</span>
+          <button class="stat-plus" data-stat="body">+</button>
+        </div>
+        <div class="stat-choice">
+          <span>Mind</span>
+          <button class="stat-minus" data-stat="mind">−</button>
+          <span id="stat-mind-count">0</span>
+          <button class="stat-plus" data-stat="mind">+</button>
+        </div>
+        <div class="stat-choice">
+          <span>Spirit</span>
+          <button class="stat-minus" data-stat="spirit">−</button>
+          <span id="stat-spirit-count">0</span>
+          <button class="stat-plus" data-stat="spirit">+</button>
+        </div>
+      </div>
+
+      <p id="stat-pick-status">0 selected</p>
+
+      <div class="modal-actions">
+        <button id="stat-cancel">Cancel</button>
+        <button id="confirm-stat-selection" disabled>Continue</button>
+      </div>
     </div>
   </div>
+
 
   <!-- Morph Modal It's Morphin Time -->
   <div id="morph-modal" class="modal hidden">

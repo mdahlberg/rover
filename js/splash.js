@@ -46,7 +46,7 @@ function runModalFlow(raceKey) {
   // Stat Selection - for Races who allow choosing one or more core stats
   if (race.selectStat) {
     modalSteps.push(() => new Promise(resolve => {
-      StatSelector.open();
+      StatSelector.open(race.selectStat);
       StatSelector.onConfirm = resolve;
     }));
   }

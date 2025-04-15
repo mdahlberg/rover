@@ -1,65 +1,86 @@
-// === statModal.js ===
-
 window.StatSelector = {
-  selected: null,
-  onConfirm: null, // callback
+  selectedStats: {
+    body: 0,
+    mind: 0,
+    spirit: 0,
+  },
+  maxPoints: 1,
+  onConfirm: null,
 
-  open: function (options = { stats: ["body", "mind", "spirit"], title: "Choose a Stat Bonus" }) {
-    const modal = document.getElementById("stat-selection-modal");
-    const list = document.getElementById("stat-selection-list");
-    const confirm = document.getElementById("confirm-stat-selection");
+  open(numPoints = 1) {
+    this.maxPoints = numPoints;
+    this.selectedStats = { body: 0, mind: 0, spirit: 0 };
 
-    // Reset
-    this.selected = null;
-    list.innerHTML = "";
-    confirm.disabled = true;
-
-    // Title
-    document.getElementById("stat-selection-title").textContent = options.title;
-
-    options.stats.forEach(stat => {
-      const button = document.createElement("button");
-      button.className = "stat-choice-button";
-      button.textContent = stat.charAt(0).toUpperCase() + stat.slice(1);
-      button.onclick = () => {
-        this.selected = stat;
-        document.querySelectorAll(".stat-choice-button").forEach(b => b.classList.remove("selected"));
-        button.classList.add("selected");
-        confirm.disabled = false;
-      };
-      list.appendChild(button);
-    });
-
+    const modal = document.getElementById("stat-modal");
     modal.classList.remove("hidden");
     setTimeout(() => modal.classList.add("show"), 10);
+
+    this.updateUI();
+
+    // Plus buttons
+    document.querySelectorAll(".stat-plus").forEach(btn => {
+      btn.onclick = () => {
+        const stat = btn.dataset.stat;
+        if (this.getTotalSelected() < this.maxPoints) {
+          this.selectedStats[stat]++;
+          this.updateUI();
+        }
+      };
+    });
+
+    // Minus buttons
+    document.querySelectorAll(".stat-minus").forEach(btn => {
+      btn.onclick = () => {
+        const stat = btn.dataset.stat;
+        if (this.selectedStats[stat] > 0) {
+          this.selectedStats[stat]--;
+          this.updateUI();
+        }
+      };
+    });
   },
 
-  confirmSelection: function () {
-    if (!this.selected) return;
+  getTotalSelected() {
+    return Object.values(this.selectedStats).reduce((sum, val) => sum + val, 0);
+  },
 
-    // Apply the stat to racial starting stats
-    Stats.startingStats[this.selected] = (Stats.startingStats[this.selected] || 0) + 1;
+  updateUI() {
+    ["body", "mind", "spirit"].forEach(stat => {
+      document.getElementById(`stat-${stat}-count`).textContent = this.selectedStats[stat];
+    });
 
-    // Lock it in
-    localStorage.setItem("racialStatChoice", this.selected);
-    window.RacialLocks = window.RacialLocks || {};
-    window.RacialLocks.stats = new Set([this.selected]);
+    const total = this.getTotalSelected();
+    document.getElementById("stat-pick-status").textContent = `${total} of ${this.maxPoints} selected`;
 
-    // Hide modal
-    const modal = document.getElementById("stat-selection-modal");
+    document.getElementById("confirm-stat-selection").disabled = total !== this.maxPoints;
+  },
+
+  confirmSelection() {
+    if (this.getTotalSelected() !== this.maxPoints) {
+      alert("Please assign exactly 2 stat points.");
+      return;
+    }
+
+    // Apply stats
+    Object.entries(this.selectedStats).forEach(([stat, value]) => {
+      Stats.startingStats[stat] = (Stats.startingStats[stat] || 0) + value;
+    });
+
+    // Close modal
+    const modal = document.getElementById("stat-modal");
     modal.classList.remove("show");
     setTimeout(() => modal.classList.add("hidden"), 300);
 
-    if (typeof this.onConfirm === "function") this.onConfirm(this.selected);
-  },
+    if (typeof this.onConfirm === "function") this.onConfirm({ ...this.selectedStats });
+  }
 };
 
-// Hook up confirm button
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("confirm-stat-selection").onclick = () => StatSelector.confirmSelection();
+
   document.getElementById("stat-cancel").onclick = () => {
     if (!confirm("Cancel character creation?")) return;
-    ConfirmationModal.cancelModal("stat-selection-modal", true);
+    ConfirmationModal.cancelModal("stat-modal", true);
   };
 });
 
