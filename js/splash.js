@@ -9,57 +9,81 @@ let selectedRace = {};
  * @param {string} race - The identifier of the race.
  */
 function selectRace(race) {
+  raceObject = Races[race];
+
   // Remove selection from all race cards.
   const allCards = document.querySelectorAll('.race-card');
   allCards.forEach(card => card.classList.remove('selected'));
 
   // Set the selected race.
-  selectedRace = race;
   const selectedCard = document.querySelector(`[onclick="selectRace('${race}')"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
   }
+
+  // Pop-up modal(s) to choose special abilities
+  localStorage.setItem("selectedRace", race);
+  runModalFlow(race);
   
   // Show the confirm button.
   document.getElementById('start-button-container').classList.remove('hidden');
 }
 
 /**
- * Confirms the race selection, applies race effects, and redirects to the planner.
+ * Set up a series of modals to move through during character creation
  */
-function confirmRace() {
-  if (!selectedRace) {
-    alert('Please select a race before proceeding!');
-    return;
+function runModalFlow(raceKey) {
+  const race = window.Races?.[raceKey];
+  if (!race) return;
+
+  const modalSteps = [];
+
+  // Character name and description - ALL Races
+  modalSteps.push(() => new Promise(resolve => {
+    CharacterInfoModal.open();
+    CharacterInfoModal.onConfirm = resolve;
+  }));
+
+  // Stat Selection - for Races who allow choosing one or more core stats
+  if (race.selectStat) {
+    modalSteps.push(() => new Promise(resolve => {
+      StatSelector.open(race.selectStat);
+      StatSelector.onConfirm = resolve;
+    }));
   }
 
-  // 🌟 Save and apply race
-  console.log("Race confirmed:", selectedRace);
-  localStorage.setItem('selectedRace', selectedRace);
+  // Morph Attribute selection
+  // TODO - remove hard coding
+  if (raceKey === "morphs") {
+    modalSteps.push(() => new Promise(resolve => {
+      MorphSelector.open();
+      MorphSelector.onConfirm = resolve;
+    }));
+  }
 
-  Stats.applyRaceEffects(selectedRace);
-  applyRacialProficienciesAndAbilities();
+  // Proficiency selection - for Races who allowing choosing a starting proficiency
+  //if (race.selectProficiency) {
+  //  modalSteps.push(() => new Promise(resolve => {
+  //    ProficiencySelector.open();
+  //    ProficiencySelector.onConfirm = resolve;
+  //  }));
+ // }
 
-  // 🎯 Setup Build Point totals
-  //const startingBP = parseInt(localStorage.getItem("startingBP") || "50", 10);
-  const racialCost = parseInt(localStorage.getItem("racialBPSpent") || "0", 10);
+  // Character confirmation modal
+  modalSteps.push(() => new Promise(resolve => {
+    ConfirmationModal.open();
+    ConfirmationModal.onConfirm = resolve;
+  }));
 
-  BPLeveling.addEarnedBP(50);
 
-  // 🧼 Setup layer cleanly
-  Layers.currentLayer = {
-    pointsSpent: racialCost,
-    points: {},
-    stats: {},
-    abilities: {},
-    lores: {},
-    proficiencies: {},
-    essenceSlots: {},
-  };
+  // Run the sequence in order
+  (async () => {
+    for (const step of modalSteps) {
+      await step();
+    }
 
-  // Show planner and update display
-  UI.showCharacterPlanner();
-  UI.refreshAll();
-  UI.updateGlobalBuildPoints();
+    // All done – refresh the UI
+    //UI.refreshAll();
+  })();
 }
 

@@ -1,0 +1,15 @@
+Morph Racial Skills,Effect,Cost for Extra Uses
+"Natural Weapons","This allows a character to wield a special short blade boffer to represent natural weapons such as claws, horns, beaks, or fangs. An anthropomorph with this ability is automatically proficient in the use of this weapon. When you buy this ability you may choose to take a single short blade that deals 2 damage or two blades that deal 1 damage. Natural weapons boffers must be at least half red, and cannot be destroyed or disarmed, but they can be broken. They are treated as Short Blades for all weapon feature prerequisites.","N/A"
+Naturally Strong,Raise your strength by 1. This has no effect on your BCS.,N/A
+Rapid Regeneration,Gains a use of Regenerate 10 once per rest. All uses of any regeneration effects only take this anthropomorph 10 seconds rather than 30 seconds. All uses of Regeneration should add the word "Rapid" to the audible call.,N/A
+Scent,Gains the ability to get extra information from the Plot Marshalls based on any scents in the area. Can also be used to enhance any tracking based Lores.,N/A
+Insulating Hide,This character is resistant to cold damage and reduces any cold damage taken by 5, to a minimum of 0.,N/A
+Armored Plating,This character gains proficiency in shields for free. This shield cannot be destroyed or disarmed. It should be marked with green stripes along the edge to denote it as natural armor. This skill does not allow a character to use more than one shield at a time.,N/A
+Hard to Kill,Once per cycle when this character’s health reaches 0, they begin a silent 10 count and then automatically gain 1 health.,5
+Naturally Tough,Gain 3 additional health points. Can be bought a maximum of three times.,4
+Regenerate Limb,This anthropomorph can end a single wrapped, pinned, or withered effect after a 3 count while roleplaying ripping free, taking 5 health damage and gaining an long Unsteady effect. When the Unsteady effect ends, the character gains 5 health.,5
+Blinding Venom Spray,This anthropomorph gains a thrown packet ability to call “Blinding Venom! Toxin 5/Long Blind” once per Cycle. This is physical damage, not essence damage.,6
+Neurotoxin Venom Spray,This anthropomorph gains a thrown packet ability to call “Neurotoxin! Toxin 5/Long Weaken 2” once per Cycle. This is physical damage, not essence damage.,6
+Terrifying Glare,Once per rest this anthropomorph may throw a packet to call “Terrifying Glare! Short Terror!” This is a physical effect. Creatures who do not feel fear are immune.,4
+
+

@@ -464,7 +464,10 @@ window.UI = {
   
     // Helper to create ability DOM
     function createAbilityCard(abilityId, ability, count, isDerived = false) {
+      const isMorph = ability?.isMorph || false;
+
       const item = document.createElement("div");
+
       item.className = "ability-item" + (isDerived ? " derived" : "");
   
       const header = document.createElement("div");
@@ -474,6 +477,14 @@ window.UI = {
       name.className = "ability-name";
       name.textContent = ability.name;
       name.title = ability.description;
+
+      if (isMorph) {
+        item.classList.add("morph-ability");
+        const morphTag = document.createElement("span");
+        morphTag.className = "racial-tag";
+        morphTag.textContent = "(Morph)";
+        name.appendChild(morphTag);
+      }
   
       const badge = document.createElement("span");
       badge.className = "ability-badge";
