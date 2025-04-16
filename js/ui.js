@@ -178,7 +178,7 @@ window.UI = {
       label.textContent = EssenceSlots.getDisplayLabel(level);
 
       const count = document.createElement("span");
-      count.textContent = `x${EssenceSlots.getTotalSlotsForLevel(level)}`;
+      count.textContent = `x${EssenceSlots.purchasedEssences[level]}`;
       count.classList.add("slot-count");
 
       const cost = EssenceSlots.getCost(level);
@@ -250,6 +250,17 @@ window.UI = {
         <em>Lores:</em> ${lores}<br>
         <em>Essence Slots:</em> ${essence}
       `;
+
+      // Add a revert button
+      if (index < Layers.layers.length) {
+        const revertBtn = document.createElement("button");
+        revertBtn.textContent = "Revert to this Level";
+        revertBtn.className = "revert-button";
+        revertBtn.onclick = () => {
+          Layers.revertToLevel(index);
+        };
+        item.appendChild(revertBtn);
+      }
 
       historyList.appendChild(item);
     });
@@ -783,6 +794,12 @@ window.UI = {
   },
 
   updateGlobalBuildPoints: function () {
+    // Set current Level display as well
+    const levelEl = document.getElementById("level-display");
+    if (levelEl) {
+      levelEl.innerText = Layers.getCurrentLevel();
+    }
+
     const total = BPLeveling.earnedBP;
     const spent = Layers.getTotalPointsSpent();
     const remaining = total - spent;

@@ -28,7 +28,7 @@ window.Races = {
     name: "Duskers",
     description: "+1 Mind, +1 Spirit, +1 of choice. Discount on Dual Wielder / Strike from Behind.",
     bpCost: 10,
-    startingStats: { mind: 1, spirit: 1, body: 1 }, // TODO: make one of choice
+    startingStats: { mind: 1, spirit: 1 },
     proficiencies: ["short_weapons"],
     selectStat: 1, // Choose 1 stat to boost
     discounts: {

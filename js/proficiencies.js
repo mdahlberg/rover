@@ -64,63 +64,41 @@ window.Proficiencies = {
     },
   },
 
-  purchased: {},
+  purchasedProficiencies: {},
+  currentLayerPurchasedProficiencies: {},
 
   purchaseProficiency: function (id, overrideCost) {
     const prof = this.availableProficiencies[id];
+    const cost = overrideCost ?? prof.cost;
 
-    const cost = overrideCost ?? prof.cost
-
-    if (!prof || this.purchased[id]) return false;
-
+    if (!prof || this.purchasedProficiencies[id]) return false;
     if (!Layers.spendPoints("proficiencies", id, cost)) return false;
 
-    if (!Layers.currentLayer.proficiencies) {
-      Layers.currentLayer.proficiencies = {}
-    }
-
-    Layers.currentLayer.proficiencies[id] = 1;
-    this.purchased[id] = true;
+    this.purchasedProficiencies[id] = true;
+    this.currentLayerPurchasedProficiencies[id] = true;
 
     UI.updateProficiencyUI();
     return true;
   },
 
-  canRefund: function(id) {
-    // Can't return from previous level
-    if (!Layers.currentLayer.proficiencies?.[id]) {
-      return false;
-    }
+  canRefund: function (id) {
+    if (!this.currentLayerPurchasedProficiencies[id]) return false;
+    if (window.RacialLocks?.proficiencies?.has(id)) return false;
 
-    // Can't return starting stuff
-    if (window.RacialLocks?.proficiencies?.has(id)) {
-      return false;
-    }
-
-    // Check weapon property dependencies
     const propertiesRemoved = new Set();
-
-    // See what properties this proficiency grants
     for (const [propId, prop] of Object.entries(WeaponProperties.availableProperties)) {
-      if (prop.grantedBy?.includes(id)) {
-        propertiesRemoved.add(propId);
-      }
+      if (prop.grantedBy?.includes(id)) propertiesRemoved.add(propId);
     }
 
-    // Get the set of properties *after* refunding this proficiency
     const stillOwnedProps = WeaponProperties.getPlayerProperties();
     propertiesRemoved.forEach(p => stillOwnedProps.delete(p));
 
-    // Look through all currently purchased abilities
     for (const [abilityId, count] of Object.entries(Abilities.purchasedAbilities)) {
       if (count <= 0) continue;
-
       const ability = Abilities.availableAbilities[abilityId];
       const requiredProps = ability.weaponProperties || [];
-
-      const hasRequired = requiredProps.some(prop => stillOwnedProps.has(prop));
-      if (!hasRequired && requiredProps.length > 0) {
-        console.warn(`Cannot refund ${id} — it would invalidate purchased ability: ${ability.name}`);
+      if (requiredProps.length && !requiredProps.some(p => stillOwnedProps.has(p))) {
+        console.warn(`Cannot refund ${id} — it would invalidate ${ability.name}`);
         return false;
       }
     }
@@ -129,24 +107,21 @@ window.Proficiencies = {
   },
 
   removeProficiency: function (id) {
-    if (!this.purchased[id] || !Layers.currentLayer.proficiencies?.[id]) return false;
-
-    if (window.RacialLocks?.proficiencies?.has(id)) {
-      console.warn("Cannot remove starting proficiency: ", id);
-      return false;
-    }
+    if (!this.purchasedProficiencies[id] || !this.currentLayerPurchasedProficiencies[id]) return false;
+    if (window.RacialLocks?.proficiencies?.has(id)) return false;
 
     const prof = this.availableProficiencies[id];
     Layers.refundPoints("proficiencies", id, prof.cost);
-    delete Layers.currentLayer.proficiencies?.[id];
-    delete this.purchased[id];
+
+    delete this.purchasedProficiencies[id];
+    delete this.currentLayerPurchasedProficiencies[id];
 
     UI.updateProficiencyUI();
     return true;
   },
 
   isPurchased: function (id) {
-    return !!this.purchased[id];
+    return !!this.purchasedProficiencies[id];
   },
 
   getProficiencyById: function (id) {
@@ -155,12 +130,33 @@ window.Proficiencies = {
 
   initializeRacialProficiencies: function () {
     const racial = JSON.parse(localStorage.getItem("racialProficiencies") || "[]");
-    racial.forEach((id) => {
-      if (!this.purchasedProficiencies[id]) {
-        this.purchasedProficiencies[id] = "racial";
-      }
-    });
+    racial.forEach(id => this.purchasedProficiencies[id] = "racial");
   },
-  
-};
 
+  resetCurrentLayer: function () {
+    this.currentLayerPurchasedProficiencies = {};
+  },
+
+  recalcFromLayers() {
+    console.log("Restoring Proficiencies from all locked layers");
+
+    this.purchased = {};
+    this.currentLayerPurchasedProficiencies = {};
+
+    // Aggregate all finalized layers
+    for (const layer of Layers.layers) {
+      if (!layer?.proficiencies) continue;
+      for (const id of Object.keys(layer.proficiencies)) {
+        this.purchased[id] = true;
+      }
+    }
+
+    // Restore current layer
+    const restored = Layers.currentLayer.proficiencies || {};
+    for (const id of Object.keys(restored)) {
+      this.purchased[id] = true;
+      this.currentLayerPurchasedProficiencies[id] = true;
+    }
+  }
+
+};

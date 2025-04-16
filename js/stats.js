@@ -1,4 +1,5 @@
 window.Stats = {
+  // Track Current stats across all Layers
   currentStats: {
     body: 0,
     mind: 0,
@@ -15,6 +16,7 @@ window.Stats = {
     strength: 0
   },
 
+  // Track stats that have been added in this layer
   currentLayerStats: {
     body: 0,
     mind: 0,
@@ -215,6 +217,27 @@ window.Stats = {
 
     if (race.traits) {
       localStorage.setItem("morphTraits", JSON.stringify(race.traits));
+    }
+  },
+
+  /**
+   * We keep a global number of stats to avoid recalculating it from all
+   * layers each time we refresh.
+   * When reverting to a previous layer, we do need to iterate through all
+   * prior layers though.
+   */
+  recalcFromLayers: function() {
+    Stats.currentStats = {}; // Start fresh
+
+    for (const layer of Layers.layers) {
+      for (const [stat, value] of Object.entries(layer.stats || {})) {
+        this.currentStats[stat] = (this.currentStats[stat] || 0) + value;
+      }
+    }
+
+    // Now add current layer stats
+    for (const [stat, value] of Object.entries(Layers.currentLayer.stats || {})) {
+      this.currentStats[stat] = (this.currentStats[stat] || 0) + value;
     }
   },
 };

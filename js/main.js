@@ -40,7 +40,7 @@ function applyRacialProficienciesAndAbilities() {
 
   // ✅ Apply racial proficiencies
   allProfs.forEach((profId) => {
-    if (!Proficiencies.purchased[profId]) {
+    if (!Proficiencies.purchasedProficiencies[profId]) {
       Proficiencies.purchaseProficiency(profId, 0);
     }
   });
@@ -54,7 +54,6 @@ function applyRacialProficienciesAndAbilities() {
 
   for (const type in racialDiscounts) {
     if (type === "abilities") {
-      // A list of objects {name: str, uses: int, factor: float}
       Abilities.applyDiscounts(racialDiscounts[type]);
     } else {
       alert("Only Ability Discounts are available");

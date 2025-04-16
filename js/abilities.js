@@ -404,4 +404,27 @@ window.Abilities = {
     }
   },
 
+  /**
+   * We keep a global number of purhcased abilities to avoid recalculating it from all
+   * layers each time we refresh.
+   * When reverting to a previous layer, we do need to iterate through all
+   * prior layers though.
+   */
+  recalcFromLayers: function(layerIndex) {
+    this.resetCurrentLayerPurchasedAbilities();
+    const layer = Layers.layers[layerIndex];
+    if (!layer || !layer.abilities) return;
+
+    // Restore currentLayer purchases for that level
+    this.currentLayerPurchasedAbilities = structuredClone(layer.abilities);
+
+    // Rebuild purchasedAbilities from all locked layers
+    this.purchasedAbilities = {};
+    Layers.layers.forEach(l => {
+      for (const id in l.abilities || {}) {
+        this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + l.abilities[id];
+      }
+    });
+  },
+
 };
