@@ -62,12 +62,12 @@ function runModalFlow(raceKey) {
   }
 
   // Proficiency selection - for Races who allowing choosing a starting proficiency
-  //if (race.selectProficiency) {
-  //  modalSteps.push(() => new Promise(resolve => {
-  //    ProficiencySelector.open();
-  //    ProficiencySelector.onConfirm = resolve;
-  //  }));
- // }
+  if (race.selectProficiency) {
+    modalSteps.push(() => new Promise(resolve => {
+      ProficiencySelector.open();
+      ProficiencySelector.onConfirm = resolve;
+    }));
+  }
 
   // Character confirmation modal
   modalSteps.push(() => new Promise(resolve => {
