@@ -137,6 +137,19 @@
     </div>
   </div>
 
+  <!-- Prof Modal -->
+  <div id="proficiency-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Select Your Free Proficiency</h2>
+      <p>Choose one proficiency to begin with. This is free and permanent.</p>
+      <div id="proficiency-list" class="modal-grid"></div>
+      <div class="modal-footer">
+        <button id="proficiency-cancel">Cancel</button>
+        <button id="proficiency-confirm" disabled>Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Confirmation Modal -->
   <div id="confirmation-modal" class="modal hidden">
     <div class="modal-content">
@@ -294,11 +307,12 @@
   <script src="js/races.js"></script>              <!-- Data only, safe to go here -->
   <script src="js/ui.js"></script>                 <!-- Uses all above modules -->
   <script src="js/main.js"></script>               <!-- Entry point: sets RacialLocks, calls UI updates -->
+  <script src="js/characterInfoModal.js"></script> <!-- -->
+  <script src="js/statModal.js"></script>          <!-- -->
   <script src="js/morphAbilities.js"></script>     <!-- -->
   <script src="js/morphSelector.js"></script>      <!-- -->
-  <script src="js/characterInfoModal.js"></script> <!-- -->
+  <script src="js/profModal.js"></script>          <!-- -->
   <script src="js/confirmationModal.js"></script>  <!-- -->
-  <script src="js/statModal.js"></script>          <!-- -->
   <script src="js/splash.js"></script>             <!-- Splash needs Races and Stats, can go last -->
 
 </body>
