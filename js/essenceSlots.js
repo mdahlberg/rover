@@ -16,6 +16,35 @@ window.EssenceSlots = {
     "master": [null, null, null, 6, 4, 2]
   },
 
+  purchasedEssences: {},
+  currentLayerPurchasedEssences: {},
+
+  initialize: function () {
+    this.purchasedEssences = {};
+    this.currentLayerPurchasedEssences = {};
+    this.levels.forEach(level => {
+      this.purchasedEssences[level] = 0;
+      this.currentLayerPurchasedEssences[level] = 0;
+    });
+  },
+
+  recalcFromLayers: function () {
+    this.initialize();
+
+    Layers.layers.forEach(layer => {
+      const essences = layer.essenceSlots || {};
+      for (const level in essences) {
+        this.purchasedEssences[level] += essences[level];
+      }
+    });
+
+    const current = Layers.currentLayer.essenceSlots || {};
+    for (const level in current) {
+      this.purchasedEssences[level] += current[level];
+      this.currentLayerPurchasedEssences[level] = current[level];
+    }
+  },
+
   getMindBracket: function () {
     const mind = Stats.getTotal("mind");
     if (mind >= 30) return 5;
@@ -32,11 +61,11 @@ window.EssenceSlots = {
   },
 
   getSlotCount: function (level) {
-    return Layers.getCurrentLayerCount("essenceSlots", level);
+    return this.currentLayerPurchasedEssences[level] || 0;
   },
 
   getTotalSlotsForLevel: function (level) {
-    return Layers.getTotalCount("essenceSlots", level);
+    return this.purchasedEssences[level] || 0;
   },
 
   getDisplayLabel: function (levelId) {
@@ -51,9 +80,10 @@ window.EssenceSlots = {
       return false;
     }
 
-    if (level === "1") return true; // Slot 1 is always allowed
+    // Slot 1 is always allowed
+    if (level === "1") return true;
 
-    const prevLevelCount = this.getTotalSlotsForLevel(level - 1);
+    const prevLevelCount = this.getTotalSlotsForLevel(String(Number(level) - 1));
     const thisLevelCount = this.getTotalSlotsForLevel(level);
 
     return prevLevelCount > thisLevelCount;
@@ -61,11 +91,12 @@ window.EssenceSlots = {
 
   isRefundable: function (level) {
     const levelIndex = this.levels.indexOf(level);
+
     if (levelIndex === -1) return false;
-  
+
     // You must have at least one slot to refund
     if (this.getSlotCount(level) <= 0) return false;
-  
+
     // You can't refund if doing so would break pyramid structure
     for (let i = levelIndex + 1; i < this.levels.length; i++) {
       const higher = this.levels[i];
@@ -73,29 +104,22 @@ window.EssenceSlots = {
       const thisCount = this.getTotalSlotsForLevel(level);
       if (higherCount > thisCount - 1) return false;
     }
-  
+
     return true;
   },
 
   purchaseSlot: function (level) {
-    levelKey = String(level)
+    const levelKey = String(level);
     const cost = this.getCost(levelKey);
     if (!this.canPurchase(levelKey)) return false;
-  
+
     if (!Layers.spendPoints("essenceSlots", levelKey, cost)) return false;
-  
-    // ✅ Increment the number of slots purchased for this level
-    if (!Layers.currentLayer.essenceSlots) {
-      Layers.currentLayer.essenceSlots = {};
-      if (!Layers.currentLayer.essenceSlots[levelKey]) {
-        Layers.currentLayer.essenceSlots[levelKey] = 0
-      }
-    }
-  
-    Layers.currentLayer.essenceSlots[levelKey] = (Layers.currentLayer.essenceSlots[levelKey] || 0) + 1;
+
+    this.currentLayerPurchasedEssences[levelKey] = (this.currentLayerPurchasedEssences[levelKey] || 0) + 1;
+    this.purchasedEssences[levelKey] = (this.purchasedEssences[levelKey] || 0) + 1;
 
     Stats.lockedStats.mind = true;
-  
+
     UI.updateEssenceSlotUI();
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
@@ -105,9 +129,7 @@ window.EssenceSlots = {
 
   refundSlot: function (level) {
     const levelIndex = this.levels.indexOf(level);
-    if (levelIndex === -1) {
-      return;
-    }
+    if (levelIndex === -1) return;
 
     const current = this.getSlotCount(level);
     if (current <= 0) return;
@@ -123,22 +145,29 @@ window.EssenceSlots = {
     // Refund BP
     Layers.refundPoints("essenceSlots", level, cost);
 
-    // Decrement the local display/purchase tracker
-    if (Layers.currentLayer.essenceSlots?.[level]) {
-      Layers.currentLayer.essenceSlots[level]--;
-      if (Layers.currentLayer.essenceSlots[level] <= 0) {
-        delete Layers.currentLayer.essenceSlots[level];
-      }
+    this.currentLayerPurchasedEssences[level] -= 1;
+    this.purchasedEssences[level] -= 1;
+
+    if (this.currentLayerPurchasedEssences[level] <= 0) {
+      delete this.currentLayerPurchasedEssences[level];
     }
 
-    if ((Layers.currentLayer?.essenceSlots?.length || 0) === 0) {
+    if ((Object.keys(this.currentLayerPurchasedEssences).length || 0) === 0) {
       Stats.lockedStats.mind = false;
     }
 
-    // Re-render
     UI.updateEssenceSlotUI();
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
     UI.updateStatsUI();
   },
+
+  resetCurrentLayer: function() {
+    this.levels.forEach(level => {
+      this.currentLayerPurchasedEssences[level] = 0;
+    });
+  },
 };
+
+// Initialize on first load
+EssenceSlots.initialize();

@@ -92,4 +92,16 @@ window.BPLeveling = {
 
     return true
   },
+
+  restoreFromSnapshot(snapshot) {
+    if (!snapshot || typeof snapshot.earned !== 'number') {
+      console.warn("Invalid BP snapshot provided.");
+      return;
+    }
+
+    this.earnedBP = snapshot.earned;
+
+    // Trigger UI sync
+    UI.updateGlobalBuildPoints?.();
+  }
 };

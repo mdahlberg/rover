@@ -785,6 +785,21 @@ header {
 }
 
 /* Level History Styling */
+.revert-button {
+  margin-top: 0.5em;
+  padding: 0.3em 0.6em;
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 0.25em;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.revert-button:hover {
+  background-color: #555;
+}
+
 #layer-history div {
   margin-bottom: 6px;
 }

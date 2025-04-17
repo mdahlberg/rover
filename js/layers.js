@@ -38,34 +38,6 @@ window.Layers = {
     return this.currentLayer.pointsSpent;
   },
 
-  getCurrentLayerCount: function (domain, id) {
-    return this.currentLayer[domain]?.[id] || 0;
-  },
-
-  /**
-   * Get the total count of a specific item across all layers.
-   * @param {string} domain - "stats", "abilities", "proficiencies", "lores", "essenceSlots"
-   * @param {string} id - The ID of the item
-   * @returns {number} Total count
-   */
-  getTotalCount: function (domain, id) {
-    let total = 0;
-
-    // Include finalized layers
-    this.layers.forEach(layer => {
-      if (layer[domain] && layer[domain][id]) {
-        total += layer[domain][id];
-      }
-    });
-
-    // Include current layer
-    if (this.currentLayer[domain] && this.currentLayer[domain][id]) {
-      total += this.currentLayer[domain][id];
-    }
-
-    return total;
-  },
-
   /**
    * Spend points on a domain+id pair.
    * @param {string} domain - e.g., "stats", "abilities"
@@ -122,24 +94,26 @@ window.Layers = {
    * Called when the user levels up — freeze the current layer and start fresh.
    */
   resetLayer() {
-    // TODO - refactor curentLayer to always hold this info
     this.currentLayer.stats = structuredClone(Stats.currentLayerStats);
     this.currentLayer.abilities = structuredClone(Abilities.currentLayerPurchasedAbilities);
-    this.layers.push(structuredClone(this.currentLayer));
+    this.currentLayer.proficiencies = structuredClone(Proficiencies.currentLayerPurchasedProficiencies);
+    this.currentLayer.essenceSlots = structuredClone(EssenceSlots.currentLayerPurchasedEssences);
 
-    this.currentLayer = {
-      pointsSpent: 0,
-      points: {},
-      stats: {},
-      abilities: {},
-      lores: {},
-      proficiencies: {},
-      essenceSlots: {},
+    // Save snapshot of BP state
+    this.currentLayer.bpSnapshot = {
+      earned: BPLeveling.earnedBP,
+      spent: this.getTotalPointsSpent(),
+      remaining: BPLeveling.earnedBP - this.getTotalPointsSpent()
     };
 
-    Stats.resetLayerStats();
-    Abilities.currentLayerPurchasedAbilities = {};
+    this.layers.push(structuredClone(this.currentLayer));
 
+    this.currentLayer = this.createNewLayer();
+
+    Stats.resetLayerStats();
+    Abilities.resetCurrentLayerPurchasedAbilities?.();
+    Proficiencies.resetCurrentLayer?.();
+    EssenceSlots.resetCurrentLayer?.();
   },
 
   /**
@@ -158,5 +132,58 @@ window.Layers = {
   getCurrentPointsSpent: function () {
     return this.currentLayer.pointsSpent || 0;
   },
+
+  createNewLayer: function () {
+    // We have already trimmed additional layers
+    const lastLayer = this.layers[this.layers.length - 1];
+
+    // Restore BP snapshot if available (used during revert)
+    if (lastLayer?.bpSnapshot) {
+      console.log("BP Snapshot found! Restoring: ", lastLayer.bpSnapshot);
+      BPLeveling.earnedBP = lastLayer.bpSnapshot.earned;
+    }
+
+    // Return a fresh, empty layer
+    return {
+      pointsSpent: 0,
+      points: {},
+      stats: {},
+      abilities: {},
+      lores: {},
+      proficiencies: {},
+      essenceSlots: {},
+    };
+  },
+
+  revertToLevel: function (index) {
+    if (!confirm(`Revert to Level ${index + 1}? All progress after this will be lost.`)) return;
+
+    // Grab the layer the user wants to revert to
+    const reverted = structuredClone(this.layers[index]);
+
+    // Remove that layer and all above it
+    this.layers = this.layers.slice(0, index);
+
+    // Set it as the new current layer
+    this.currentLayer = reverted;
+
+    // Reset domain-specific helpers
+    // Restore counts so preview shows `x1` correctly
+    Stats.currentLayerStats = structuredClone(this.currentLayer.stats || {});
+
+    // Recalculate Globals by iterating through all previous layers
+    Stats.recalcFromLayers();
+    Abilities.currentLayerPurchasedAbilities = structuredClone(this.currentLayer.abilities || {});
+    Abilities.recalcFromLayers();
+    Proficiencies.currentLayerPurchasedProficiencies = structuredClone(this.currentLayer.proficiencies || {});
+    Proficiencies.recalcFromLayers();
+    EssenceSlots.currentLayerPurchasedEssences = structuredClone(this.currentLayer.essenceSlots || {});
+    EssenceSlots.recalcFromLayers();
+
+    BPLeveling.restoreFromSnapshot(this.currentLayer.bpSnapshot);
+
+    // Sync UI
+    UI.refreshAll();
+  }
 
 };
