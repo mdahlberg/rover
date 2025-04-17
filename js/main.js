@@ -29,9 +29,7 @@ function applyRacialProficienciesAndAbilities() {
   const racialAbilities = JSON.parse(localStorage.getItem("racialAbilities") || "[]");
   const racialDiscounts = JSON.parse(localStorage.getItem("racialDiscounts") || "[]");
 
-  // Include small_weapons as a locked default
-  const defaultProfs = ["small_weapons"];
-  const allProfs = [...new Set([...racialProfs, ...defaultProfs])];
+  const allProfs = [...new Set([...racialProfs])];
 
   window.RacialLocks = {
     proficiencies: new Set(allProfs),

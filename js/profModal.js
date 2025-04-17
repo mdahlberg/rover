@@ -1,5 +1,6 @@
 window.ProficiencySelector = {
   selected: null,
+  onConfirm: null,
 
   open() {
     const modal = document.getElementById("proficiency-modal");
@@ -13,6 +14,9 @@ window.ProficiencySelector = {
     grid.innerHTML = "";
 
     Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
+      // ❌ Skip default proficiency everyone gets
+      if (id === "small_weapons") return;
+
       const owned = Proficiencies.isPurchased(id);
       const card = document.createElement("div");
       card.className = "trait-card" + (owned ? " disabled" : "");
@@ -59,8 +63,10 @@ window.ProficiencySelector = {
 
       modal.classList.remove("show");
       setTimeout(() => modal.classList.add("hidden"), 300);
-      // Maybe call next step or show planner
-      confirmRace();
+
+      if (typeof this.onConfirm === "function") {
+        this.onConfirm(this.selected);
+      }
     };
   }
 };
