@@ -90,6 +90,7 @@ window.Proficiencies = {
       if (prop.grantedBy?.includes(id)) propertiesRemoved.add(propId);
     }
 
+    // Get the set of properties *after* refunding this proficiency
     const stillOwnedProps = WeaponProperties.getPlayerProperties();
     propertiesRemoved.forEach(p => stillOwnedProps.delete(p));
 

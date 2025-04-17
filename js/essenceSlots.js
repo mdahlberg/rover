@@ -80,6 +80,7 @@ window.EssenceSlots = {
       return false;
     }
 
+    // Slot 1 is always allowed
     if (level === "1") return true;
 
     const prevLevelCount = this.getTotalSlotsForLevel(String(Number(level) - 1));
@@ -90,10 +91,13 @@ window.EssenceSlots = {
 
   isRefundable: function (level) {
     const levelIndex = this.levels.indexOf(level);
+
     if (levelIndex === -1) return false;
 
+    // You must have at least one slot to refund
     if (this.getSlotCount(level) <= 0) return false;
 
+    // You can't refund if doing so would break pyramid structure
     for (let i = levelIndex + 1; i < this.levels.length; i++) {
       const higher = this.levels[i];
       const higherCount = this.getTotalSlotsForLevel(higher);
@@ -137,6 +141,8 @@ window.EssenceSlots = {
     }
 
     const cost = this.getCost(level);
+
+    // Refund BP
     Layers.refundPoints("essenceSlots", level, cost);
 
     this.currentLayerPurchasedEssences[level] -= 1;
@@ -154,13 +160,6 @@ window.EssenceSlots = {
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
     UI.updateStatsUI();
-  },
-
-  finalizeCurrentLayer: function() {
-    for (const level in this.currentLayerPurchasedEssences) {
-      const count = this.currentLayerPurchasedEssences[level];
-      this.purchasedEssences[level] = (this.purchasedEssences[level] || 0) + count;
-    }
   },
 
   resetCurrentLayer: function() {
