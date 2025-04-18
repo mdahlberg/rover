@@ -99,7 +99,6 @@ window.Proficiencies = {
       const ability = Abilities.availableAbilities[abilityId];
       const requiredProps = ability.weaponProperties || [];
       if (requiredProps.length && !requiredProps.some(p => stillOwnedProps.has(p))) {
-        console.warn(`Cannot refund ${id} — it would invalidate ${ability.name}`);
         return false;
       }
     }

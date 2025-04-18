@@ -69,6 +69,14 @@ function runModalFlow(raceKey) {
     }));
   }
 
+  // Ability Discount  selection - for Races who allowing choosing abilities for discount
+  if (race.selectAbilityDiscount) {
+    modalSteps.push(() => new Promise(resolve => {
+      AbilitySelectModal.open("Select for Discount", "Selected abilities  will get a one time, 50% discount", race.selectAbilityDiscount);
+      AbilitySelectModal.onConfirm = resolve;
+    }));
+  }
+
   // Character confirmation modal
   modalSteps.push(() => new Promise(resolve => {
     ConfirmationModal.open();

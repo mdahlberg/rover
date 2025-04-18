@@ -58,6 +58,7 @@ window.MorphSelector = {
   confirm: function () {
     const modal = document.getElementById("morph-modal");
 
+    // TODO update to MAX
     if (this.selected.size !== 2) {
       alert("Please select exactly two traits.");
       return;
