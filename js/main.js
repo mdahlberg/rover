@@ -34,6 +34,7 @@ function applyRacialProficienciesAndAbilities() {
   window.RacialLocks = {
     proficiencies: new Set(allProfs),
     abilities: new Set(racialAbilities),
+    lores: new Set(JSON.parse(localStorage.getItem("racialLores") || "[]")) // ✅ Add this line
   };
 
   // ✅ Apply racial proficiencies
@@ -49,6 +50,8 @@ function applyRacialProficienciesAndAbilities() {
       Abilities.purchaseAbility(abilityId, 0);
     }
   });
+
+  Lores.initializeRacialLores();
 
   for (const type in racialDiscounts) {
     if (type === "abilities") {

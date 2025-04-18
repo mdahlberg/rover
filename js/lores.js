@@ -27,6 +27,11 @@ window.Lores = {
   currentLayerPurchasedLores: {},
   purchasedLores: {},
 
+  isRacial: function (loreId) {
+    const stored = JSON.parse(localStorage.getItem("racialLores") || "[]");
+    return stored.includes(loreId);
+  },
+
   getChildLores: function (parentId) {
     return this.availableLores.filter(lore => lore.parent === parentId);
   },
@@ -36,7 +41,10 @@ window.Lores = {
   },
 
   getUnspentLores: function () {
-    const totalSpent = Object.values(this.purchasedLores).reduce((sum, val) => sum + val, 0);
+    const totalSpent = Object.entries(this.purchasedLores)
+      .filter(([id]) => !this.isRacial(id))
+      .reduce((sum, [, val]) => sum + val, 0);
+
     return this.getEarnedLores() - totalSpent;
   },
 
@@ -46,7 +54,10 @@ window.Lores = {
   },
 
   canDecreaseLore: function (loreId) {
-    return this.currentLayerPurchasedLores[loreId] > 0;
+    const current = this.currentLayerPurchasedLores[loreId] || 0;
+    const racial = window.RacialLocks?.lores?.has(loreId) ? 1 : 0;
+
+    return current >= racial;
   },
 
   isSelected: function (loreId) {
@@ -68,6 +79,7 @@ window.Lores = {
   },
 
   removeLore: function (loreId) {
+    console.log("Attempting to remove one from lore Id: ", loreId);
     if (!this.canDecreaseLore(loreId)) return false;
 
     this.currentLayerPurchasedLores[loreId]--;
@@ -107,4 +119,14 @@ window.Lores = {
   resetCurrentLayer: function() {
     this.currentLayerPurchasedLores = {};
   },
+
+  initializeRacialLores: function () {
+    const racial = JSON.parse(localStorage.getItem("racialLores") || "[]");
+  
+    racial.forEach(id => {
+      if (!this.purchasedLores[id]) this.purchasedLores[id] = 0;
+      this.purchasedLores[id] += 1;
+    });
+  },
+
 };

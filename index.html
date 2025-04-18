@@ -114,6 +114,19 @@
     </div>
   </div>
 
+  <!-- Lore Selection Modal -->
+  <div id="lore-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Select One Starting Lore</h2>
+      <p>Choose one lore to receive at character creation. This cannot be changed later.</p>
+      <div id="lore-list" class="trait-grid"></div>
+      <div class="modal-actions">
+        <button id="lore-cancel">Cancel</button>
+        <button id="lore-confirm" disabled>Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <div id="ability-select-modal" class="modal hidden">
     <div class="modal-content">
       <h2 id="ability-select-title">Choose Abilities</h2>
@@ -319,6 +332,7 @@
   <script src="js/races.js"></script>              <!-- Data only, safe to go here -->
   <script src="js/ui.js"></script>                 <!-- Uses all above modules -->
   <script src="js/characterInfoModal.js"></script> <!-- -->
+  <script src="js/loreModal.js"></script>          <!-- -->
   <script src="js/statModal.js"></script>          <!-- -->
   <script src="js/abilitySelectionModal.js"></script>          <!-- -->
   <script src="js/morphAbilities.js"></script>     <!-- -->
