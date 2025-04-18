@@ -98,6 +98,7 @@ window.Layers = {
     this.currentLayer.abilities = structuredClone(Abilities.currentLayerPurchasedAbilities);
     this.currentLayer.proficiencies = structuredClone(Proficiencies.currentLayerPurchasedProficiencies);
     this.currentLayer.essenceSlots = structuredClone(EssenceSlots.currentLayerPurchasedEssences);
+    this.currentLayer.lores = structuredClone(Lores.currentLayerPurchasedLores);
 
     // Save snapshot of BP state
     this.currentLayer.bpSnapshot = {
@@ -114,6 +115,7 @@ window.Layers = {
     Abilities.resetCurrentLayerPurchasedAbilities?.();
     Proficiencies.resetCurrentLayer?.();
     EssenceSlots.resetCurrentLayer?.();
+    Lores.resetCurrentLayer?.();
   },
 
   /**
@@ -179,6 +181,8 @@ window.Layers = {
     Proficiencies.recalcFromLayers();
     EssenceSlots.currentLayerPurchasedEssences = structuredClone(this.currentLayer.essenceSlots || {});
     EssenceSlots.recalcFromLayers();
+    Lores.currentLayerPurchasedLores = structuredClone(this.currentLayer.lores || {});
+    Lores.recalcFromLayers();
 
     BPLeveling.restoreFromSnapshot(this.currentLayer.bpSnapshot);
 

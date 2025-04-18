@@ -119,7 +119,7 @@ window.Stats = {
     if (statName === "mind") {
       const nextMind = current - 1;
       const maxLores = Math.floor(nextMind / 3);
-      const spent = Object.values(Lores.getSelectedLores()).reduce((sum, v) => sum + v, 0);
+      const spent = Object.values(Lores.currentLayerPurchasedLores).reduce((sum, v) => sum + v, 0);
       if (spent > maxLores) {
         return {allowed: false, reason: "Spent Lores must be refunded prior to decreasing Mind"};
       }

@@ -130,12 +130,13 @@ window.UI = {
     }
 
     // Lores preview
-    if (points.lores && Object.keys(points.lores).length > 0) {
+    const curLores = Lores.currentLayerPurchasedLores;
+    if (curLores && Object.keys(curLores).length > 0) {
       const header = document.createElement("li");
       header.innerHTML = `<strong>Lores</strong>`;
       fragments.push(header);
-      for (const id in points.lores) {
-        const count = points.lores[id];
+      for (const id in curLores) {
+        const count = curLores[id];
         const lore = Lores.availableLores.find(l => l.id === id);
         const name = lore?.name || id;
         const li = document.createElement("li");
@@ -178,6 +179,7 @@ window.UI = {
       label.textContent = EssenceSlots.getDisplayLabel(level);
 
       const count = document.createElement("span");
+
       count.textContent = `x${EssenceSlots.purchasedEssences[level]}`;
       count.classList.add("slot-count");
 
@@ -238,9 +240,12 @@ window.UI = {
         })
         .join(", ") || "None";
 
-      const essence = Object.entries(layer.essenceSlots || {})
-        .map(([k, v]) => `Lvl ${k} x${v}`)
-        .join(", ") || "None";
+      const essenceEntries = Object.entries(layer.essenceSlots || {});
+      const nonZeroEssences = essenceEntries.filter(([_, count]) => count > 0);
+
+      const essence = nonZeroEssences.length > 0
+        ? nonZeroEssences.map(([level, count]) => `Lvl ${level} x${count}`).join(", ")
+        : "None";
 
       item.innerHTML = `
         <strong>Level ${index + 1}</strong><br>
@@ -760,34 +765,37 @@ window.UI = {
   createLoreItem: function (lore, parentId = null) {
     const listItem = document.createElement("div");
     listItem.className = `lore-item ${parentId ? "sub-lore" : ""}`;
-
+  
+    const loreId = lore.id;
+    const level = Lores.purchasedLores[loreId] || 0;
+    const current = Lores.currentLayerPurchasedLores[loreId] || 0;
+  
     // Controls container (left-aligned buttons)
     const controls = document.createElement("span");
     controls.className = "lore-controls";
-
+  
     const minus = document.createElement("button");
     minus.textContent = "-";
-    minus.disabled = !Lores.canDecreaseLore(lore.id);
+    minus.disabled = current <= 0;
     minus.onclick = () => {
-      if (Lores.removeLore(lore.id)) UI.refreshAll();
+      if (Lores.removeLore(loreId)) UI.refreshAll();
     };
-
+  
     const plus = document.createElement("button");
     plus.textContent = "+";
-    plus.disabled = !Lores.canIncreaseLore(lore.id);
+    plus.disabled = !Lores.canIncreaseLore(loreId);
     plus.onclick = () => {
-      if (Lores.purchaseLore(lore.id)) UI.refreshAll();
+      if (Lores.purchaseLore(loreId)) UI.refreshAll();
     };
-
+  
     controls.appendChild(minus);
     controls.appendChild(plus);
-
+  
     // Label container (text and level)
     const label = document.createElement("span");
-    label.textContent = `${lore.name} ${Lores.isSelected(lore.id) ? `(Level ${Lores.selectedLores[lore.id] || 0})` : ""}`;
+    label.textContent = `${lore.name}${level > 0 ? ` (Level ${level})` : ""}`;
     label.title = lore.description;
-
-    // Combine and return
+  
     listItem.appendChild(controls);
     listItem.appendChild(label);
     return listItem;
