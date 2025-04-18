@@ -7,6 +7,7 @@ window.Races = {
     abilities: [],
     selectProficiency: 1, // Choose 1 free proficiency
     selectAbilityDiscount: 1, // Choose 1 ability to get a 1st time .5 discount
+    selectLore: 1,
     proficiencies: ["small_weapons"],
   },
 

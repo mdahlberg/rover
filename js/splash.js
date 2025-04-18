@@ -52,6 +52,13 @@ function runModalFlow(raceKey) {
     }));
   }
 
+  if (race.selectLore) {
+    modalSteps.push(() => new Promise(resolve => {
+      LoreSelector.open();
+      LoreSelector.onConfirm = resolve;
+    }));
+  }
+
   // Morph Attribute selection
   // TODO - remove hard coding
   if (raceKey === "morphs") {
