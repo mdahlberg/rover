@@ -52,11 +52,9 @@ window.ProficiencySelector = {
       // Apply Profiency as 'Racial'
       // Load existing racial proficiencies (if any)
       const stored = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]");
-      console.warn("Current stored racial profs: ", stored);
       // Add the new one if not already present
       if (!stored.includes(this.selected)) {
         stored.push(this.selected);
-        console.warn("Storing new racial profs: ", stored);
         localStorage.setItem(Constants.RACIAL_PROFS, JSON.stringify(stored));
       }
 

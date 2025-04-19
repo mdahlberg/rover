@@ -62,7 +62,7 @@ window.CharacterExporter = {
   },
 
   importSnapshot(snapshot) {
-    console.warn("Importing snapshot");
+    console.log("Importing snapshot");
   
     if (!snapshot || snapshot.schema !== "v1") {
       alert("Invalid or incompatible snapshot file.");

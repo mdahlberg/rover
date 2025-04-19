@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Import character button
-  console.warn("Setting up import button");
   const importInput = document.getElementById("import-btn");
 
   importInput.addEventListener("change", function (e) {
@@ -29,9 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const file = e.target.files[0];
     if (!file) return;
 
-    console.warn("File found");
-
-    console.warn("Reading file");
     const reader = new FileReader();
     reader.onload = function (event) {
       try {
@@ -43,9 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
 
-    console.warn("Calling read as text");
     reader.readAsText(file);
-    console.warn("Character uploaded");
+    console.log("Character uploaded");
   });
 
   // 🕹️ If race not selected yet, wait for splash confirmation

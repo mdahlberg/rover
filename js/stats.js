@@ -209,7 +209,6 @@ window.Stats = {
     }
 
     // Safely append race features
-    console.warn("Updating racial proficiencies in local store");
     mergeStoredArray(Constants.RACIAL_PROFS, race.proficiencies);
     mergeStoredArray(Constants.RACIAL_ABILITIES, race.abilities);
     mergeStoredArray(Constants.RACIAL_LORES, race.lores);
