@@ -9,7 +9,7 @@ window.CharacterInfoModal = {
 
   confirm: function () {
     const name = document.getElementById("character-name").value.trim();
-    const description = document.getElementById("character-description").value.trim();
+    const description = document.getElementById("character-desc").value.trim();
 
     if (!name) {
       alert("Please enter a character name.");

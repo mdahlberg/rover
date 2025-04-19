@@ -77,14 +77,26 @@
 
   <!-- Character information modal -->
   <div id="name-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content character-info-modal">
       <h2>Name Your Character</h2>
-      <input type="text" id="character-name" placeholder="Character Name" />
-      <textarea id="character-description" placeholder="Brief description (optional)"></textarea>
-      <button id="character-info-cancel" class="modal-cancel-button">Cancel</button>
-      <button id="confirm-name">Continue</button>
+
+      <div class="form-group">
+        <label for="character-name">Character Name</label>
+        <input id="character-name" type="text" />
+      </div>
+
+      <div class="form-group">
+        <label for="character-desc">Brief Description</label>
+        <textarea id="character-desc" placeholder="Optional backstory, goals, quirks..."></textarea>
+      </div>
+
+      <div class="button-group">
+        <button id="character-info-cancel" class="btn-cancel">Cancel</button>
+        <button id="confirm-name" class="btn-continue">Continue</button>
+      </div>
     </div>
   </div>
+
 
   <!-- Stat Selection modal -->
   <div id="stat-modal" class="modal hidden">
