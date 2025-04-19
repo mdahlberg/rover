@@ -16,8 +16,8 @@ window.CharacterInfoModal = {
       return;
     }
 
-    localStorage.setItem("characterName", name);
-    localStorage.setItem("characterDescription", description);
+    localStorage.setItem(Constants.CHAR_NAME, name);
+    localStorage.setItem(Constants.CHAR_DESC, description);
 
     const modal = document.getElementById("name-modal");
     modal.classList.remove("show");

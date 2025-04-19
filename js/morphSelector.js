@@ -81,7 +81,7 @@ window.MorphSelector = {
       Abilities.purchaseAbility(abilityId, 0); // free
     });
 
-    localStorage.setItem("morphTraits", JSON.stringify([...this.selected]));
+    localStorage.setItem(Constants.MORPH_TRAITS, JSON.stringify([...this.selected]));
 
     // Hide modal
     modal.classList.remove("show");

@@ -212,7 +212,7 @@ window.Abilities = {
   },
 
   resetCurrentLayerPurchasedAbilities: function() {
-    currentLayerPurchasedAbilities = {};
+    this.currentLayerPurchasedAbilities = {};
   },
 
   /**
@@ -410,21 +410,24 @@ window.Abilities = {
    * When reverting to a previous layer, we do need to iterate through all
    * prior layers though.
    */
-  recalcFromLayers: function(layerIndex) {
-    this.resetCurrentLayerPurchasedAbilities();
-    const layer = Layers.layers[layerIndex];
-    if (!layer || !layer.abilities) return;
+  recalcFromLayers: function () {
+    console.log("Recalculating Abilities from all locked layers + current layer");
 
-    // Restore currentLayer purchases for that level
-    this.currentLayerPurchasedAbilities = structuredClone(layer.abilities);
-
-    // Rebuild purchasedAbilities from all locked layers
     this.purchasedAbilities = {};
-    Layers.layers.forEach(l => {
-      for (const id in l.abilities || {}) {
-        this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + l.abilities[id];
-      }
-    });
-  },
+    this.currentLayerPurchasedAbilities = {};
 
+    // Rebuild purchasedAbilities from all finalized layers
+    for (const layer of Layers.layers) {
+      for (const id in layer.abilities || {}) {
+        this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + layer.abilities[id];
+      }
+    }
+
+    // Restore current layer abilities
+    const current = Layers.currentLayer.abilities || {};
+    for (const id in current) {
+      this.currentLayerPurchasedAbilities[id] = current[id];
+      this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + current[id];
+    }
+  },
 };

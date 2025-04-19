@@ -47,10 +47,10 @@ window.LoreSelector = {
     Lores.purchaseLore(this.selected);
 
     // Lock as racial
-    const stored = JSON.parse(localStorage.getItem("racialLores") || "[]");
+    const stored = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
     if (!stored.includes(this.selected)) {
       stored.push(this.selected);
-      localStorage.setItem("racialLores", JSON.stringify(stored));
+      localStorage.setItem(Constants.RACIAL_LORES, JSON.stringify(stored));
     }
 
     // Hide modal

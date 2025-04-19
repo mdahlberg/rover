@@ -188,35 +188,40 @@ window.Stats = {
       return;
     }
 
-    localStorage.setItem("selectedRace", raceKey);
-    localStorage.setItem("racialBPSpent", race.bpCost); // e.g., 5 for Espers
+    localStorage.setItem(Constants.SELECTED_RACE, raceKey);
+    localStorage.setItem(Constants.RACIAL_BP_SPENT, race.bpCost); // e.g., 5 for Espers
 
+    // Merge startingStats
     Object.entries(race.startingStats || {}).forEach(([stat, value]) => {
       this.startingStats[stat] = (this.startingStats[stat] || 0) + value;
     });
 
+    // Merge startingBonuses
     Object.entries(race.bonuses || {}).forEach(([stat, value]) => {
-      this.startingBonuses[stat] = (this.startingStats[stat] || 0) + value;
+      this.startingBonuses[stat] = (this.startingBonuses[stat] || 0) + value;
     });
 
-    if (race.proficiencies) {
-      localStorage.setItem("racialProficiencies", JSON.stringify(race.proficiencies));
+    // Utility to merge arrays in localStorage
+    function mergeStoredArray(key, incomingArray = []) {
+      const existing = JSON.parse(localStorage.getItem(key) || "[]");
+      const merged = Array.from(new Set([...existing, ...incomingArray]));
+      localStorage.setItem(key, JSON.stringify(merged));
     }
 
-    if (race.abilities) {
-      localStorage.setItem("racialAbilities", JSON.stringify(race.abilities));
-    }
+    // Safely append race features
+    console.warn("Updating racial proficiencies in local store");
+    mergeStoredArray(Constants.RACIAL_PROFS, race.proficiencies);
+    mergeStoredArray(Constants.RACIAL_ABILITIES, race.abilities);
+    mergeStoredArray(Constants.RACIAL_LORES, race.lores);
+    mergeStoredArray(Constants.MORPH_TRAITS, race.traits);
 
+    // Replace discounts and bonuses — assume these are objects
     if (race.discounts) {
-      localStorage.setItem("racialDiscounts", JSON.stringify(race.discounts));
+      localStorage.setItem(Constants.RACIAL_DISCOUNTS, JSON.stringify(race.discounts));
     }
 
     if (race.bonuses) {
-      localStorage.setItem("racialBonuses", JSON.stringify(race.bonuses));
-    }
-
-    if (race.traits) {
-      localStorage.setItem("morphTraits", JSON.stringify(race.traits));
+      localStorage.setItem(Constants.RACIAL_BONUSES, JSON.stringify(race.bonuses));
     }
   },
 

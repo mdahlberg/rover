@@ -91,7 +91,7 @@ window.AbilitySelectModal = {
 
     // Store the discount (1 use at 50% cost)
     const discounts = [{ name: selectedId, uses: 1, factor: 0.5 }];
-    localStorage.setItem("racialDiscounts", JSON.stringify({ abilities: discounts }));
+    localStorage.setItem(Constants.RACIAL_DISCOUNTS, JSON.stringify({ abilities: discounts }));
 
     // Hide the modal
     modal.classList.remove("show");

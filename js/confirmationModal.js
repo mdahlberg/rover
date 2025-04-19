@@ -3,14 +3,14 @@ window.ConfirmationModal = {
     const modal = document.getElementById("confirmation-modal");
     const summary = document.getElementById("confirmation-summary");
 
-    const raceKey = localStorage.getItem("selectedRace");
+    const raceKey = localStorage.getItem(Constants.SELECTED_RACE);
     const race = window.Races?.[raceKey];
 
-    const name = localStorage.getItem("characterName") || "(Unnamed)";
-    const desc = localStorage.getItem("characterDescription") || "";
+    const name = localStorage.getItem(Constants.CHAR_NAME) || "(Unnamed)";
+    const desc = localStorage.getItem(Constants.CHAR_DESC) || "";
     const stat = localStorage.getItem("racialStatChoice");
-    const traits = JSON.parse(localStorage.getItem("morphTraits") || "[]");
-    const profs = JSON.parse(localStorage.getItem("racialProficiencies") || "[]");
+    const traits = JSON.parse(localStorage.getItem(Constants.MORPH_TRAITS) || "[]");
+    const profs = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]");
 
     let html = `<p><strong>Name:</strong> ${name}</p>`;
     if (desc) html += `<p><strong>Description:</strong> ${desc}</p>`;
@@ -45,12 +45,12 @@ window.ConfirmationModal = {
   },
 
   resetCharacterCreation: function() {
-    localStorage.removeItem("characterName");
-    localStorage.removeItem("characterDescription");
-    localStorage.removeItem("selectedRace");
+    localStorage.removeItem(Constants.CHAR_NAME);
+    localStorage.removeItem(Constants.CHAR_DESC);
+    localStorage.removeItem(Constants.SELECTED_RACE);
     localStorage.removeItem("racialStatChoice");
-    localStorage.removeItem("morphTraits");
-    localStorage.removeItem("racialProficiencies");
+    localStorage.removeItem(Constants.MORPH_TRAITS);
+    localStorage.removeItem(Constants.RACIAL_PROFS);
     // Clear anything else relevant
   }
 };
@@ -68,7 +68,7 @@ document.getElementById("confirmation-cancel").onclick = () => {
  * Confirms the race selection, applies race effects, and redirects to the planner.
  */
 function confirmRace() {
-  selectedRace = localStorage.getItem("selectedRace");
+  selectedRace = localStorage.getItem(Constants.SELECTED_RACE);
   if (!selectedRace) {
     alert('Please select a race before proceeding!');
     return;
@@ -81,7 +81,7 @@ function confirmRace() {
   applyRacialProficienciesAndAbilities();
 
   // 🎯 Setup Build Point totals
-  const racialCost = parseInt(localStorage.getItem("racialBPSpent") || "0", 10);
+  const racialCost = parseInt(localStorage.getItem(Constants.RACIAL_BP_SPENT) || "0", 10);
 
   BPLeveling.addEarnedBP(50);
 
