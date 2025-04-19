@@ -59,6 +59,9 @@ window.CharacterExporter = {
     a.download = `character_snapshot_${timestamp}.json`;
     a.click();
     URL.revokeObjectURL(url);
+
+    // 💾 Also generate PDF report
+    this.exportAsPDF(snapshot);
   },
 
   importSnapshot(snapshot) {
@@ -128,5 +131,61 @@ window.CharacterExporter = {
     // ✅ UI update
     alert("Snapshot imported successfully!");
     UI.showCharacterPlanner();
+  },
+
+  exportAsPDF: function(snapshot) {
+    const doc = new jspdf.jsPDF();
+    let y = 10;
+
+    const addLine = (text) => {
+      doc.text(text, 10, y);
+      y += 10;
+    };
+
+    // Title
+    doc.setFontSize(16);
+    addLine("Character Report");
+    doc.setFontSize(12);
+    addLine("-------------------------");
+
+    // Basic Info
+    addLine("Name: " + (snapshot.characterInfo?.name || "Unnamed"));
+    addLine("Description: " + (snapshot.characterInfo?.description || ""));
+    addLine("Race: " + (snapshot.raceDetails?.name || snapshot.race || "Unknown"));
+
+    addLine("");
+    addLine("Stats:");
+    for (const [stat, value] of Object.entries(snapshot.stats || {})) {
+      addLine("  " + stat.toUpperCase() + ": " + value);
+    }
+
+    addLine("");
+    addLine("Abilities:");
+    for (const [id, count] of Object.entries(snapshot.abilities || {})) {
+      if (count > 0) {
+        const name = snapshot.availableAbilities?.[id]?.name || id;
+        addLine("  " + name + " x" + count);
+      }
+    }
+
+    addLine("");
+    addLine("Proficiencies:");
+    for (const [id, owned] of Object.entries(snapshot.proficiencies || {})) {
+      if (owned) {
+        addLine("  " + id.replace(/_/g, ' '));
+      }
+    }
+
+    addLine("");
+    addLine("Lores:");
+    for (const [id, count] of Object.entries(snapshot.lores || {})) {
+      if (count > 0) {
+        addLine("  " + id.replace(/_/g, ' ') + " x" + count);
+      }
+    }
+
+    // Download
+    doc.save("character_report.pdf");
   }
 };
+
