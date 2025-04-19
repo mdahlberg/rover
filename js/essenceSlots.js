@@ -152,7 +152,14 @@ window.EssenceSlots = {
       delete this.currentLayerPurchasedEssences[level];
     }
 
-    if ((Object.keys(this.currentLayerPurchasedEssences).length || 0) === 0) {
+    hasPurchases = false;
+    for (slot in this.currentLayerPurchasesEssences) {
+      if (this.currentLayerPurchasedEssences[slot] !== 0) {
+        hasPurchases = true;
+        break;
+      }
+    }
+    if (!hasPurchases) {
       Stats.lockedStats.mind = false;
     }
 
