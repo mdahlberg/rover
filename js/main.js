@@ -13,6 +13,36 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  const exportButton = document.getElementById("export-character");
+  if (exportButton) {
+    exportButton.addEventListener("click", () => {
+      CharacterExporter.exportSnapshot();
+    });
+  }
+
+  // Import character button
+  const importInput = document.getElementById("import-btn");
+
+  importInput.addEventListener("change", function (e) {
+    console.log("Importing char");
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const snapshot = JSON.parse(event.target.result);
+        CharacterExporter.importSnapshot(snapshot);
+      } catch (err) {
+        alert("Failed to read snapshot file.");
+        console.error(err);
+      }
+    };
+
+    reader.readAsText(file);
+    console.log("Character uploaded");
+  });
+
   // 🕹️ If race not selected yet, wait for splash confirmation
   if (!selectedRace) {
     console.log("No race selected yet. Waiting for splash confirmation...");
@@ -25,17 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function applyRacialProficienciesAndAbilities() {
-  const racialProfs = JSON.parse(localStorage.getItem("racialProficiencies") || "[]");
-  const racialAbilities = JSON.parse(localStorage.getItem("racialAbilities") || "[]");
-  const racialDiscounts = JSON.parse(localStorage.getItem("racialDiscounts") || "[]");
+  this.initializeRacialLocksFromStorage()
 
-  const allProfs = [...new Set([...racialProfs])];
-
-  window.RacialLocks = {
-    proficiencies: new Set(allProfs),
-    abilities: new Set(racialAbilities),
-    lores: new Set(JSON.parse(localStorage.getItem("racialLores") || "[]")) // ✅ Add this line
-  };
+  const allProfs = [...new Set([...window.RacialLocks.proficiencies])];
 
   // ✅ Apply racial proficiencies
   allProfs.forEach((profId) => {
@@ -45,7 +67,7 @@ function applyRacialProficienciesAndAbilities() {
   });
 
   // ✅ Apply racial abilities
-  racialAbilities.forEach((abilityId) => {
+  window.RacialLocks.abilities.forEach((abilityId) => {
     if (!Abilities.purchasedAbilities[abilityId]) {
       Abilities.purchaseAbility(abilityId, 0);
     }
@@ -53,13 +75,27 @@ function applyRacialProficienciesAndAbilities() {
 
   Lores.initializeRacialLores();
 
-  for (const type in racialDiscounts) {
+  for (const type in window.RacialLocks.racialDiscounts) {
     if (type === "abilities") {
-      Abilities.applyDiscounts(racialDiscounts[type]);
+      Abilities.applyDiscounts(window.RacialLocks.racialDiscounts[type]);
     } else {
       alert("Only Ability Discounts are available");
     }
   }
+}
+
+function initializeRacialLocksFromStorage() {
+  const racialProfs = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]");
+  const racialAbilities = JSON.parse(localStorage.getItem(Constants.RACIAL_ABILITITES) || "[]");
+  const racialLores = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
+  const racialDiscounts = JSON.parse(localStorage.getItem(Constants.RACIAL_DISCOUNTS) || "[]");
+
+  window.RacialLocks = {
+    proficiencies: new Set(racialProfs),
+    abilities: new Set(racialAbilities),
+    lores: new Set(racialLores),
+    racialDiscounts: racialDiscounts,
+  };
 }
 
 function levelUp() {

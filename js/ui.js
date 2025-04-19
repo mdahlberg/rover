@@ -93,17 +93,11 @@ window.UI = {
         let count = Abilities.currentLayerPurchasedAbilities?.[id] || 0;
         const ability = Abilities.getAbilityById?.(id);
         const name = ability?.name || id;
-        const cost = ability?.cost || 0;
-        const isRacial = window.RacialLocks?.abilities?.has(id);
-        const tag = isRacial ? " - Race Bonus" : "";
-        let totalCost = 0;
+        const totalCost = Layers.currentLayer.points.abilities[id];
 
-        if (count > 0 && isRacial && Layers.getCurrentLevel() === 1) {
-          // Take one off for the race
-          totalCost = (count - 1) * cost;
-        } else {
-          totalCost = count * cost;
-        }
+        const isRacial = window.RacialLocks?.abilities?.has(id);
+
+        const tag = isRacial ? " - Race Bonus" : "";
 
         const li = document.createElement("li");
         li.textContent = `• ${name} x${count} (${totalCost} BP)${tag}`;

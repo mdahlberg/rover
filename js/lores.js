@@ -28,7 +28,7 @@ window.Lores = {
   purchasedLores: {},
 
   isRacial: function (loreId) {
-    const stored = JSON.parse(localStorage.getItem("racialLores") || "[]");
+    const stored = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
     return stored.includes(loreId);
   },
 
@@ -41,9 +41,14 @@ window.Lores = {
   },
 
   getUnspentLores: function () {
-    const totalSpent = Object.entries(this.purchasedLores)
-      .filter(([id]) => !this.isRacial(id))
-      .reduce((sum, [, val]) => sum + val, 0);
+    const racialIds = window.RacialLocks?.lores || new Set();
+
+    let totalSpent = 0;
+
+    for (const [id, val] of Object.entries(this.purchasedLores)) {
+      const racialOffset = racialIds.has(id) ? 1 : 0;
+      totalSpent += Math.max(0, val - racialOffset);
+    }
 
     return this.getEarnedLores() - totalSpent;
   },
@@ -94,7 +99,7 @@ window.Lores = {
     return true;
   },
 
-    recalcFromLayers() {
+  recalcFromLayers: function() {
     console.log("Restoring lores from all locked layers");
 
     this.purchasedLores = {};
@@ -114,6 +119,12 @@ window.Lores = {
       this.purchasedLores[id] = (this.purchasedLores[id] || 0) + restored[id];
       this.currentLayerPurchasedLores[id] = restored[id];
     }
+
+    // ✅ Re-apply racial lores
+    const racial = JSON.parse(localStorage.getItem("racialLores") || "[]");
+    for (const id of racial) {
+      this.purchasedLores[id] = (this.purchasedLores[id] || 0) + 1;
+    }
   },
 
   resetCurrentLayer: function() {
@@ -121,7 +132,7 @@ window.Lores = {
   },
 
   initializeRacialLores: function () {
-    const racial = JSON.parse(localStorage.getItem("racialLores") || "[]");
+    const racial = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
   
     racial.forEach(id => {
       if (!this.purchasedLores[id]) this.purchasedLores[id] = 0;

@@ -13,6 +13,7 @@
       <h1>Welcome to <span>Roles of the Valiant</span></h1>
       <p>Select your starting race to begin your adventure!</p>
     </div>
+
     <section class="race-selection">
       <div class="race-grid">
         <!-- Humans -->
@@ -61,6 +62,13 @@
         </div>
       </div>
     </section>
+    <div style="margin-top: 1rem;">
+      <label for="import-btn" class="import-label">
+        <input type="file" id="import-btn" accept=".json" style="display:none">
+        <span class="btn">Upload Existing Character</span>
+      </label>
+    </div>
+
     <!-- Confirm Button (hidden until a race is selected) -->
     <div id="start-button-container" class="hidden">
       <button id="start-btn" onclick="confirmRace()">Confirm Race & Begin</button>
@@ -231,7 +239,7 @@
         <span id="bp-add-feedback" style="margin-left: 1em; color: green;"></span>
         <div id="bp-warning" class="hidden" style="color: orange; margin-top: 0.5em;"></div>
       </div>
-
+      <button id="export-character">Export Character</button>
 
     </header>
 
@@ -321,6 +329,7 @@
   </div>
 
   <!-- Scripts: Load splash.js first, then the rest -->
+  <script src="js/constants.js"></script>          <!-- -->
   <script src="js/layers.js"></script>             <!-- Foundation: Build point tracking -->
   <script src="js/bpLeveling.js"></script>         <!-- Depends on layers -->
   <script src="js/stats.js"></script>              <!-- Depends on layers -->
@@ -334,11 +343,12 @@
   <script src="js/characterInfoModal.js"></script> <!-- -->
   <script src="js/loreModal.js"></script>          <!-- -->
   <script src="js/statModal.js"></script>          <!-- -->
-  <script src="js/abilitySelectionModal.js"></script>          <!-- -->
+  <script src="js/abilitySelectionModal.js"></script> <!-- -->
   <script src="js/morphAbilities.js"></script>     <!-- -->
   <script src="js/morphSelector.js"></script>      <!-- -->
   <script src="js/profModal.js"></script>          <!-- -->
   <script src="js/confirmationModal.js"></script>  <!-- -->
+  <script src="js/characterExporter.js"></script>  <!-- -->
   <script src="js/main.js"></script>               <!-- Entry point: sets RacialLocks, calls UI updates -->
   <script src="js/splash.js"></script>             <!-- Splash needs Races and Stats, can go last -->
 

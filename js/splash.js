@@ -22,7 +22,7 @@ function selectRace(race) {
   }
 
   // Pop-up modal(s) to choose special abilities
-  localStorage.setItem("selectedRace", race);
+  localStorage.setItem(Constants.SELECTED_RACE, race);
   runModalFlow(race);
   
   // Show the confirm button.
@@ -96,9 +96,6 @@ function runModalFlow(raceKey) {
     for (const step of modalSteps) {
       await step();
     }
-
-    // All done – refresh the UI
-    //UI.refreshAll();
   })();
 }
 
