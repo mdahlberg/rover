@@ -135,141 +135,229 @@ window.CharacterExporter = {
   },
 
   exportAsPDF: function(snapshot) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
-    const W = doc.internal.pageSize.width;
-    const H = doc.internal.pageSize.height;
-    let y = 50;
+    // 1) Create & style the container
+    const container = document.createElement('div');
+    Object.assign(container.style, {
+      position: 'fixed',
+      top: '5%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '800px',
+      padding: '20px',
+      background: '#fff',
+      fontFamily: 'Arial, sans-serif',
+      color: '#333',
+      zIndex: 9999,
+      boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+      overflow: 'visible'   // allow it to expand naturally
+    });
+    document.body.appendChild(container);
   
-    // 1) PARCHMENT BACKGROUND
-    doc.setFillColor(245, 222, 179);   // wheat‑like
-    doc.rect(0, 0, W, H, 'F');
+    // 2) Title & divider
+    container.innerHTML = `
+      <h1 style="
+        text-align:center;
+        color:#4A90E2;
+        margin:0 0 8px;
+        font-size:26px;
+      ">Character Chronicle</h1>
+      <hr style="border:1px solid #eee; margin-bottom:16px;" />
+    `;
   
-    // 2) SET SERIF “OLD” FONT
-    doc.setFont('times', 'normal');
-    doc.setTextColor(60, 30, 0);       // dark brown
-  
-    // 3) TITLE WITH ROMAN NUMERAL FRAME
-    doc.setFontSize(24);
-    doc.setFont('times', 'bolditalic');
-    doc.text('~ Roles of the Valiant ~', W/2, y, { align: 'center' });
-    y += 30;
-  
-    // Decorative rule
-    doc.setLineWidth(1);
-    doc.setDrawColor(150, 75, 0);
-    doc.line(40, y, W-40, y);
-    y += 20;
-  
-    // helper: section header
-    function section(num, title) {
-      doc.setFontSize(14);
-      doc.setFont('times', 'bold');
-      doc.text(`${num}. ${title}`,  Fifty(), y);
-      y += 18;
-      doc.setFont('times', 'normal');
+    // Helper to build tables
+    function mkTable(title, cols, rows) {
+      const sec = document.createElement('div');
+      sec.innerHTML = `<h3 style="color:#4A90E2;margin:12px 0 4px;font-size:16px;">
+                         ${title}
+                       </h3>`;
+      const tbl = document.createElement('table');
+      Object.assign(tbl.style, {
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginBottom: '16px',
+        fontSize: '12px'
+      });
+      // header
+      const thead = tbl.createTHead();
+      const hr = thead.insertRow();
+      cols.forEach(c => {
+        const th = document.createElement('th');
+        th.textContent = c;
+        Object.assign(th.style, {
+          border: '1px solid #ddd',
+          padding: '6px',
+          background: '#f0f8ff',
+          textAlign: 'left'
+        });
+        hr.appendChild(th);
+      });
+      // body
+      const tb = tbl.createTBody();
+      rows.forEach(r => {
+        const row = tb.insertRow();
+        r.forEach(v => {
+          const td = row.insertCell();
+          td.textContent = v;
+          Object.assign(td.style, {
+            border: '1px solid #ddd',
+            padding: '6px'
+          });
+        });
+      });
+      sec.appendChild(tbl);
+      container.appendChild(sec);
     }
-    function Fifty() { return 50; }
   
-    // helper: key/value list
-    function kvList(obj) {
-      doc.setFontSize(11);
-      for (const [k, v] of Object.entries(obj)) {
-        doc.text(`• ${k.charAt(0).toUpperCase() + k.slice(1)}: ${v}`, 70, y);
-        y += 14;
+    // 3) Radar chart for stats
+    const statsCanvas = document.createElement('canvas');
+    statsCanvas.width  = container.clientWidth - 40;
+    statsCanvas.height = 220;
+    container.appendChild(statsCanvas);
+  
+    const statKeys   = Object.keys(snapshot.stats || {});
+    const statValues = statKeys.map(k => snapshot.stats[k] || 0);
+    new Chart(statsCanvas.getContext('2d'), {
+      type: 'radar',
+      data: {
+        labels: statKeys.map(s => s[0].toUpperCase()+s.slice(1)),
+        datasets: [{
+          data: statValues,
+          backgroundColor: 'rgba(74,144,226,0.2)',
+          borderColor: '#4A90E2',
+          borderWidth: 2,
+          pointBackgroundColor: '#4A90E2'
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: Math.max(...statValues,1)+1
+          }
+        },
+        plugins: { legend: { display: false } }
       }
-      y += 10;
-    }
+    });
   
-    // 4) CHARACTER INFO
-    section('I', 'Character Info');
-    kvList(snapshot.characterInfo || {});
+    // 4) Horizontal bar chart for abilities
+    const abilCanvas = document.createElement('canvas');
+    abilCanvas.width  = container.clientWidth - 40;
+    abilCanvas.height = 240;
+    container.appendChild(abilCanvas);
   
-    // 5) STATS
-    section('II', 'Attributes');
-    doc.autoTable({
-      startY: y,
-      margin: { left: 60, right: 40 },
-      head: [['Attribute','Value']],
-      body: Object.entries(snapshot.stats || {}),
-      headStyles: {
-        fillColor: [222, 184, 135],    // burlywood
-        textColor: [60,30,0],
-        fontStyle: 'bold'
+    const abilityKeys   = Object.keys(snapshot.abilities || {});
+    const abilityRanks  = abilityKeys.map(k => snapshot.abilities[k] || 0);
+    const discountedIds = (snapshot.discountedAbilities||[]).map(d=>d.id);
+  
+    new Chart(abilCanvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: abilityKeys.map(n=>n.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())),
+        datasets: [{
+          data: abilityRanks,
+          backgroundColor: abilityKeys.map(k =>
+            discountedIds.includes(k)
+              ? 'rgba(226,74,74,0.6)'
+              : 'rgba(74,144,226,0.6)'
+          ),
+          borderColor: abilityKeys.map(k =>
+            discountedIds.includes(k) ? '#E24A4A' : '#4A90E2'
+          ),
+          borderWidth: 1
+        }]
       },
-      styles: {
-        font: 'times',
-        textColor: [60,30,0],
-        cellPadding: 4,
-        fontSize: 10,
-        lineColor: [150,75,0],
-        lineWidth: 0.5
-      },
-      theme: 'grid'
+      options: {
+        animation: false,
+        indexAxis: 'y',
+        scales: { x: { beginAtZero:true, ticks:{stepSize:1} } },
+        plugins: {
+          legend: { display:false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const id = abilityKeys[ctx.dataIndex];
+                const d  = (snapshot.discountedAbilities||[]).find(x=>x.id===id);
+                return d
+                  ? `Rank ${ctx.parsed.x} (${d.discount.factor*100}% off)`
+                  : `Rank ${ctx.parsed.x}`;
+              }
+            }
+          }
+        }
+      }
     });
-    y = doc.lastAutoTable.finalY + 20;
   
-    // 6) ABILITIES
-    section('III', 'Abilities & Proficiencies');
-    // Abilities table
-    doc.autoTable({
-      startY: y,
-      margin: { left: 60, right: 40 },
-      head: [['Ability','Rank']],
-      body: Object.entries(snapshot.abilities || {}),
-      headStyles: { fillColor: [222,184,135], textColor: [60,30,0], fontStyle: 'bold' },
-      styles: { font: 'times', textColor: [60,30,0], cellPadding: 4, fontSize: 10, lineColor: [150,75,0], lineWidth: 0.5 },
-      theme: 'grid'
+    // 5) Build Points bars
+    const bp = snapshot.bp||{};
+    const bpDiv = document.createElement('div');
+    bpDiv.style.margin = '16px 0';
+    ['earned','spent','remaining'].forEach(m => {
+      const val = bp[m]||0;
+      const w   = Math.min(val/(bp.earned||1)*100,100);
+      const row = document.createElement('div');
+      row.style.marginBottom = '6px';
+      row.innerHTML = `
+        <strong>${m.charAt(0).toUpperCase()+m.slice(1)}:</strong>
+        <div style="
+          display:inline-block;
+          width:60%;
+          background:#eee;
+          margin-left:8px;
+          vertical-align:middle;
+        ">
+          <div style="
+            width:${w}%;
+            background:#4A90E2;
+            color:#fff;
+            font-size:10px;
+            text-align:center;
+            padding:2px 0;
+          ">${val}</div>
+        </div>`;
+      bpDiv.appendChild(row);
     });
-    y = doc.lastAutoTable.finalY + 10;
+    container.appendChild(bpDiv);
   
-    // Inline proficiencies
-    const profs = Object.keys(snapshot.proficiencies||{}).filter(k=>snapshot.proficiencies[k]);
-    if (profs.length) {
-      doc.setFontSize(11);
-      doc.text('Proficiencies: ' + profs.map(w=>w.replace('_',' ')).join(', '), 70, y);
-      y += 24;
-    } else {
-      y += 10;
-    }
+    // 6) Tables: Lores, Proficiencies, Discounted Abilities
+    const mores  = new Set(snapshot.racialLocks?.lores||[]);
+    mkTable('Lores',
+      ['Lore','Rank','Origin'],
+      Object.entries(snapshot.lores||{}).map(([l,r])=>[
+        l.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),
+        r,
+        mores.has(l)?'Racial Bonus':'Purchased'
+      ])
+    );
   
-    // 7) LORES
-    section('IV', 'Lores');
-    doc.autoTable({
-      startY: y,
-      margin: { left: 60, right: 40 },
-      head: [['Lore','Rank']],
-      body: Object.entries(snapshot.lores || {}),
-      headStyles: { fillColor: [222,184,135], textColor: [60,30,0], fontStyle: 'bold' },
-      styles: { font: 'times', textColor: [60,30,0], cellPadding: 4, fontSize: 10, lineColor: [150,75,0], lineWidth: 0.5 },
-      theme: 'grid'
-    });
-    y = doc.lastAutoTable.finalY + 20;
+    mkTable('Proficiencies',
+      ['Proficiency','Owned','Racial Lock'],
+      Object.entries(snapshot.proficiencies||{}).map(([p,own])=>[
+        p.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),
+        own?'✅':'❌',
+        (snapshot.racialLocks?.proficiencies||[]).includes(p)?'Yes':'No'
+      ])
+    );
   
-    // 8) ESSENCE SLOTS
-    section('V', 'Essence Slots');
-    doc.autoTable({
-      startY: y,
-      margin: { left: 60, right: 40 },
-      head: [['Slot','Used']],
-      body: Object.entries(snapshot.essenceSlots || {}),
-      headStyles: { fillColor: [222,184,135], textColor: [60,30,0], fontStyle: 'bold' },
-      styles: { font: 'times', textColor: [60,30,0], cellPadding: 4, fontSize: 10, lineColor: [150,75,0], lineWidth: 0.5 },
-      theme: 'grid'
-    });
-    y = doc.lastAutoTable.finalY + 20;
+    mkTable('Discounted Abilities',
+      ['Ability','Discount','Used'],
+      (snapshot.discountedAbilities||[]).map(d=>[
+        d.id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),
+        `${(d.discount.factor*100).toFixed(0)}% off`,
+        `${d.discount.used}/${d.discount.uses||'∞'}`
+      ])
+    );
   
-    // 9) BUILD POINTS
-    section('VI', 'Build Points');
-    kvList(snapshot.bp || {});
-  
-    // 10) FOOTER
-    doc.setFontSize(8);
-    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 50, H - 30);
-    doc.text(`Page 1`, W - 60, H - 30);
-  
-    // 11) SAVE
-    const fname = (snapshot.characterInfo?.name || 'character') + '_chronicle.pdf';
-    doc.save(fname);
+    // 7) Snapshot & download after a short delay
+    setTimeout(() => {
+      html2canvas(container, { scale: 2 }).then(canvas => {
+        const a = document.createElement('a');
+        a.download = `${snapshot.characterInfo.name||'character'}_report.png`;
+        a.href      = canvas.toDataURL('image/png');
+        a.click();
+        document.body.removeChild(container);
+      });
+    }, 200);
   }
 };
+
