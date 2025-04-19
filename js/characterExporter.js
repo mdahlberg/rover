@@ -61,6 +61,7 @@ window.CharacterExporter = {
     URL.revokeObjectURL(url);
 
     // 💾 Also generate PDF report
+    console.warn("Now to export the PDF");
     this.exportAsPDF(snapshot);
   },
 
@@ -134,58 +135,141 @@ window.CharacterExporter = {
   },
 
   exportAsPDF: function(snapshot) {
-    const doc = new jspdf.jsPDF();
-    let y = 10;
-
-    const addLine = (text) => {
-      doc.text(text, 10, y);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    const W = doc.internal.pageSize.width;
+    const H = doc.internal.pageSize.height;
+    let y = 50;
+  
+    // 1) PARCHMENT BACKGROUND
+    doc.setFillColor(245, 222, 179);   // wheat‑like
+    doc.rect(0, 0, W, H, 'F');
+  
+    // 2) SET SERIF “OLD” FONT
+    doc.setFont('times', 'normal');
+    doc.setTextColor(60, 30, 0);       // dark brown
+  
+    // 3) TITLE WITH ROMAN NUMERAL FRAME
+    doc.setFontSize(24);
+    doc.setFont('times', 'bolditalic');
+    doc.text('~ Roles of the Valiant ~', W/2, y, { align: 'center' });
+    y += 30;
+  
+    // Decorative rule
+    doc.setLineWidth(1);
+    doc.setDrawColor(150, 75, 0);
+    doc.line(40, y, W-40, y);
+    y += 20;
+  
+    // helper: section header
+    function section(num, title) {
+      doc.setFontSize(14);
+      doc.setFont('times', 'bold');
+      doc.text(`${num}. ${title}`,  Fifty(), y);
+      y += 18;
+      doc.setFont('times', 'normal');
+    }
+    function Fifty() { return 50; }
+  
+    // helper: key/value list
+    function kvList(obj) {
+      doc.setFontSize(11);
+      for (const [k, v] of Object.entries(obj)) {
+        doc.text(`• ${k.charAt(0).toUpperCase() + k.slice(1)}: ${v}`, 70, y);
+        y += 14;
+      }
       y += 10;
-    };
-
-    // Title
-    doc.setFontSize(16);
-    addLine("Character Report");
-    doc.setFontSize(12);
-    addLine("-------------------------");
-
-    // Basic Info
-    addLine("Name: " + (snapshot.characterInfo?.name || "Unnamed"));
-    addLine("Description: " + (snapshot.characterInfo?.description || ""));
-    addLine("Race: " + (snapshot.raceDetails?.name || snapshot.race || "Unknown"));
-
-    addLine("");
-    addLine("Stats:");
-    for (const [stat, value] of Object.entries(snapshot.stats || {})) {
-      addLine("  " + stat.toUpperCase() + ": " + value);
     }
-
-    addLine("");
-    addLine("Abilities:");
-    for (const [id, count] of Object.entries(snapshot.abilities || {})) {
-      if (count > 0) {
-        const name = snapshot.availableAbilities?.[id]?.name || id;
-        addLine("  " + name + " x" + count);
-      }
+  
+    // 4) CHARACTER INFO
+    section('I', 'Character Info');
+    kvList(snapshot.characterInfo || {});
+  
+    // 5) STATS
+    section('II', 'Attributes');
+    doc.autoTable({
+      startY: y,
+      margin: { left: 60, right: 40 },
+      head: [['Attribute','Value']],
+      body: Object.entries(snapshot.stats || {}),
+      headStyles: {
+        fillColor: [222, 184, 135],    // burlywood
+        textColor: [60,30,0],
+        fontStyle: 'bold'
+      },
+      styles: {
+        font: 'times',
+        textColor: [60,30,0],
+        cellPadding: 4,
+        fontSize: 10,
+        lineColor: [150,75,0],
+        lineWidth: 0.5
+      },
+      theme: 'grid'
+    });
+    y = doc.lastAutoTable.finalY + 20;
+  
+    // 6) ABILITIES
+    section('III', 'Abilities & Proficiencies');
+    // Abilities table
+    doc.autoTable({
+      startY: y,
+      margin: { left: 60, right: 40 },
+      head: [['Ability','Rank']],
+      body: Object.entries(snapshot.abilities || {}),
+      headStyles: { fillColor: [222,184,135], textColor: [60,30,0], fontStyle: 'bold' },
+      styles: { font: 'times', textColor: [60,30,0], cellPadding: 4, fontSize: 10, lineColor: [150,75,0], lineWidth: 0.5 },
+      theme: 'grid'
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  
+    // Inline proficiencies
+    const profs = Object.keys(snapshot.proficiencies||{}).filter(k=>snapshot.proficiencies[k]);
+    if (profs.length) {
+      doc.setFontSize(11);
+      doc.text('Proficiencies: ' + profs.map(w=>w.replace('_',' ')).join(', '), 70, y);
+      y += 24;
+    } else {
+      y += 10;
     }
-
-    addLine("");
-    addLine("Proficiencies:");
-    for (const [id, owned] of Object.entries(snapshot.proficiencies || {})) {
-      if (owned) {
-        addLine("  " + id.replace(/_/g, ' '));
-      }
-    }
-
-    addLine("");
-    addLine("Lores:");
-    for (const [id, count] of Object.entries(snapshot.lores || {})) {
-      if (count > 0) {
-        addLine("  " + id.replace(/_/g, ' ') + " x" + count);
-      }
-    }
-
-    // Download
-    doc.save("character_report.pdf");
+  
+    // 7) LORES
+    section('IV', 'Lores');
+    doc.autoTable({
+      startY: y,
+      margin: { left: 60, right: 40 },
+      head: [['Lore','Rank']],
+      body: Object.entries(snapshot.lores || {}),
+      headStyles: { fillColor: [222,184,135], textColor: [60,30,0], fontStyle: 'bold' },
+      styles: { font: 'times', textColor: [60,30,0], cellPadding: 4, fontSize: 10, lineColor: [150,75,0], lineWidth: 0.5 },
+      theme: 'grid'
+    });
+    y = doc.lastAutoTable.finalY + 20;
+  
+    // 8) ESSENCE SLOTS
+    section('V', 'Essence Slots');
+    doc.autoTable({
+      startY: y,
+      margin: { left: 60, right: 40 },
+      head: [['Slot','Used']],
+      body: Object.entries(snapshot.essenceSlots || {}),
+      headStyles: { fillColor: [222,184,135], textColor: [60,30,0], fontStyle: 'bold' },
+      styles: { font: 'times', textColor: [60,30,0], cellPadding: 4, fontSize: 10, lineColor: [150,75,0], lineWidth: 0.5 },
+      theme: 'grid'
+    });
+    y = doc.lastAutoTable.finalY + 20;
+  
+    // 9) BUILD POINTS
+    section('VI', 'Build Points');
+    kvList(snapshot.bp || {});
+  
+    // 10) FOOTER
+    doc.setFontSize(8);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, 50, H - 30);
+    doc.text(`Page 1`, W - 60, H - 30);
+  
+    // 11) SAVE
+    const fname = (snapshot.characterInfo?.name || 'character') + '_chronicle.pdf';
+    doc.save(fname);
   }
 };
-
