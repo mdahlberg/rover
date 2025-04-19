@@ -61,7 +61,6 @@ window.CharacterExporter = {
     URL.revokeObjectURL(url);
 
     // 💾 Also generate PDF report
-    console.warn("Now to export the PDF");
     this.exportAsPDF(snapshot);
   },
 

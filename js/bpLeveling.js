@@ -58,7 +58,7 @@ window.BPLeveling = {
     }
 
     this.earnedBP = newTotalBP;
-    UI.updateGlobalBuildPoints();
+    UI.refreshAll();
 
     return true;
   },
