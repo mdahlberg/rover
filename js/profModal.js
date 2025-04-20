@@ -5,7 +5,7 @@ window.ProficiencySelector = {
   open() {
     const modal = document.getElementById("proficiency-modal");
     const grid = document.getElementById("proficiency-list");
-    const confirm = document.getElementById("proficiency-confirm");
+    const confirmBtn = document.getElementById("proficiency-confirm");
 
     modal.classList.remove("hidden");
     setTimeout(() => modal.classList.add("show"), 10);
@@ -31,7 +31,7 @@ window.ProficiencySelector = {
         document.querySelectorAll(".trait-card").forEach(c => c.classList.remove("selected"));
         card.classList.add("selected");
         this.selected = id;
-        confirm.disabled = false;
+        confirmBtn.disabled = false;
       };
 
       grid.appendChild(card);
@@ -44,7 +44,7 @@ window.ProficiencySelector = {
     };
 
     // Confirm
-    confirm.onclick = () => {
+    confirmBtn.onclick = () => {
       if (!this.selected) return;
       window.SelectedProficiency = this.selected;
       Proficiencies.purchaseProficiency(this.selected, 0); // free
