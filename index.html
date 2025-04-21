@@ -149,18 +149,21 @@
     </div>
   </div>
 
+  <!-- Ability Selection Modal -->
   <div id="ability-select-modal" class="modal hidden">
     <div class="modal-content">
-      <h2 id="ability-select-title">Choose Abilities</h2>
-      <p id="ability-select-instructions">Pick up to 1 ability.</p>
-      <div id="ability-select-grid" class="trait-grid"></div>
-      <div class="modal-footer">
-        <span id="ability-select-count">0 selected</span>
-        <button id="ability-select-cancel">Cancel</button>
-        <button id="ability-select-confirm" disabled>Confirm</button>
+      <h2>Select Your Discounted Ability</h2>
+      <p>You may choose one ability to receive at half cost. This discount applies only to the first purchase.</p>
+
+      <div id="ability-list" class="trait-grid"></div>
+
+      <div class="modal-actions">
+        <button id="ability-select-cancel" class="btn-cancel">Cancel</button>
+        <button id="ability-select-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
+
 
   <!-- Morph Modal It's Morphin Time -->
   <div id="morph-modal" class="modal hidden">
@@ -184,15 +187,19 @@
     </div>
   </div>
 
-  <!-- Prof Modal -->
+  <!-- Proficiency Selection Modal -->
   <div id="proficiency-modal" class="modal hidden">
     <div class="modal-content">
       <h2>Select Your Free Proficiency</h2>
       <p>Choose one proficiency to begin with. This is free and permanent.</p>
-      <div id="proficiency-list" class="modal-grid"></div>
-      <div class="modal-footer">
-        <button id="proficiency-cancel">Cancel</button>
-        <button id="proficiency-confirm" disabled>Confirm</button>
+
+      <!-- Use the same grid structure as other modals -->
+      <div id="proficiency-list" class="trait-grid"></div>
+
+      <!-- Reuse shared modal footer styles -->
+      <div class="modal-actions">
+        <button id="proficiency-cancel" class="btn-cancel">Cancel</button>
+        <button id="proficiency-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>

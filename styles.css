@@ -31,8 +31,13 @@ body {
 }
 
 .info-icon {
-  font-size: 1rem;
-  vertical-align: middle;
+  font-size: 0.85rem;
+  background: #555;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-left: 0.5rem;
 }
 
 .tooltip {
@@ -252,16 +257,81 @@ body {
   cursor: pointer;
 }
 
+/* Match Lore styling for consistency */
 #proficiency-modal .trait-card {
-  background-color: #2c2c2c;
+  background-color: #2e2e3e;
   color: white;
   border: 2px solid transparent;
   border-radius: 0.5rem;
   padding: 1rem;
-  margin: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  text-align: center;
+  position: relative;
+}
+
+#ability-select-modal .trait-card {
+  background-color: #2e2e3e;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+#ability-select-modal .trait-card:hover {
+  border-color: #888;
+}
+
+#ability-select-modal .trait-card.selected {
+  border-color: #66ccff;
+  background-color: #1f3f4f;
+}
+
+#ability-select-modal .trait-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#ability-select-modal .trait-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#ability-select-modal .trait-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+#ability-select-modal .trait-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-family: monospace;
+  color: #ccc;
+}
+
+#ability-select-modal .trait-cost {
+  color: #8be38b;
+}
+
+#ability-select-modal .info-icon {
+  background-color: #555;
+  color: white;
+  border-radius: 50%;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.9rem;
+  margin-left: 0.6rem;
+}
+
+#ability-select-modal .tooltip {
+  max-width: 280px;
+  white-space: normal;
+  z-index: 999;
 }
 
 #proficiency-modal .trait-card:hover {
@@ -280,14 +350,64 @@ body {
   background-color: #333;
 }
 
-.trait-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+#proficiency-modal .lore-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#proficiency-modal .lore-name {
+  margin: 0 auto;
+}
+
+#proficiency-modal .left-hint {
+  position: absolute;
+  left: 0;
+}
+
+#proficiency-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
   gap: 1rem;
-  margin: 1rem 0;
+  margin-top: 1.5rem;
+}
+
+/* Ensure we don’t break responsiveness */
+#proficiency-modal .modal-content {
+  max-width: 600px;
+  width: 90%;
+}
+
+/* Button styling is inherited via .btn-cancel and .btn-continue */
+
+.modal-content.proficiency-modal {
+  border: 1px solid #444;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+#proficiency-list.trait-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.trait-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#ability-list.trait-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .trait-card {
+  min-height: 70px;
   background: #333;
   padding: 1rem;
   border: 2px solid transparent;
@@ -308,6 +428,9 @@ body {
 }
 
 .trait-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 1.1rem;
   font-weight: bold;
   margin-bottom: 0.25rem;
@@ -341,6 +464,15 @@ body {
 .modal-actions button {
   padding: 0.5rem 1rem;
   margin-left: 0.5rem;
+}
+
+#ability-select-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* single column layout */
+  gap: 1rem;
+  padding-top: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 
@@ -911,6 +1043,14 @@ header {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.info-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  cursor: pointer;
 }
 
 .left-hint {
