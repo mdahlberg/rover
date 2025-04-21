@@ -2,24 +2,74 @@ window.ConfirmationModal = {
   open: function () {
     const modal = document.getElementById("confirmation-modal");
     const summary = document.getElementById("confirmation-summary");
-
-    const raceKey = localStorage.getItem(Constants.SELECTED_RACE);
+    const name = localStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
+    const raceKey = localStorage.getItem(Constants.SELECTED_RACE) || "Unknown";
     const race = window.Races?.[raceKey];
+    const selectedLore = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]")[0];
+    const selectedProf = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]")[0];
+    const discounts = JSON.parse(localStorage.getItem(Constants.RACIAL_DISCOUNTS) || "{}");
+    const discountedAbility = discounts.abilities?.[0]?.name;
+    const traitIds = JSON.parse(localStorage.getItem(Constants.MORPH_TRAITS) || "[]");
 
-    const name = localStorage.getItem(Constants.CHAR_NAME) || "(Unnamed)";
-    const desc = localStorage.getItem(Constants.CHAR_DESC) || "";
-    const stat = localStorage.getItem("racialStatChoice");
-    const traits = JSON.parse(localStorage.getItem(Constants.MORPH_TRAITS) || "[]");
-    const profs = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]");
+    summary.innerHTML = `
+      <h3>${name}</h3>
+      <p><strong>Race:</strong> ${race?.name || raceKey}</p>
+      ${selectedLore ? `<p><strong>Starting Lore:</strong> ${Lores.availableLores[selectedLore]?.name || selectedLore}</p>` : ""}
+      ${discountedAbility ? `<p><strong>Discounted Ability:</strong> ${Abilities.availableAbilities[discountedAbility]?.name || discountedAbility}</p>` : ""}
+    `;
 
-    let html = `<p><strong>Name:</strong> ${name}</p>`;
-    if (desc) html += `<p><strong>Description:</strong> ${desc}</p>`;
-    html += `<p><strong>Race:</strong> ${race?.name || raceKey}</p>`;
-    if (stat) html += `<p><strong>Stat Bonus:</strong> ${stat.charAt(0).toUpperCase() + stat.slice(1)}</p>`;
-    if (traits.length) html += `<p><strong>Morph Traits:</strong> ${traits.join(", ")}</p>`;
-    if (profs.length) html += `<p><strong>Free Proficiency:</strong> ${profs.join(", ")}</p>`;
+    const parts = [];
 
-    summary.innerHTML = html;
+    // ✅ Combined and cleaned stat bonuses
+    const combinedStats = {};
+    Object.entries(race?.startingStats || {}).forEach(([stat, value]) => {
+      combinedStats[stat] = (combinedStats[stat] || 0) + value;
+    });
+    Object.entries(race?.bonuses || {}).forEach(([stat, value]) => {
+      combinedStats[stat] = (combinedStats[stat] || 0) + value;
+    });
+    Object.entries(Stats?.startingStats || {}).forEach(([stat, value]) => {
+      combinedStats[stat] = (combinedStats[stat] || 0) + value;
+    });
+    if (Object.keys(combinedStats).length > 0) {
+      const statLine = Object.entries(combinedStats)
+        .map(([stat, val]) => `${stat} +${val}`)
+        .join(", ");
+      parts.push(`<p><strong>Stat Bonuses:</strong> ${statLine}</p>`);
+    }
+
+    // ✅ Combine selected prof + racial profs
+    const allProfs = new Set(race?.proficiencies || []);
+    if (selectedProf) allProfs.add(selectedProf);
+    if (allProfs.size > 0) {
+      const names = [...allProfs]
+        .map(p => Proficiencies.availableProficiencies[p]?.name || p)
+        .join(", ");
+      parts.push(`<p><strong>Proficiencies:</strong> ${names}</p>`);
+    }
+
+    // ✅ Racial abilities (if any)
+    if (race?.abilities?.length) {
+      const abilities = race.abilities.map(a => Abilities.availableAbilities[a]?.name || a);
+      parts.push(`<p><strong>Starting Abilities:</strong> ${abilities.join(", ")}</p>`);
+    }
+
+    // ✅ Morph traits (if present)
+    if (traitIds.length) {
+      const traits = traitIds.map(t => `<code>${t}</code>`).join(", ");
+      parts.push(`<p><strong>Morph Traits:</strong> ${traits}</p>`);
+    }
+
+    // ✅ Essence slots
+    if (race?.essenceSlots && Object.keys(race.essenceSlots).length > 0) {
+      const ess = Object.entries(race.essenceSlots)
+        .map(([lvl, count]) => `Level ${lvl}: +${count}`)
+        .join(", ");
+      parts.push(`<p><strong>Bonus Essence Slots:</strong> ${ess}</p>`);
+    }
+
+    summary.innerHTML += parts.join("");
+
 
     modal.classList.remove("hidden");
     setTimeout(() => modal.classList.add("show"), 10);
@@ -31,7 +81,6 @@ window.ConfirmationModal = {
     setTimeout(() => modal.classList.add("hidden"), 300);
 
     confirmRace();
-    // UI.showCharacterPlanner(); // Your existing function
   },
 
   cancelModal: function(modalId, reset = false) {
@@ -52,6 +101,7 @@ window.ConfirmationModal = {
     localStorage.removeItem(Constants.MORPH_TRAITS);
     localStorage.removeItem(Constants.RACIAL_PROFS);
     // Clear anything else relevant
+    startOver();
   }
 };
 

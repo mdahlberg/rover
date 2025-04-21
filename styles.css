@@ -1412,4 +1412,26 @@ ul ul {
   margin-top: 1.5rem;
 }
 
+.race-note {
+  font-size: 0.95rem;
+  color: #aaa;
+  margin-top: 0.5rem;
+}
+
+.race-preview {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+.race-preview div {
+  margin-bottom: 0.4rem;
+}
+
+.race-preview .stat-label {
+  text-transform: capitalize;
+  font-weight: bold;
+  color: #9be09b;
+}
 
