@@ -56,7 +56,16 @@ window.ConfirmationModal = {
 };
 
 window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("confirm-character").onclick = () => ConfirmationModal.confirm();
+  const confirmBtn = document.getElementById("confirm-character");
+  const cancelBtn = document.getElementById("confirmation-cancel");
+
+  if (confirmBtn) confirmBtn.onclick = () => ConfirmationModal.confirm();
+  if (cancelBtn) {
+    cancelBtn.onclick = () => {
+      if (!window.confirm("Cancel character creation?")) return;
+      ConfirmationModal.cancelModal("confirmation-modal", true);
+    };
+  }
 });
 
 document.getElementById("confirmation-cancel").onclick = () => {

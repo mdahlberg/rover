@@ -11,7 +11,7 @@ window.AbilitySelectModal = {
   open(title, instructions, max = 1, filter = () => true) {
     const modal = document.getElementById("ability-select-modal");
     const grid = document.getElementById("ability-list");
-    const confirmBtn = document.getElementById("ability-confirm");
+    const confirmBtn = document.getElementById("ability-select-confirm");
 
     // Reset config
     this.selected.clear();

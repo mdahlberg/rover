@@ -204,16 +204,17 @@
     </div>
   </div>
 
-  <!-- Confirmation Modal -->
+  <!-- Character Confirmation Modal -->
   <div id="confirmation-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content character-info-modal">
       <h2>Confirm Your Character</h2>
-      <div id="confirmation-summary"></div>
-      <button id="confirmation-cancel" class="modal-cancel-button">Cancel</button>
-      <button id="confirm-character">Start Character Planner</button>
+      <div id="confirmation-summary" class="confirmation-summary"></div>
+      <div class="button-group">
+        <button class="btn-cancel" id="confirmation-cancel">Cancel</button>
+        <button class="btn-continue" id="confirm-character">Start Character Planner</button>
+      </div>
     </div>
   </div>
-
 
   <!-- Main Planner Section -->
   <div id="planner-container" class="hidden">

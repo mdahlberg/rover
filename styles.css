@@ -1334,3 +1334,82 @@ ul ul {
 .btn-continue:hover {
   background-color: #3c78c0;
 }
+
+.summary-line {
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
+  text-align: center;
+}
+
+#confirm-modal .button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+#confirm-modal .btn-cancel,
+#confirm-modal .btn-continue {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#confirm-modal .btn-cancel {
+  background-color: #444;
+  color: #ddd;
+}
+
+#confirm-modal .btn-cancel:hover {
+  background-color: #555;
+}
+
+#confirm-modal .btn-continue {
+  background-color: #4a90e2;
+  color: white;
+}
+
+#confirm-modal .btn-continue:hover {
+  background-color: #3c78c0;
+}
+
+.confirm-character-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.confirm-character-modal .modal-actions .btn-cancel {
+  background-color: #444;
+  color: #ddd;
+}
+
+.confirm-character-modal .modal-actions .btn-cancel:hover {
+  background-color: #555;
+}
+
+.confirm-character-modal .modal-actions .btn-continue {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.confirm-character-modal .modal-actions .btn-continue:hover {
+  background-color: #3c78c0;
+}
+
+#confirmation-summary {
+  margin: 1rem 0 2rem;
+  font-size: 1.05rem;
+  line-height: 1.0;
+}
+
+.modal-actions {
+  border-top: 1px solid #444;
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+}
+
+
