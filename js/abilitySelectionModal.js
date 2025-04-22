@@ -35,7 +35,11 @@ window.AbilitySelectModal = {
             <strong class="trait-name">${ability.name}</strong>
           </div>
           <div class="trait-meta">
-            <span class="trait-cost">Cost: ${ability.cost} BP</span>
+            <span class="trait-cost">
+              Cost:
+              <span class="original-cost">${ability.cost} BP</span>
+              <span class="discounted-cost">${Math.floor(ability.cost / 2)} BP</span>
+            </span>
           </div>
         `;
 

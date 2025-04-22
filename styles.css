@@ -207,8 +207,8 @@ body {
   background: #1e1e1e;
   padding: 2rem;
   border-radius: 1rem;
-  max-width: 600px;
-  width: 90%;
+  max-width: 700px;
+  width: 95%;
   color: #fff;
   max-height: 90vh;
   overflow-y: auto;
@@ -270,6 +270,7 @@ body {
 }
 
 #ability-select-modal .trait-card {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   background-color: #2e2e3e;
   color: white;
   border: 2px solid transparent;
@@ -280,6 +281,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  margin-top: 1rem;
 }
 
 #ability-select-modal .trait-card:hover {
@@ -404,13 +406,13 @@ body {
 
 #ability-list.trait-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
 }
 
 .trait-card {
-  min-height: 70px;
   background: #333;
   padding: 1rem;
   border: 2px solid transparent;
@@ -476,11 +478,12 @@ body {
 
 #ability-select-grid {
   display: grid;
-  grid-template-columns: 1fr; /* single column layout */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
   padding-top: 1rem;
   max-width: 600px;
   margin: 0 auto;
+  margin-top: 1rem;
 }
 
 
@@ -1445,5 +1448,16 @@ ul ul {
 
 .trait-header .info-wrapper {
   margin-left: -0.75rem;
+}
+
+.original-cost {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 0.3em;
+}
+
+.discounted-cost {
+  color: #4df04d;
+  font-weight: bold;
 }
 
