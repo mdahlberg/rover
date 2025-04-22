@@ -28,11 +28,11 @@ window.AbilitySelectModal = {
 
         card.innerHTML = `
           <div class="trait-header">
-            <strong class="trait-name">${ability.name}</strong>
-            <div class="info-wrapper left-hint">
+            <div class="info-wrapper">
               <span class="info-icon">i</span>
               <div class="tooltip">${ability.description}</div>
             </div>
+            <strong class="trait-name">${ability.name}</strong>
           </div>
           <div class="trait-meta">
             <span class="trait-cost">Cost: ${ability.cost} BP</span>

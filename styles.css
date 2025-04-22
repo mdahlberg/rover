@@ -37,7 +37,7 @@ body {
   padding: 2px 6px;
   border-radius: 50%;
   font-weight: bold;
-  margin-left: 0.5rem;
+  margin-left: -0.5rem;
 }
 
 .tooltip {
@@ -298,7 +298,9 @@ body {
 
 #ability-select-modal .trait-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
   align-items: center;
 }
 
@@ -332,6 +334,7 @@ body {
   max-width: 280px;
   white-space: normal;
   z-index: 999;
+  margin-left: 10rem;
 }
 
 #proficiency-modal .trait-card:hover {
@@ -443,6 +446,11 @@ body {
   display: flex;
   justify-content: space-between;
   font-family: monospace;
+}
+
+.info-wrapper.left-hint {
+  position: relative;
+  display: inline-block;
 }
 
 .trait-cost {
@@ -1433,5 +1441,9 @@ ul ul {
   text-transform: capitalize;
   font-weight: bold;
   color: #9be09b;
+}
+
+.trait-header .info-wrapper {
+  margin-left: -0.75rem;
 }
 
