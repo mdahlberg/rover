@@ -20,14 +20,28 @@ window.ProficiencySelector = {
       const owned = Proficiencies.isPurchased(id);
       const card = document.createElement("div");
       card.className = "trait-card" + (owned ? " disabled" : "");
-      card.innerHTML = `<strong>${prof.name}</strong>`;
-      card.title = prof.description;
       card.dataset.id = id;
-
+      
+      const wrapper = document.createElement("div");
+      wrapper.className = "lore-header"; // reuse shared header style
+      
+      const name = document.createElement("div");
+      name.className = "lore-name";
+      name.innerText = prof.name;
+      
+      const infoWrapper = document.createElement("div");
+      infoWrapper.className = "info-wrapper left-hint";
+      infoWrapper.innerHTML = `
+        <span class="info-icon">i</span>
+        <div class="lore-tooltip">${prof.description}</div>
+      `;
+      
+      wrapper.appendChild(name);
+      wrapper.appendChild(infoWrapper);
+      card.appendChild(wrapper);
+      
       card.onclick = () => {
         if (owned) return;
-
-        // Deselect others
         document.querySelectorAll(".trait-card").forEach(c => c.classList.remove("selected"));
         card.classList.add("selected");
         this.selected = id;

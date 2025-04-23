@@ -31,8 +31,13 @@ body {
 }
 
 .info-icon {
-  font-size: 1rem;
-  vertical-align: middle;
+  font-size: 0.85rem;
+  background: #555;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-left: -0.5rem;
 }
 
 .tooltip {
@@ -202,8 +207,8 @@ body {
   background: #1e1e1e;
   padding: 2rem;
   border-radius: 1rem;
-  max-width: 600px;
-  width: 90%;
+  max-width: 700px;
+  width: 95%;
   color: #fff;
   max-height: 90vh;
   overflow-y: auto;
@@ -252,16 +257,86 @@ body {
   cursor: pointer;
 }
 
+/* Match Lore styling for consistency */
 #proficiency-modal .trait-card {
-  background-color: #2c2c2c;
+  background-color: #2e2e3e;
   color: white;
   border: 2px solid transparent;
   border-radius: 0.5rem;
   padding: 1rem;
-  margin: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  text-align: center;
+  position: relative;
+}
+
+#ability-select-modal .trait-card {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  background-color: #2e2e3e;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+#ability-select-modal .trait-card:hover {
+  border-color: #888;
+}
+
+#ability-select-modal .trait-card.selected {
+  border-color: #66ccff;
+  background-color: #1f3f4f;
+}
+
+#ability-select-modal .trait-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#ability-select-modal .trait-header {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+#ability-select-modal .trait-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+#ability-select-modal .trait-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-family: monospace;
+  color: #ccc;
+}
+
+#ability-select-modal .trait-cost {
+  color: #8be38b;
+}
+
+#ability-select-modal .info-icon {
+  background-color: #555;
+  color: white;
+  border-radius: 50%;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.9rem;
+  margin-left: 0.6rem;
+}
+
+#ability-select-modal .tooltip {
+  max-width: 280px;
+  white-space: normal;
+  z-index: 999;
+  margin-left: 10rem;
 }
 
 #proficiency-modal .trait-card:hover {
@@ -280,11 +355,61 @@ body {
   background-color: #333;
 }
 
-.trait-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+#proficiency-modal .lore-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#proficiency-modal .lore-name {
+  margin: 0 auto;
+}
+
+#proficiency-modal .left-hint {
+  position: absolute;
+  left: 0;
+}
+
+#proficiency-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
   gap: 1rem;
-  margin: 1rem 0;
+  margin-top: 1.5rem;
+}
+
+/* Ensure we don’t break responsiveness */
+#proficiency-modal .modal-content {
+  max-width: 600px;
+  width: 90%;
+}
+
+/* Button styling is inherited via .btn-cancel and .btn-continue */
+
+.modal-content.proficiency-modal {
+  border: 1px solid #444;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+#proficiency-list.trait-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.trait-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#ability-list.trait-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
 }
 
 .trait-card {
@@ -308,6 +433,9 @@ body {
 }
 
 .trait-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 1.1rem;
   font-weight: bold;
   margin-bottom: 0.25rem;
@@ -320,6 +448,11 @@ body {
   display: flex;
   justify-content: space-between;
   font-family: monospace;
+}
+
+.info-wrapper.left-hint {
+  position: relative;
+  display: inline-block;
 }
 
 .trait-cost {
@@ -341,6 +474,16 @@ body {
 .modal-actions button {
   padding: 0.5rem 1rem;
   margin-left: 0.5rem;
+}
+
+#ability-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 1rem;
 }
 
 
@@ -913,6 +1056,14 @@ header {
   transform: translateY(-50%);
 }
 
+.info-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
 .left-hint {
   position: absolute;
   left: 0;
@@ -1193,4 +1344,309 @@ ul ul {
 
 .btn-continue:hover {
   background-color: #3c78c0;
+}
+
+.summary-line {
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
+  text-align: center;
+}
+
+#confirm-modal .button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+#confirm-modal .btn-cancel,
+#confirm-modal .btn-continue {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#confirm-modal .btn-cancel {
+  background-color: #444;
+  color: #ddd;
+}
+
+#confirm-modal .btn-cancel:hover {
+  background-color: #555;
+}
+
+#confirm-modal .btn-continue {
+  background-color: #4a90e2;
+  color: white;
+}
+
+#confirm-modal .btn-continue:hover {
+  background-color: #3c78c0;
+}
+
+.confirm-character-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.confirm-character-modal .modal-actions .btn-cancel {
+  background-color: #444;
+  color: #ddd;
+}
+
+.confirm-character-modal .modal-actions .btn-cancel:hover {
+  background-color: #555;
+}
+
+.confirm-character-modal .modal-actions .btn-continue {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.confirm-character-modal .modal-actions .btn-continue:hover {
+  background-color: #3c78c0;
+}
+
+#confirmation-summary {
+  margin: 1rem 0 2rem;
+  font-size: 1.05rem;
+  line-height: 1.0;
+}
+
+.modal-actions {
+  border-top: 1px solid #444;
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+}
+
+.race-note {
+  font-size: 0.95rem;
+  color: #aaa;
+  margin-top: 0.5rem;
+}
+
+.race-preview {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #ccc;
+  line-height: 1.4;
+}
+
+.race-preview div {
+  margin-bottom: 0.4rem;
+}
+
+.race-preview .stat-label {
+  text-transform: capitalize;
+  font-weight: bold;
+  color: #9be09b;
+}
+
+.trait-header .info-wrapper {
+  margin-left: -0.75rem;
+}
+
+.original-cost {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 0.3em;
+}
+
+.discounted-cost {
+  color: #4df04d;
+  font-weight: bold;
+}
+
+/* Stat Modal overrides */
+.modal-content.stat-modal {
+  max-width: 520px;
+  text-align: center;
+}
+
+/* same 2-col—or auto-fit—card grid you use elsewhere */
+#stat-modal .trait-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* reuse your trait-card style */
+#stat-modal .trait-card {
+  background-color: #2e2e3e;
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+/* highlight when user has used points on this stat */
+#stat-modal .trait-card.selected {
+  border-color: #66ccff;
+  background-color: #1f3f4f;
+}
+
+#stat-modal .trait-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* center your plus/minus */
+#stat-modal .stat-choice {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+/* Morph Modal tweaks */
+.modal-content.morph-modal {
+  max-width: 600px;
+  text-align: center;
+}
+
+/* same grid as #ability-list */
+#morph-modal .trait-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* reuse your existing trait-card styling */
+#morph-modal .trait-card {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  background-color: #2e2e3e;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+#morph-modal .tooltip {
+  /* position tooltip to the right of the icon instead of centering under it */
+  left: 100% !important;
+  right: auto !important;
+  top: 50% !important;
+  transform: translateX(8px) translateY(-50%) !important;
+  white-space: nowrap;      /* keep the text on one line */
+}
+
+/* 2) Tweak info-icon spacing so it doesn’t shove the title */
+#morph-modal .trait-header .info-icon {
+  margin-left: 0.25rem !important;  /* a little gap, but not too much */
+  vertical-align: middle;           /* ensure it sits inline with the text */
+}
+
+/* 3) Give the Morph modal a bit more breathing room */
+.modal-content.morph-modal {
+  max-width: 720px;  /* up from 600px */
+  width: 85%;        /* fill more of the viewport */
+}
+
+/* 1) Lay out the header exactly like AbilitySelectModal */
+#morph-modal .modal-content .trait-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;      /* small gap between icon & title */
+}
+
+/* 2) Remove that extra left-push on the info-icon */
+#morph-modal .trait-header .info-icon {
+  margin-left: 0 !important;
+  vertical-align: middle;
+}
+
+/* 3) Center the tooltip beneath the icon, with plenty of z-index */
+#morph-modal .tooltip {
+  position: absolute !important;
+  left: 50% !important;
+  top: calc(100% + 6px) !important;    /* just below the header */
+  transform: translateX(-50%) !important;
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  white-space: normal;
+  max-width: 240px;
+  z-index: 10000;
+}
+
+/* 4) Make sure cards let the tooltip spill out */
+#morph-modal .trait-card {
+  overflow: visible;
+}
+
+/* Ensure Morph modal headers line up icon + name */
+#morph-modal .trait-header {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+/* Make sure the info-wrapper only takes up the space it needs */
+#morph-modal .trait-header .info-wrapper {
+  display: inline-flex !important;
+  width: auto !important;
+  margin-left: 0 !important;
+}
+/* Tighten cost + uses into two flex items */
+#morph-modal .trait-meta {
+  display: flex;
+  justify-content: space-between;  /* cost-group left, uses-group right */
+  align-items: center;
+  font-family: monospace;
+  font-size: 0.9rem;
+  gap: 0;                          /* no extra gap between items */
+}
+
+/* If you still want a tiny gap inside cost-group: */
+#morph-modal .cost-group {
+  margin-right: 0.5rem;
+}
+
+/* And make sure the container still shows overflow */
+#morph-modal .trait-card {
+  overflow: visible !important;
+}
+
+/* Ensure every tooltip in the Morph modal opens to the right and slightly down */
+#morph-modal .info-wrapper {
+  position: relative !important;  /* anchor point for tooltip */
+}
+
+#morph-modal .tooltip {
+  position: absolute !important;
+  top: 100% !important;                 /* right below the icon */
+  left: 100% !important;                /* flush to the right edge */
+  transform: translate(8px, 4px) !important;  /* nudge right & down */
+  white-space: normal;
+  max-width: 240px;
+  z-index: 10000;
+}
+
+/* Show tooltip only on hover */
+#morph-modal .info-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Morph‐modal: clearly highlight selected cards */
+#morph-modal .trait-card.selected {
+  border-color: #66ccff !important;       /* bright blue border */
+  background-color: #1f3f4f !important;   /* darker panel fill */
+  box-shadow: 0 0 8px rgba(102,204,255,0.6); /* subtle glow */
 }

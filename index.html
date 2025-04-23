@@ -97,39 +97,20 @@
     </div>
   </div>
 
-
-  <!-- Stat Selection modal -->
+  <!-- Stat Selection Modal -->
   <div id="stat-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content stat-modal">
       <h2>Select Stat Bonuses</h2>
-      <p>Choose You Starting Stat Bonus.</p>
+      <p>Choose exactly <span id="stat-config-max">2</span> total points.</p>
 
-      <div id="stat-choice-buttons">
-        <div class="stat-choice">
-          <span>Body</span>
-          <button class="stat-minus" data-stat="body">−</button>
-          <span id="stat-body-count">0</span>
-          <button class="stat-plus" data-stat="body">+</button>
-        </div>
-        <div class="stat-choice">
-          <span>Mind</span>
-          <button class="stat-minus" data-stat="mind">−</button>
-          <span id="stat-mind-count">0</span>
-          <button class="stat-plus" data-stat="mind">+</button>
-        </div>
-        <div class="stat-choice">
-          <span>Spirit</span>
-          <button class="stat-minus" data-stat="spirit">−</button>
-          <span id="stat-spirit-count">0</span>
-          <button class="stat-plus" data-stat="spirit">+</button>
-        </div>
-      </div>
+      <!-- grid of “cards” with steppers -->
+      <div id="stat-choice-buttons" class="trait-grid"></div>
 
       <p id="stat-pick-status">0 selected</p>
 
       <div class="modal-actions">
-        <button id="stat-cancel">Cancel</button>
-        <button id="confirm-stat-selection" disabled>Continue</button>
+        <button id="stat-cancel" class="btn-cancel">Cancel</button>
+        <button id="stat-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
@@ -149,64 +130,73 @@
     </div>
   </div>
 
+  <!-- Ability Selection Modal -->
   <div id="ability-select-modal" class="modal hidden">
     <div class="modal-content">
-      <h2 id="ability-select-title">Choose Abilities</h2>
-      <p id="ability-select-instructions">Pick up to 1 ability.</p>
-      <div id="ability-select-grid" class="trait-grid"></div>
-      <div class="modal-footer">
-        <span id="ability-select-count">0 selected</span>
-        <button id="ability-select-cancel">Cancel</button>
-        <button id="ability-select-confirm" disabled>Confirm</button>
+      <h2>Select Your Discounted Ability</h2>
+      <p>You may choose one ability to receive at half cost. This discount applies only to the first purchase.</p>
+
+      <div id="ability-list" class="trait-grid"></div>
+
+      <div class="modal-actions">
+        <button id="ability-select-cancel" class="btn-cancel">Cancel</button>
+        <button id="ability-select-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
 
+
   <!-- Morph Modal It's Morphin Time -->
   <div id="morph-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content morph-modal">
       <h2>🧬 Choose Your Morph Traits</h2>
       <p>
         Select <strong>exactly two</strong> traits.<br><br>
         If a trait has a build point cost, you may take it once for free as one of your racial selections,
         and purchase it up to <strong>three more times</strong> at character creation for the listed cost.
       </p>
-      <p>Selected: <span id="morph-selected-count">0</span> / 2</p>
+      <p>Selected: <span id="morph-selected-count">0</span> / <span id="morph-config-max">2</span></p>
   
+      <!-- trait-grid like Ability Selector -->
       <div id="morph-trait-grid" class="trait-grid">
-        <!-- Trait cards go here -->
+        <!-- JS will inject cards here -->
       </div>
-  
+
       <div class="modal-actions">
-        <button id="morph-cancel" class="modal-cancel-button">Cancel</button>
-        <button id="morph-confirm" disabled>Confirm ✔</button>
+        <button id="morph-cancel" class="btn-cancel">Cancel</button>
+        <button id="morph-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
 
-  <!-- Prof Modal -->
+  <!-- Proficiency Selection Modal -->
   <div id="proficiency-modal" class="modal hidden">
     <div class="modal-content">
       <h2>Select Your Free Proficiency</h2>
       <p>Choose one proficiency to begin with. This is free and permanent.</p>
-      <div id="proficiency-list" class="modal-grid"></div>
-      <div class="modal-footer">
-        <button id="proficiency-cancel">Cancel</button>
-        <button id="proficiency-confirm" disabled>Confirm</button>
+
+      <!-- Use the same grid structure as other modals -->
+      <div id="proficiency-list" class="trait-grid"></div>
+
+      <!-- Reuse shared modal footer styles -->
+      <div class="modal-actions">
+        <button id="proficiency-cancel" class="btn-cancel">Cancel</button>
+        <button id="proficiency-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
 
-  <!-- Confirmation Modal -->
+  <!-- Character Confirmation Modal -->
   <div id="confirmation-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content character-info-modal">
       <h2>Confirm Your Character</h2>
-      <div id="confirmation-summary"></div>
-      <button id="confirmation-cancel" class="modal-cancel-button">Cancel</button>
-      <button id="confirm-character">Start Character Planner</button>
+      <div id="confirmation-summary" class="confirmation-summary"></div>
+      <div class="button-group">
+        <button class="btn-cancel" id="confirmation-cancel">Cancel</button>
+        <button class="btn-continue" id="confirm-character">Start Character Planner</button>
+      </div>
     </div>
   </div>
-
 
   <!-- Main Planner Section -->
   <div id="planner-container" class="hidden">
@@ -359,14 +349,14 @@
   <script src="js/essenceSlots.js"></script>       <!-- Uses Stats, Layers -->
   <script src="js/races.js"></script>              <!-- Data only, safe to go here -->
   <script src="js/ui.js"></script>                 <!-- Uses all above modules -->
+  <script src="js/profModal.js"></script>          <!-- -->
+  <script src="js/confirmationModal.js"></script>  <!-- -->
   <script src="js/characterInfoModal.js"></script> <!-- -->
   <script src="js/loreModal.js"></script>          <!-- -->
   <script src="js/statModal.js"></script>          <!-- -->
   <script src="js/abilitySelectionModal.js"></script> <!-- -->
   <script src="js/morphAbilities.js"></script>     <!-- -->
   <script src="js/morphSelector.js"></script>      <!-- -->
-  <script src="js/profModal.js"></script>          <!-- -->
-  <script src="js/confirmationModal.js"></script>  <!-- -->
   <script src="js/characterExporter.js"></script>  <!-- -->
   <script src="js/main.js"></script>               <!-- Entry point: sets RacialLocks, calls UI updates -->
   <script src="js/splash.js"></script>             <!-- Splash needs Races and Stats, can go last -->
