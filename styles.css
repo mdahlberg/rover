@@ -1644,3 +1644,9 @@ ul ul {
   opacity: 1;
 }
 
+/* Morph‐modal: clearly highlight selected cards */
+#morph-modal .trait-card.selected {
+  border-color: #66ccff !important;       /* bright blue border */
+  background-color: #1f3f4f !important;   /* darker panel fill */
+  box-shadow: 0 0 8px rgba(102,204,255,0.6); /* subtle glow */
+}

@@ -96,6 +96,12 @@ window.StatSelector = {
       alert(`Please assign exactly ${this.config.max} points.`);
       return;
     }
+
+    // Apply stats
+    Object.entries(this.counts).forEach(([stat, value]) => {
+      Stats.startingStats[stat] = (Stats.startingStats[stat] || 0) + value;
+    });
+
     // hide
     const modal = document.getElementById("stat-modal");
     modal.classList.remove("show");

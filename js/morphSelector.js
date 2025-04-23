@@ -78,15 +78,45 @@ window.MorphSelector = {
       alert(`Please select exactly ${max} traits.`);
       return;
     }
-    // hide
+  
+    // 1) Persist morph choices to localStorage
+    const chosen = Array.from(this.selected);
+    window.MorphLocks = new Set();
+    chosen.forEach(id => {
+      const abilityId = `morph_${id}`;
+      const trait     =  MorphAbilities[id];
+  
+      // Track which morphs are locked in
+      window.MorphLocks.add(abilityId);
+  
+      // Inject into your abilities pool as “free” abilities
+      Abilities.availableAbilities[abilityId] = {
+        ...trait,
+        isMorph: true,
+        weaponProperties: []  // or trait.weaponProperties if you have them
+      };
+  
+      // Automatically purchase them at zero cost
+      Abilities.purchaseAbility(abilityId, 0);
+    });
+  
+    // Save to localStorage so it persists across reloads
+    localStorage.setItem(
+      Constants.MORPH_TRAITS,
+      JSON.stringify(chosen)
+    );
+  
+    // 2) Close modal
     const modal = document.getElementById("morph-modal");
     modal.classList.remove("show");
     setTimeout(() => modal.classList.add("hidden"), 300);
-    // callback
+  
+    // 3) Fire external callback if provided
     if (typeof this.onConfirm === "function") {
-      this.onConfirm(Array.from(this.selected));
+      this.onConfirm(chosen);
     }
-  }
+  },
+
 };
 
 // wire up Confirm & Cancel
