@@ -97,39 +97,20 @@
     </div>
   </div>
 
-
-  <!-- Stat Selection modal -->
+  <!-- Stat Selection Modal -->
   <div id="stat-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content stat-modal">
       <h2>Select Stat Bonuses</h2>
-      <p>Choose You Starting Stat Bonus.</p>
+      <p>Choose exactly <span id="stat-config-max">2</span> total points.</p>
 
-      <div id="stat-choice-buttons">
-        <div class="stat-choice">
-          <span>Body</span>
-          <button class="stat-minus" data-stat="body">−</button>
-          <span id="stat-body-count">0</span>
-          <button class="stat-plus" data-stat="body">+</button>
-        </div>
-        <div class="stat-choice">
-          <span>Mind</span>
-          <button class="stat-minus" data-stat="mind">−</button>
-          <span id="stat-mind-count">0</span>
-          <button class="stat-plus" data-stat="mind">+</button>
-        </div>
-        <div class="stat-choice">
-          <span>Spirit</span>
-          <button class="stat-minus" data-stat="spirit">−</button>
-          <span id="stat-spirit-count">0</span>
-          <button class="stat-plus" data-stat="spirit">+</button>
-        </div>
-      </div>
+      <!-- grid of “cards” with steppers -->
+      <div id="stat-choice-buttons" class="trait-grid"></div>
 
       <p id="stat-pick-status">0 selected</p>
 
       <div class="modal-actions">
-        <button id="stat-cancel">Cancel</button>
-        <button id="confirm-stat-selection" disabled>Continue</button>
+        <button id="stat-cancel" class="btn-cancel">Cancel</button>
+        <button id="stat-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
@@ -167,22 +148,23 @@
 
   <!-- Morph Modal It's Morphin Time -->
   <div id="morph-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content morph-modal">
       <h2>🧬 Choose Your Morph Traits</h2>
       <p>
         Select <strong>exactly two</strong> traits.<br><br>
         If a trait has a build point cost, you may take it once for free as one of your racial selections,
         and purchase it up to <strong>three more times</strong> at character creation for the listed cost.
       </p>
-      <p>Selected: <span id="morph-selected-count">0</span> / 2</p>
+      <p>Selected: <span id="morph-selected-count">0</span> / <span id="morph-config-max">2</span></p>
   
+      <!-- trait-grid like Ability Selector -->
       <div id="morph-trait-grid" class="trait-grid">
-        <!-- Trait cards go here -->
+        <!-- JS will inject cards here -->
       </div>
-  
+
       <div class="modal-actions">
-        <button id="morph-cancel" class="modal-cancel-button">Cancel</button>
-        <button id="morph-confirm" disabled>Confirm ✔</button>
+        <button id="morph-cancel" class="btn-cancel">Cancel</button>
+        <button id="morph-confirm" class="btn-continue" disabled>Confirm</button>
       </div>
     </div>
   </div>
