@@ -4,7 +4,7 @@
 window.UI = {
   refreshAll: function () {
     // Not on the character planner page yet
-    if (!document.getElementById("planner-container") || document.getElementById("planner-container").classList.contains("hidden")) {
+    if (!document.getElementById("planner-wrapper") || document.getElementById("planner-wrapper").classList.contains("hidden")) {
       console.warn("UI.refreshAll() skipped — planner not visible yet.");
       return;
     }
@@ -267,7 +267,7 @@ window.UI = {
 
   showCharacterPlanner: function () {
     document.getElementById("splash-container").classList.add("hidden");
-    document.getElementById("planner-container").classList.remove("hidden");
+    document.getElementById("planner-wrapper").classList.remove("hidden");
 
     this.setupEarnedBPButton();
 

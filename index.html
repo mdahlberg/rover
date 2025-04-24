@@ -227,140 +227,171 @@
     </div>
   </div>
 
-  <!-- Main Planner Section -->
-  <div id="planner-container" class="hidden">
-    <!-- Header: Sticky header remains the same -->
-    <header>
-      <h1>Character Planner</h1>
-      <div id="level-controls">
-        <strong>Level:</strong> <span id="level-display">1</span>
-        <!-- Start Over Button -->
-        <button id="start-over-btn" onclick="startOver()">Start Over</button>
-      </div>
-      <div id="global-bp-summary">
-        <div class="bp-line">
-          <strong>Total BP:</strong>
-          <span id="total-bp">0</span>
+  <!-- Planner Dashboard Wrapper -->
+  <div id="planner-wrapper" class="hidden">
+    <div class="app-container">
+
+      <!-- 1) Header -->
+      <header class="app-header">
+        <h1>Character Planner</h1>
+        <div id="level-controls">
+          <strong>Level:</strong> <span id="level-display">1</span>
+          <!-- Start Over Button -->
+          <button id="start-over-btn" onclick="startOver()">Start Over</button>
         </div>
-        <div class="bp-line">
-          <strong>Spent:</strong>
-          <span id="spent-bp">0</span>
-        </div>
-        <div class="bp-line">
-          <strong>Remaining:</strong>
-          <span id="remaining-bp">0</span>
-        </div>
-        <div class="bp-line with-tooltip">
-          <strong>BP To Next Level:</strong>
-          <span id="to-level-bp">0</span>
-          <div class="info-wrapper">
-            <span class="info-icon">ℹ️</span>
-            <div class="tooltip">
-              This is how many build points you need to spend before you can level up.
-              <br><br>
-              <strong>Tip:</strong> Add earned build points until you are one away from leveling.
-              Then make all final purchases for your current level before increasing points to level up.
+        <div id="global-bp-summary">
+          <div class="bp-line">
+            <strong>Total BP:</strong>
+            <span id="total-bp">0</span>
+          </div>
+          <div class="bp-line">
+            <strong>Spent:</strong>
+            <span id="spent-bp">0</span>
+          </div>
+          <div class="bp-line">
+            <strong>Remaining:</strong>
+            <span id="remaining-bp">0</span>
+          </div>
+          <div class="bp-line with-tooltip">
+            <strong>BP To Next Level:</strong>
+            <span id="to-level-bp">0</span>
+            <div class="info-wrapper">
+              <span class="info-icon">ℹ️</span>
+              <div class="tooltip">
+                This is how many build points you need to spend before you can level up.
+                <br><br>
+                <strong>Tip:</strong> Add earned build points until you are one away from leveling.
+                Then make all final purchases for your current level before increasing points to level up.
+              </div>
             </div>
           </div>
+        <div>
+        <div id="earned-bp-container">
+          <label for="earned-bp">Earned Build Points:</label>
+          <input type="number" id="earned-bp-input" min="0" step="1" />
+          <button id="add-earned-bp">Add BP</button>
+          <span id="bp-add-feedback" style="margin-left: 1em; color: green;"></span>
+          <div id="bp-warning" class="hidden" style="color: orange; margin-top: 0.5em;"></div>
         </div>
-      </div>
-      
-      <div id="earned-bp-container">
-        <label for="earned-bp">Earned Build Points:</label>
-        <input type="number" id="earned-bp-input" min="0" step="1" />
-        <button id="add-earned-bp">Add BP</button>
-        <span id="bp-add-feedback" style="margin-left: 1em; color: green;"></span>
-        <div id="bp-warning" class="hidden" style="color: orange; margin-top: 0.5em;"></div>
-      </div>
-      <button id="export-character">Export Character</button>
+        <button id="export-character">Export</button>
+        <div><button class="toggle-sidebar">☰</button></div>
+      </header>
 
-    </header>
+      <!-- 2) Sidebar Nav -->
+      <nav id="sidebar" class="sidebar">
+        <ul>
+          <li data-target="stats"><span class="icon">📊</span><span class="label">Stats</span></li>
+          <li data-target="proficiencies"><span class="icon">🛡️</span><span class="label">Proficiencies</span></li>
+          <li data-target="abilities"><span class="icon">⚔️</span><span class="label">Abilities</span></li>
+          <li data-target="essences"><span class="icon">🔮</span><span class="label">Essences</span></li>
+          <li data-target="lores"><span class="icon">🧠</span><span class="label">Lores</span></li>
+          <li data-target="history"><span class="icon">📜</span><span class="label">History</span></li>
+        </ul>
+      </nav>
 
-    <!-- Core Stats Section -->
-    <section id="core-stats" class="card">
-      <h2>Core Stats</h2>
-      
-      <!-- Body Category -->
-      <div class="core-stat-category">
-        <h3>Body</h3>
-        <div class="stats-grid">
-          <div class="stat-line">
-            <span>Body: <span id="body-value">0</span></span>
-            <button class="stat-increase" data-stat="body">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="body">Decrease (+? pts)</button>
+      <!-- 3) Main Content Area -->
+      <main id="main-content">
+        <section id="stats" class="content-section">
+          <!-- Core Stats Section -->
+          <div id="core-stats" class="card">
+          <h2>Core Stats</h2>
+          
+          <!-- Body Category -->
+          <div class="core-stat-category">
+            <h3>Body</h3>
+            <div class="stats-grid">
+              <div class="stat-line">
+                <span>Body: <span id="body-value">0</span></span>
+                <button class="stat-increase" data-stat="body">Increase (+? pts)</button>
+                <button class="stat-decrease" data-stat="body">Decrease (+? pts)</button>
+              </div>
+            </div>
+            <div class="derived-stats">
+              <p>Strength: <span id="strength-value">0</span></p>
+              <p>Health: <span id="health-value">0</span></p>
+              <p>Max Armor: <span id="armor-value">0</span></p>
+            </div>
           </div>
-        </div>
-        <div class="derived-stats">
-          <p>Strength: <span id="strength-value">0</span></p>
-          <p>Health: <span id="health-value">0</span></p>
-          <p>Max Armor: <span id="armor-value">0</span></p>
-        </div>
-      </div>
-      
-      <!-- Mind Category -->
-      <div class="core-stat-category">
-        <h3>Mind</h3>
-        <div class="stats-grid">
-          <div class="stat-line">
-            <span>Mind: <span id="mind-value">0</span></span>
-            <button class="stat-increase" data-stat="mind">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="mind">Decrease (+? pts)</button>
+          
+          <!-- Mind Category -->
+          <div class="core-stat-category">
+            <h3>Mind</h3>
+            <div class="stats-grid">
+              <div class="stat-line">
+                <span>Mind: <span id="mind-value">0</span></span>
+                <button class="stat-increase" data-stat="mind">Increase (+? pts)</button>
+                <button class="stat-decrease" data-stat="mind">Decrease (+? pts)</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      
-      <!-- Spirit Category -->
-      <div class="core-stat-category">
-        <h3>Spirit</h3>
-        <div class="stats-grid">
-          <div class="stat-line">
-            <span>Spirit: <span id="spirit-value">0</span></span>
-            <button class="stat-increase" data-stat="spirit">Increase (+? pts)</button>
-            <button class="stat-decrease" data-stat="spirit">Decrease (+? pts)</button>
+          
+          <!-- Spirit Category -->
+          <div class="core-stat-category">
+            <h3>Spirit</h3>
+            <div class="stats-grid">
+              <div class="stat-line">
+                <span>Spirit: <span id="spirit-value">0</span></span>
+                <button class="stat-increase" data-stat="spirit">Increase (+? pts)</button>
+                <button class="stat-decrease" data-stat="spirit">Decrease (+? pts)</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
+        <section id="proficiencies" class="content-section hidden">
+          <!-- Proficiency Shop -->
+          <div id="proficiency-shop" class="shop-grid">
+            <h2>Proficiency Shop</h2>
+            <div id="proficiency-shop" class="shop-grid"></div>
+          </div>
+        </section>
 
-    <!-- Current Level Purchases Section -->
-    <section id="current-layer" class="card">
-      <h2>Current Level Purchases</h2>
-      <div id="current-layer-display">(None)</div>
-    </section>
+        <section id="abilities" class="content-section hidden">
+          <!-- Ability Shop -->
+          <div id="ability-shop" class="shop-grid">
+            <h2>Ability Shop</h2>
+            <div id="ability-shop" class="shop-grid"></div>
+          </div>
+        </section>
 
-    <section id="lore-section" class="card">
-      <h2>
-        Lores <span id="unspent-lores" class="badge">0 Unspent</span>
-        <button id="add-lore-btn" class="btn" style="margin-left:1rem;">+ New Lore</button>
-      </h2>
-      <div id="lore-content"></div>
-    </section>
+        <section id="essences" class="content-section hidden">
+          <!-- Essence Slots -->
+          <div id="essence-slots" class="card">
+            <h2>Essence Slots</h2>
+            <ul id="essence-slot-list" class="slot-list"></ul>
+          </div>
+        </section>
 
-    <!-- Ability Shop Section -->
-    <section class="card">
-      <h2>Ability Shop</h2>
-      <div id="ability-shop" class="shop-grid"></div>
-    </section>
+        <section id="lores" class="content-section hidden">
+          <!-- Lore Shop -->
+          <div id="lore-shop" class="shop-grid"></div>
+            <h2>
+              Lores <span id="unspent-lores" class="badge">0 Unspent</span>
+              <button id="add-lore-btn" class="btn" style="margin-left:1rem;">+ New Lore</button>
+            </h2>
+            <div id="lore-content"></div>
+          </div>
+        </section>
 
-    <!-- Proficiency Shop Section -->
-    <section class="card">
-      <h2>Proficiency Shop</h2>
-      <div id="proficiency-shop" class="shop-grid"></div>
-    </section>
+        <section id="history" class="content-section hidden">
+          <!-- Level History -->
+          <div class="card">
+            <h2>Level History</h2>
+            <ul id="layer-history"></ul>
+          </div>
+        </section>
+      </main>
 
-    <!-- Essence Slots Section -->
-    <section id="essence-slots" class="card">
-      <h2>Essence Slots</h2>
-      <ul id="essence-slot-list" class="slot-list"></ul>
-    </section>
-
-    <!-- Level History Section -->
-    <section class="card">
-      <h2>Level History</h2>
-      <ul id="layer-history"></ul>
-    </section>
-  </div>
+      <!-- 4) Optional Footer -->
+      <footer class="app-footer">
+        <!-- Current Level Purchases Section -->
+        <section id="current-layer" class="card">
+        <h2>Current Level Purchases</h2>
+          <div id="current-layer-display">(None)</div>
+        </section>
+      </footer>
+    </div><!-- /.app-container -->
+  </div><!-- /#planner-wrapper -->
 
   <!-- Scripts: Load splash.js first, then the rest -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

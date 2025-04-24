@@ -162,3 +162,49 @@ document.querySelectorAll('.info-wrapper').forEach(wrapper => {
   }
 });
 
+// ── Sidebar Collapse Toggle ──
+document.querySelector('.toggle-sidebar').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+});
+
+// ── Section‐Swap Logic ──
+const navItems = document.querySelectorAll('#sidebar li');
+const sections = document.querySelectorAll('.content-section');
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    // 1) Highlight active nav button
+    navItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+
+    // 2) Show matching section, hide the rest
+    const target = item.dataset.target;
+    sections.forEach(sec => {
+      if (sec.id === target) sec.classList.remove('hidden');
+      else sec.classList.add('hidden');
+    });
+  });
+});
+
+// ── Hook into your splash→planner transition ──
+// If you already have UI.showCharacterPlanner, override it here:
+if (window.UI && typeof UI.showCharacterPlanner === 'function') {
+  const originalShow = UI.showCharacterPlanner.bind(UI);
+  UI.showCharacterPlanner = () => {
+    // hide splash
+    document.getElementById('splash-container').classList.add('hidden');
+    // show planner
+    document.getElementById('planner-wrapper').classList.remove('hidden');
+    // then do any existing logic
+    originalShow();
+  };
+}
+
+// ── On load, default to “Stats” tab ──
+window.addEventListener('DOMContentLoaded', () => {
+  // Ensure planner-wrapper is hidden until you click “Begin”
+  // Then, when you call UI.showCharacterPlanner(), this will fire:
+  const statsBtn = document.querySelector('#sidebar li[data-target="stats"]');
+  if (statsBtn) statsBtn.click();
+});
+
