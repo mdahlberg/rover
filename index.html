@@ -198,6 +198,35 @@
     </div>
   </div>
 
+  <!-- Add somewhere near the bottom of index.html, sibling to other <div class="modal"> blocks -->
+  <div id="add-lore-modal" class="modal hidden">
+    <div class="modal-content add-lore-modal">
+      <h2>Create Custom Lore</h2>
+      <div class="form-group">
+        <label for="new-lore-name">Name (max 25 chars)</label>
+        <input id="new-lore-name" type="text" maxlength="25" />
+        <small id="name-error" style="color:#f88;display:none;">Name is required and must be unique.</small>
+      </div>
+      <div class="form-group">
+        <label for="new-lore-parent">Category</label>
+        <select id="new-lore-parent">
+          <option value="general">General</option>
+          <option value="knowledge">Knowledge</option>
+          <option value="biology">Biology</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="new-lore-desc">Description (max 300 chars)</label>
+        <textarea id="new-lore-desc" maxlength="300"></textarea>
+        <small id="desc-error" style="color:#f88;display:none;">Description is required.</small>
+      </div>
+      <div class="modal-actions">
+        <button id="add-lore-cancel" class="btn-cancel">Cancel</button>
+        <button id="add-lore-confirm" class="btn-continue" disabled>Create</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Planner Section -->
   <div id="planner-container" class="hidden">
     <!-- Header: Sticky header remains the same -->
@@ -303,6 +332,7 @@
     <section id="lore-section" class="card">
       <h2>
         Lores <span id="unspent-lores" class="badge">0 Unspent</span>
+        <button id="add-lore-btn" class="btn" style="margin-left:1rem;">+ New Lore</button>
       </h2>
       <div id="lore-content"></div>
     </section>
@@ -346,6 +376,7 @@
   <script src="js/abilities.js"></script>          <!-- Uses Stats /  Weapon Properties / Layers -->
   <script src="js/proficiencies.js"></script>      <!-- Uses Layers -->
   <script src="js/lores.js"></script>              <!-- Uses Layers -->
+  <script src="js/addLoreModal.js"></script>       <!-- Uses Layers -->
   <script src="js/essenceSlots.js"></script>       <!-- Uses Stats, Layers -->
   <script src="js/races.js"></script>              <!-- Data only, safe to go here -->
   <script src="js/ui.js"></script>                 <!-- Uses all above modules -->
