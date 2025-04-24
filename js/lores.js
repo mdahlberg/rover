@@ -50,6 +50,17 @@ window.Lores = {
     return Math.floor(Stats.getTotal("mind") / 3);
   },
 
+  getCustomLores: function() {
+    customLores = [];
+    this.availableLores.forEach(lore => {
+      if (lore?.isCustom || false) {
+        customLores.push(lore)
+      }
+    });
+
+    return customLores;
+  },
+
   getUnspentLores: function () {
     const racialIds = window.RacialLocks?.lores || new Set();
 

@@ -19,6 +19,7 @@ window.CharacterExporter = {
 
       lores: structuredClone(Lores.purchasedLores),
       currentLayerLores: structuredClone(Lores.currentLayerPurchasedLores),
+      customLores: structuredClone(Lores.getCustomLores()),
 
       essenceSlots: structuredClone(EssenceSlots.purchasedEssences),
       currentLayerEssences: structuredClone(EssenceSlots.currentLayerPurchasedEssences),
@@ -116,6 +117,12 @@ window.CharacterExporter = {
     // ✅ Lores
     Lores.purchasedLores = structuredClone(snapshot.lores || {});
     Lores.currentLayerPurchasedLores = structuredClone(snapshot.currentLayerLores || {});
+
+    const customLores = structuredClone(snapshot.customLores);
+    for (const customLore of customLores) {
+      console.log("Adding custom lore to list of available lores: ", customLore.id);
+      Lores.availableLores.push(customLore);
+    }
   
     // ✅ Essence Slots
     EssenceSlots.purchasedEssences = structuredClone(snapshot.essenceSlots || {});
