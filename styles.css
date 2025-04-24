@@ -1742,3 +1742,52 @@ ul ul {
 }
 
 /* Button styles already covered by .btn-cancel/.btn-continue */
+/* Inline delete button on custom lores */
+.lore-entry .lore-delete {
+  background: none;
+  border: none;
+  color: #f55;
+  font-size: 1.2rem;
+  line-height: 1;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.lore-entry .lore-delete:disabled {
+  color: #555;
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.lore-entry .lore-delete:not(:disabled):hover {
+  opacity: 1;
+}
+/* Place delete × snug beside the info-icon */
+.lore-name .lore-delete {
+  background: none;
+  border: none;
+  color: #f55;
+  font-size: 1.1rem;
+  line-height: 1;
+  margin-left: 0.4rem;   /* small gap from info icon */
+  cursor: pointer;
+  vertical-align: middle;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.lore-name .lore-delete:disabled {
+  color: #555;
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.lore-name .lore-delete:not(:disabled):hover {
+  opacity: 1;
+}
+/* Make disabled delete-buttons still show the “×”, just greyed out */
+.lore-name .lore-delete:disabled {
+  color: #888 !important;      /* light grey so you can still see it */
+  opacity: 0.6 !important;     /* semi-transparent but not gone */
+  cursor: not-allowed;         /* maintain the no-click pointer */
+}

@@ -707,74 +707,100 @@ window.UI = {
     });
   },
 
+  /**
+   * Refresh the Lore shop
+   */
   updateLoreUI: function() {
     const container = document.getElementById("lore-content");
     container.innerHTML = "";
   
-    // Update the “X Unspent” badge
+    // Update Unspent badge
     const unspent = Lores.getUnspentLores();
     document.getElementById("unspent-lores").textContent = `${unspent} Unspent`;
   
-    // Recursive renderer
     function renderBranch(parentId, depth = 0) {
-      // Find all lores whose .parent === parentId
-      Lores.availableLores
-        .filter(lore => lore.parent === parentId)
-        .forEach(lore => {
-          const lvl = Lores.getLoreLevel(lore.id);
-          const entry = document.createElement("div");
-  
-          // base class + child indent class + inline margin
-          entry.className = "lore-entry" + (depth > 0 ? " child" : "");
-          entry.style.marginLeft = `${depth * 1.5}rem`;
-  
-          // Name + tooltip
-          const nameDiv = document.createElement("div");
-          nameDiv.className = "lore-name";
-          nameDiv.innerHTML = `
-            <div class="info-wrapper">
-              <span class="info-icon">i</span>
-              <div class="lore-tooltip">${lore.description}</div>
-            </div>
-            <span>${lore.name}</span>
-          `;
-  
-          // No controls for categories
-          if (!lore.isParent) {
-            // Controls: minus / count / plus
-            const controls = document.createElement("div");
-            controls.className = "lore-controls";
-  
-            const btnMinus = document.createElement("button");
-            btnMinus.textContent = "−";
-            btnMinus.disabled = !Lores.canDecreaseLore(lore.id);
-            btnMinus.onclick = () => { Lores.removeLore(lore.id); };
-  
-            const countSpan = document.createElement("span");
-            countSpan.className = "lore-count";
-            countSpan.textContent = lvl;
-  
-            const btnPlus = document.createElement("button");
-            btnPlus.textContent = "+";
-            btnPlus.disabled = !Lores.canIncreaseLore(lore.id);
-            btnPlus.onclick = () => { Lores.purchaseLore(lore.id); };
-  
-            controls.append(btnMinus, countSpan, btnPlus);
-            entry.append(nameDiv, controls);
-          } else {
-            entry.append(nameDiv);
-          }
-
-          container.appendChild(entry);
-  
-          // If this lore is a parent category, recurse into its children
-          if (lore.isParent) {
-            renderBranch(lore.id, depth + 1);
-          }
+      const branch = Lores.availableLores
+        .filter(l => l.parent === parentId)
+        .sort((a, b) => {
+          // non-parents first (a.isParent=false → 0; true→1)
+          const pa = a.isParent ? 1 : 0;
+          const pb = b.isParent ? 1 : 0;
+          if (pa !== pb) return pa - pb;
+          // then sort alphabetically by name
+          return a.name.localeCompare(b.name);
         });
+
+      for (const lore of branch) {
+        const lvl = Lores.getLoreLevel(lore.id);
+  
+        // Entry wrapper
+        const entry = document.createElement("div");
+        entry.className = "lore-entry" + (depth > 0 ? " child" : "");
+        entry.style.marginLeft = `${depth * 1.5}rem`;
+  
+        // Name + tooltip
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "lore-name";
+        nameDiv.innerHTML = `
+          <span>${lore.name}</span>
+          <div class="info-wrapper">
+            <span class="info-icon">i</span>
+            <div class="lore-tooltip">${lore.description}</div>
+          </div>
+        `;
+
+        // If this is a custom lore, inject the delete‐“×” right after the info icon
+        if (lore.isCustom) {
+          const btnDelete = document.createElement("button");
+          btnDelete.className = "lore-delete";
+          btnDelete.textContent = "×";
+          btnDelete.title = "Delete custom lore";
+          // Only allow deletion if unpurchased
+          btnDelete.disabled = (Lores.getLoreLevel(lore.id) !== 0);
+          btnDelete.onclick = () => {
+            Lores.availableLores = Lores.availableLores.filter(l => l.id !== lore.id);
+            UI.updateLoreUI();
+          };
+          nameDiv.appendChild(btnDelete);
+        }
+
+        entry.appendChild(nameDiv);
+        container.appendChild(entry);
+  
+        // Recurse categories
+        if (lore.isParent) {
+          renderBranch(lore.id, depth + 1);
+          continue;
+        }
+  
+        // Controls: − / count / + / [× delete if custom]
+        const controls = document.createElement("div");
+        controls.className = "lore-controls";
+  
+        // Minus
+        const btnMinus = document.createElement("button");
+        btnMinus.textContent = "−";
+        btnMinus.disabled = !Lores.canDecreaseLore(lore.id);
+        btnMinus.onclick = () => Lores.removeLore(lore.id);
+  
+        // Count
+        const countSpan = document.createElement("span");
+        countSpan.className = "lore-count";
+        countSpan.textContent = lvl;
+  
+        // Plus
+        const btnPlus = document.createElement("button");
+        btnPlus.textContent = "+";
+        btnPlus.disabled = !Lores.canIncreaseLore(lore.id);
+        btnPlus.onclick = () => Lores.purchaseLore(lore.id);
+  
+        controls.append(btnMinus, countSpan, btnPlus);
+  
+        entry.appendChild(controls);
+      }
     }
   
-    // Kick off rendering at the “root” (lores with no parent)
+    // Start at the root (no parent)
     renderBranch(undefined, 0);
   },
 
