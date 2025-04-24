@@ -2,26 +2,36 @@
 
 window.Lores = {
   availableLores: [
-    { id: "tracking", name: "Tracking", description: "Track creatures or humanoids.", category: "General" },
-    { id: "appraisal", name: "Appraisal", description: "Evaluate materials and essence.", category: "General" },
-    { id: "worldbreaker_historian", name: "Worldbreaker Historian", description: "Use or identify Worldbreaker tech.", category: "General" },
-    { id: "new_world_historian", name: "New World Historian", description: "History and politics post-Unraveling.", category: "General" },
-    { id: "smooth_talker", name: "Smooth Talker", description: "Persuade, bargain, and charm.", category: "General" },
-    { id: "survivalist", name: "Survivalist", description: "Survive and provide in wilderness.", category: "General" },
-    { id: "cartographer", name: "Cartographer", description: "Read and create maps accurately.", category: "General" },
-    { id: "arcanist", name: "Arcanist Knowledge", description: "Essence behavior and properties.", category: "Knowledge" },
-    { id: "theology", name: "Theology Knowledge", description: "Religious factions and beliefs.", category: "Knowledge" },
-    { id: "underworld", name: "Underworld Knowledge", description: "Criminal networks and codes.", category: "Knowledge" },
-    { id: "military", name: "Military Knowledge", description: "Strategy and army behavior.", category: "Knowledge" },
-    { id: "biology", name: "Biology", description: "Biology Lore Category", category: "Knowledge", isParent: true },
-    { id: "necrologist", name: "Necrologist", description: "Undead monsters.", category: "Knowledge", parent: "biology" },
-    { id: "macrologist", name: "Macrologist", description: "Earthshakers.", category: "Knowledge", parent: "biology" },
-    { id: "pelagist", name: "Pelagist", description: "Ocean monsters.", category: "Knowledge", parent: "biology" },
-    { id: "toxicologist", name: "Toxicologist", description: "Poisons and poisonous creatures.", category: "Knowledge", parent: "biology" },
-    { id: "umbralogist", name: "Umbralogist", description: "Tainted living creatures.", category: "Knowledge", parent: "biology" },
-    { id: "aetherologist", name: "Aetherologist", description: "Elemental creatures.", category: "Knowledge", parent: "biology" },
-    { id: "naturologist", name: "Naturologist", description: "Unmutated natural creatures.", category: "Knowledge", parent: "biology" },
-    { id: "mutologist", name: "Mutologist", description: "Unnaturally mutated creatures.", category: "Knowledge", parent: "biology" }
+    // ——— Top-level groups ———
+    { id: "general",   name: "General",   description: "General Lore", isParent: true },
+    { id: "knowledge", name: "Knowledge", description: "Focused on a particular field of study to grant information based on that topic that is not generally known.", isParent: true },
+    
+    // ——— General category (children of “general”) ———
+    { id: "tracking",     name: "Tracking",     description: "Capable of reading trail signs and marking where creatures or humanoids have passed. The larger a creature is, the easier it usually is to track, but there are exceptions….",       parent: "general" },
+    { id: "appraisal",    name: "Appraisal",    description: "Appraisers are capable of evaluating the worth of raw materials, resources, and basically anything that isn’t already coins. They can also try to identify the presence and effects of essence in physical objects.",      parent: "general" },
+    { id: "worldbreaker_historian", name: "Worldbreaker Historian", description: "Experts in what little myths and stories have survived before the Great Unraveling. They have a chance of identifying or even attempting to use any functional Worldbreaker technology, though success isn’t guaranteed.", parent: "general" },
+    { id: "new_world_historian",    name: "New World Historian",    description: "Experts on various events and politics that have occurred since the great Unraveling. Unlike Worldbreaker historians, their knowledge is usually much more reliable.", parent: "general" },
+    { id: "spycraft",    name: "Spycraft",    description: "Knowledge in how to move and act covertly, to deceive and to gain information by secret methods", parent: "general" },
+    { id: "smooth_talker", name: "Smooth Talker", description: ".Knowledge in how to make deals, bargains, and bring people around to your point of view. Can potentially defuse combat!",        parent: "general" },
+    { id: "survivalist",   name: "Survivalist",   description: "Knowledge on how to survive outside of civilization. You can find food and water much easier and can potentially even help provide for others in those situations as well.",   parent: "general" },
+    { id: "cartographer",  name: "Cartographer",  description: "Knowledge on how to read and make maps. Cartographers are rarely lost unless something is directly obscuring their senses and can usually retrace their steps accurately.",     parent: "general" },
+
+    // ——— Knowledge category (children of “knowledge”) ———
+    { id: "arcanist",   name: "Arcanist Knowledge",   description: "Knowledge on how Essence works and behaves (this does not grant the ability to identify essence effects that are not obvious, such as traps).",      parent: "knowledge" },
+    { id: "theology",   name: "Theology Knowledge",   description: "Knowledge of how various religious factions believe and act. Religion is an important part of everyday life in Valiant.",      parent: "knowledge" },
+    { id: "underworld", name: "Underworld Knowledge", description: "Knowledge of how criminals work and communicate.",         parent: "knowledge" },
+    { id: "military",   name: "Military Knowledge",   description: "Knowledge on how soldiers and armies think, act, and move.",          parent: "knowledge" },
+    
+    // ——— Biology sub-group (child of “knowledge”, parent for its own children) ———
+    { id: "biology",           name: "Biology",           description: "Knowledge of a specific type of humanoid or monster. This gives you information on how to identify their behaviors and territories, as well as their strengths and weaknesses. High level biologists can even try to communicate basic ideas with monsters in their field of study, as long as they are not already hostile", isParent: true, parent: "knowledge" },
+    { id: "necrologist",       name: "Necrologist",       description: "Undead monsters.",       parent: "biology" },
+    { id: "macrologist",       name: "Macrologist",       description: "Earthshakers.",          parent: "biology" },
+    { id: "pelagist",          name: "Pelagist",          description: "Ocean monsters.",        parent: "biology" },
+    { id: "toxicologist",      name: "Toxicologist",      description: "Recognizing poisons and poisonous creatures.", parent: "biology" },
+    { id: "umbralogist",       name: "Umbralogist",       description: "Tainted living creatures.",           parent: "biology" },
+    { id: "aetherologist",     name: "Aetherologist",     description: "Elemental creatures.",    parent: "biology" },
+    { id: "naturologist",      name: "Naturologist",      description: "Unmutated natural creatures.", parent: "biology" },
+    { id: "mutologist",        name: "Mutologist",        description: "Unnaturally mutated creatures.", parent: "biology" }
   ],
 
   currentLayerPurchasedLores: {},
@@ -59,9 +69,14 @@ window.Lores = {
   },
 
   canDecreaseLore: function (loreId) {
+    // 1) Must have at least one purchased *this layer*
     const current = this.currentLayerPurchasedLores[loreId] || 0;
-    const racial = window.RacialLocks?.lores?.has(loreId) ? 1 : 0;
+    if (current <= 0) {
+      return false;
+    }
 
+    // 2) Don't go below racial bonus count
+    const racial = window.RacialLocks?.lores?.has(loreId) ? 1 : 0;
     return current >= racial;
   },
 
@@ -70,7 +85,7 @@ window.Lores = {
   },
 
   getLoreLevel: function (loreId) {
-    return (this.purchasedLores[loreId] || 0) + (this.currentLayerPurchasedLores[loreId] || 0);
+    return (this.purchasedLores[loreId] || 0);
   },
 
   purchaseLore: function (loreId) {
@@ -80,6 +95,7 @@ window.Lores = {
     this.purchasedLores[loreId] = (this.purchasedLores[loreId] || 0) + 1;
 
     UI.updateLoreUI();
+    UI.updateLayerPreview();
     return true;
   },
 

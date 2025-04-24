@@ -707,47 +707,75 @@ window.UI = {
     });
   },
 
-  /**
-   * Update the lore system UI.
-   */
-  updateLoreUI: function () {
+  updateLoreUI: function() {
     const container = document.getElementById("lore-content");
-    if (!container) return;
     container.innerHTML = "";
-    console.log("updating lores card")
+  
+    // Update the “X Unspent” badge
+    const unspent = Lores.getUnspentLores();
+    document.getElementById("unspent-lores").textContent = `${unspent} Unspent`;
+  
+    // Recursive renderer
+    function renderBranch(parentId, depth = 0) {
+      // Find all lores whose .parent === parentId
+      Lores.availableLores
+        .filter(lore => lore.parent === parentId)
+        .forEach(lore => {
+          const lvl = Lores.getLoreLevel(lore.id);
+          const entry = document.createElement("div");
+  
+          // base class + child indent class + inline margin
+          entry.className = "lore-entry" + (depth > 0 ? " child" : "");
+          entry.style.marginLeft = `${depth * 1.5}rem`;
+  
+          // Name + tooltip
+          const nameDiv = document.createElement("div");
+          nameDiv.className = "lore-name";
+          nameDiv.innerHTML = `
+            <div class="info-wrapper">
+              <span class="info-icon">i</span>
+              <div class="lore-tooltip">${lore.description}</div>
+            </div>
+            <span>${lore.name}</span>
+          `;
+  
+          // No controls for categories
+          if (!lore.isParent) {
+            // Controls: minus / count / plus
+            const controls = document.createElement("div");
+            controls.className = "lore-controls";
+  
+            const btnMinus = document.createElement("button");
+            btnMinus.textContent = "−";
+            btnMinus.disabled = !Lores.canDecreaseLore(lore.id);
+            btnMinus.onclick = () => { Lores.removeLore(lore.id); };
+  
+            const countSpan = document.createElement("span");
+            countSpan.className = "lore-count";
+            countSpan.textContent = lvl;
+  
+            const btnPlus = document.createElement("button");
+            btnPlus.textContent = "+";
+            btnPlus.disabled = !Lores.canIncreaseLore(lore.id);
+            btnPlus.onclick = () => { Lores.purchaseLore(lore.id); };
+  
+            controls.append(btnMinus, countSpan, btnPlus);
+            entry.append(nameDiv, controls);
+          } else {
+            entry.append(nameDiv);
+          }
 
-    const categories = ["General", "Knowledge"];
-
-    categories.forEach(category => {
-      // Section Header
-      const sectionTitle = document.createElement("div");
-      sectionTitle.className = "lore-section";
-      sectionTitle.innerText = category;
-      container.appendChild(sectionTitle);
-
-      // Pull lores from this category that are not Biology children
-      const lores = Lores.availableLores.filter(l =>
-        l.category === category && !l.parent
-      );
-
-      lores.forEach(lore => {
-        if (lore.id === "biology") {
-          // Biology header
-          const biologyHeader = document.createElement("div");
-          biologyHeader.className = "lore-subgroup";
-          biologyHeader.innerText = "Biology";
-          container.appendChild(biologyHeader);
-
-          // Get children of biology
-          const bioChildren = Lores.getChildLores("biology");
-          bioChildren.forEach(childLore => {
-            container.appendChild(UI.createLoreItem(childLore, true)); // pass true for extra indent
-          });
-        } else {
-          container.appendChild(UI.createLoreItem(lore));
-        }
-      });
-    });
+          container.appendChild(entry);
+  
+          // If this lore is a parent category, recurse into its children
+          if (lore.isParent) {
+            renderBranch(lore.id, depth + 1);
+          }
+        });
+    }
+  
+    // Kick off rendering at the “root” (lores with no parent)
+    renderBranch(undefined, 0);
   },
 
   /**

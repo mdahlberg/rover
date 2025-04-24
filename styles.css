@@ -1650,3 +1650,64 @@ ul ul {
   background-color: #1f3f4f !important;   /* darker panel fill */
   box-shadow: 0 0 8px rgba(102,204,255,0.6); /* subtle glow */
 }
+/* ----------------------------------------------
+   Lore Shop Styles
+---------------------------------------------- */
+#lore-content .lore-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2e2e3e;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+#lore-content .lore-entry.child {
+  margin-left: 1.5rem;  /* indent for child lores */
+}
+
+.lore-entry .lore-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #f0f0f0;
+}
+
+.lore-entry .lore-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lore-entry button {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #444;
+  color: #fff;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lore-entry button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.lore-entry button:not(:disabled):hover {
+  background-color: #666;
+}
+
+.lore-entry .lore-count {
+  min-width: 1.5rem;
+  text-align: center;
+  color: #aad;
+  font-family: monospace;
+  font-size: 1rem;
+}
