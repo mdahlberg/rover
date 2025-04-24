@@ -1,7 +1,7 @@
 // essenceSlots.js - Manages Essence Slot logic and interactions
 
 window.EssenceSlots = {
-  levels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "master"],
+  levels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
 
   costTable: {
     "1":    [3, 2, 1, 1, 1, 1],
@@ -13,7 +13,7 @@ window.EssenceSlots = {
     "7":    [null, 10, 9, 7, 6, 3],
     "8":    [null, null, 10, 9, 8, 4],
     "9":    [null, null, null, 12, 10, 5],
-    "master": [null, null, null, 6, 4, 2]
+    "10": [null, null, null, 6, 4, 2]
   },
 
   purchasedEssences: {},
@@ -69,9 +69,9 @@ window.EssenceSlots = {
   },
 
   getDisplayLabel: function (levelId) {
-    if (levelId === "master") return "Master Slot";
-    const levelNum = parseInt(levelId.replace("slot_", ""));
-    return `Level ${levelNum}`;
+    const n = Number(levelId);
+    if (n === 10) return "Master Slot";
+    return `Level ${n}`;
   },
 
   canPurchase: function (level) {
