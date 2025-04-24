@@ -1,5 +1,6 @@
 // splash.js - Handles race selection and transition to the planner.
 console.log("splash.js loaded");
+localStorage.clear();
 
 let selectedRace = {};
 
