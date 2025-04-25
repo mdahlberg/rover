@@ -1846,3 +1846,33 @@ main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1
   color: white;
   cursor: pointer;
 }
+/* make each card a positioned context */
+#lore-modal .lore-card {
+  position: relative;
+  z-index: 0;
+}
+/* on hover, lift this card (and its tooltip) above siblings */
+#lore-modal .lore-card:hover {
+  z-index: 10;
+}
+/* ensure the tooltip itself is on top */
+#lore-modal .lore-card .lore-tooltip {
+  z-index: 20 !important;
+}
+/* ─── Proficiency Modal: keep tooltips on top ─── */
+#proficiency-modal .trait-card {
+  /* ensure every card can create its own stacking context */
+  position: relative;
+  z-index: 0;
+  overflow: visible;    /* let the tooltip spill outside */
+}
+
+#proficiency-modal .trait-card:hover {
+  /* bring the hovered card (and its tooltip) above all siblings */
+  z-index: 1000;
+}
+
+#proficiency-modal .trait-card .lore-tooltip {
+  /* make sure the tooltip is above even the hovered card’s background */
+  z-index: 1001 !important;
+}
