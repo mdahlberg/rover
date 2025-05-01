@@ -52,6 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
       UI.refreshAll();
     });
   }
+
+  // ── Sidebar Collapse Toggle ──
+  document.querySelector('.toggle-sidebar').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+  });
+
 });
 
 function applyRacialProficienciesAndAbilities() {
@@ -160,11 +166,6 @@ document.querySelectorAll('.info-wrapper').forEach(wrapper => {
       });
     });
   }
-});
-
-// ── Sidebar Collapse Toggle ──
-document.querySelector('.toggle-sidebar').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.toggle('collapsed');
 });
 
 // ── Section‐Swap Logic ──

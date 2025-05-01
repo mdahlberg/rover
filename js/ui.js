@@ -280,58 +280,61 @@ window.UI = {
    * Set up listener for earned BP button
    */
   setupEarnedBPButton: function () {
-    const input = document.getElementById('earned-bp-input');
+    const input    = document.getElementById('earned-bp-input');
     const feedback = document.getElementById('bp-add-feedback');
-    const warning = document.getElementById('bp-warning');
+    const warning  = document.getElementById('bp-warning');
+    const addBtn   = document.getElementById('add-earned-bp');
   
-    // On input, set max allowed based on level threshold logic
+    // On input, show/hide the warning under the field
     input.addEventListener('input', () => {
-      const value = parseInt(input.value, 10) || 0;
+      const value   = parseInt(input.value, 10) || 0;
       const maxSafe = BPLeveling.getMaxSafeEarnedBP();
-  
-      input.max = maxSafe;
   
       if (value > maxSafe) {
         warning.classList.remove('hidden');
-        warning.textContent = `⚠️ Max allowed is ${maxSafe} to avoid leveling up more than once. Add more BP after leveling.`;
+        warning.textContent = 
+          `⚠️ Max allowed is ${maxSafe} to avoid leveling up more than once.`;
       } else {
         warning.classList.add('hidden');
         warning.textContent = '';
       }
     });
   
-    // On Add BP button click
-    document.getElementById('add-earned-bp').addEventListener('click', () => {
-      let amount = parseInt(input.value, 10);
+    // On Add BP click, do one quick validation & either show feedback or apply
+    addBtn.addEventListener('click', () => {
+      const val     = parseInt(input.value, 10);
+      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
   
-      if (isNaN(amount) || amount <= 0) {
+      // 1) Not a positive number?
+      if (isNaN(val) || val <= 0) {
         feedback.textContent = 'Enter a valid number!';
-        feedback.style.color = 'red';
+        feedback.style.color  = 'red';
         feedback.classList.add('show');
         setTimeout(() => feedback.classList.remove('show'), 2000);
         return;
       }
   
-      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
-  
-      if (amount > maxSafe) {
-        // We already have a warning displayed, just cancel the op
-        amount = maxSafe;
-        return ;
+      // 2) Exceeds the “to next” max?
+      if (val > maxSafe) {
+        feedback.textContent = 
+          `⚠️ You can only add up to ${maxSafe} BP to avoid skipping the next level.`;
+        feedback.style.color  = 'red';
+        feedback.classList.add('show');
+        setTimeout(() => feedback.classList.remove('show'), 2000);
+        return;
       }
-
-      // Apply BP and update state
-      const applied = BPLeveling.addEarnedBP(amount);
   
+      // 3) All good—apply it!
+      const applied = BPLeveling.addEarnedBP(val);
       if (!applied) return;
-
-      feedback.textContent = `+${amount} BP added!`;
-      feedback.style.color = 'green';
+  
+      feedback.textContent = `+${val} BP added!`;
+      feedback.style.color  = 'green';
       feedback.classList.add('show');
       setTimeout(() => feedback.classList.remove('show'), 2000);
   
-      // Clear input + warning
-      input.value = '';
+      // clear and hide
+      input.value        = '';
       warning.classList.add('hidden');
       warning.textContent = '';
     });
