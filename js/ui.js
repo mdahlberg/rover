@@ -276,67 +276,79 @@ window.UI = {
     UI.setupStatButtons();
   },
 
+  showTooltip: function(msg, duration = 2000) {
+    const tip = document.getElementById('bp-tooltip');
+    tip.textContent = msg;
+    tip.classList.add('show');
+    clearTimeout(tip._hideTimer);
+    tip._hideTimer = setTimeout(() => {
+      tip.classList.remove('show');
+    }, duration);
+  },
+  
+
   /**
    * Set up listener for earned BP button
    */
   setupEarnedBPButton: function () {
     const input    = document.getElementById('earned-bp-input');
-    const feedback = document.getElementById('bp-add-feedback');
-    const warning  = document.getElementById('bp-warning');
     const addBtn   = document.getElementById('add-earned-bp');
+    const wrapper  = document.querySelector('.tooltip-container');
+    
+    // Helper: ensure we have a tooltip element and show it
+    function showTip(msg, type = 'error', duration = 2000) {
+      let tip = document.getElementById('bp-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'bp-tooltip';
+        tip.className = 'bp-tooltip';
+        wrapper.appendChild(tip);
+      }
+      tip.textContent = msg;
+      tip.classList.remove('error', 'success');
+      tip.classList.add(type, 'show');
+      clearTimeout(tip._hideTimer);
+      tip._hideTimer = setTimeout(() => tip.classList.remove('show'), duration);
+    }
   
-    // On input, show/hide the warning under the field
-    input.addEventListener('input', () => {
-      const value   = parseInt(input.value, 10) || 0;
-      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
-  
-      if (value > maxSafe) {
-        warning.classList.remove('hidden');
-        warning.textContent = 
-          `⚠️ Max allowed is ${maxSafe} to avoid leveling up more than once.`;
-      } else {
-        warning.classList.add('hidden');
-        warning.textContent = '';
+    // 1) Prevent spinner from climbing past max
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp') {
+        const max = BPLeveling.getMaxSafeEarnedBP();
+        const val = parseInt(input.value, 10) || 0;
+        if (val >= max) e.preventDefault();
       }
     });
   
-    // On Add BP click, do one quick validation & either show feedback or apply
+    // 2) Clamp and warn as-you-type
+    input.addEventListener('input', () => {
+      const max = BPLeveling.getMaxSafeEarnedBP();
+      input.max = max;
+      let val = parseInt(input.value, 10) || 0;
+      if (val > max) {
+        input.value = max;
+        showTip(`⚠️ Max is ${max} BP to avoid skipping a level`, 'error', 2500);
+      }
+    });
+  
+    // 3) On “Add” click: validate & apply
     addBtn.addEventListener('click', () => {
-      const val     = parseInt(input.value, 10);
-      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
+      const amt = parseInt(input.value, 10);
+      const max = BPLeveling.getMaxSafeEarnedBP();
   
-      // 1) Not a positive number?
-      if (isNaN(val) || val <= 0) {
-        feedback.textContent = 'Enter a valid number!';
-        feedback.style.color  = 'red';
-        feedback.classList.add('show');
-        setTimeout(() => feedback.classList.remove('show'), 2000);
+      if (isNaN(amt) || amt <= 0) {
+        showTip('Enter a valid, non-negative number!');
+        return;
+      }
+      if (amt > max) {
+        showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
         return;
       }
   
-      // 2) Exceeds the “to next” max?
-      if (val > maxSafe) {
-        feedback.textContent = 
-          `⚠️ You can only add up to ${maxSafe} BP to avoid skipping the next level.`;
-        feedback.style.color  = 'red';
-        feedback.classList.add('show');
-        setTimeout(() => feedback.classList.remove('show'), 2000);
-        return;
-      }
-  
-      // 3) All good—apply it!
-      const applied = BPLeveling.addEarnedBP(val);
-      if (!applied) return;
-  
-      feedback.textContent = `+${val} BP added!`;
-      feedback.style.color  = 'green';
-      feedback.classList.add('show');
-      setTimeout(() => feedback.classList.remove('show'), 2000);
-  
-      // clear and hide
-      input.value        = '';
-      warning.classList.add('hidden');
-      warning.textContent = '';
+      // Apply and confirm
+      BPLeveling.addEarnedBP(amt);
+      showTip(`+${amt} BP added!`, 'success', 1500);
+      input.value = '';
     });
   },
 

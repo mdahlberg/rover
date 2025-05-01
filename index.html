@@ -270,16 +270,15 @@
         </div>
 
         <div class="cell earn-bp-form">
-          <form onsubmit="event.preventDefault(); /* add‐BP logic */">
-            <input type="number" id="earned-bp-input" placeholder="Earned BP" />
-            <button id="add-earned-bp">Add</button>
-          </form>
-
-          <!-- feedback after clicking “Add” -->
-          <span id="bp-add-feedback" class="feedback-message"></span>
-
-          <!-- warning text shown as you type -->
-          <div id="bp-warning" class="error-message hidden"></div>
+          <div class="tooltip-container" style="position:relative;">
+          <!-- First row: input + button -->
+          <div class="earn-bp-controls">
+            <form onsubmit="event.preventDefault(); /* add‐BP logic */">
+              <input type="number" id="earned-bp-input" placeholder="Earned BP" />
+              <button id="add-earned-bp">Add</button>
+            </form>
+            <div id="bp-tooltip" class="bp-tooltip"></div>
+          </div>
         </div>
       </header>
 
