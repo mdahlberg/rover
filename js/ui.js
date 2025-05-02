@@ -876,6 +876,20 @@ window.UI = {
     const remaining = total - spent;
     const toLevel = BPLeveling.getBPToLevel();
 
+    // Calculate the gap between this level and the next - i.e. 15BP
+    const nextLevel = BPLeveling.getNextLevelThreshold();
+    const prevLevel = BPLeveling.getNextLevelThreshold(-1);
+    const levelPoints = nextLevel - prevLevel;
+
+    // How many points you need - 15 - 1 = 14 points earned into this level
+    const levelCompleted = levelPoints - toLevel;
+
+    const percent = levelPoints > 0
+      ? Math.round((levelCompleted / levelPoints) * 100)
+      : 0;
+    const fill = document.querySelector('.pill--highlight .progress-fill');
+    if (fill) fill.style.width = `${percent}%`;
+
     document.getElementById("total-bp").textContent = total;
     document.getElementById("spent-bp").textContent = spent;
     document.getElementById("remaining-bp").textContent = remaining;
