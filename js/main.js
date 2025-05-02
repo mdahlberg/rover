@@ -23,6 +23,17 @@ document.addEventListener("DOMContentLoaded", function () {
     ftrToggle.setAttribute('aria-expanded', !isCollapsed);
   });
 
+  // Setup start over button
+  const startOverButton = document.getElementById("start-over-btn");
+  if (startOverButton) {
+    startOverButton.addEventListener("click", () => {
+      const ok = window.confirm("Are you sure you want to start over? This will clear all your progress.");
+      if (ok) {
+        startOver();
+      }
+    });
+  }
+
   // ✅ Setup level up button
   const levelUpButton = document.getElementById("level-up-btn");
   if (levelUpButton) {
