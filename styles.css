@@ -1957,10 +1957,22 @@ main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1
   overflow: visible;
 }
 
-/* Highlighted “To Next” pill */
+/* === Tweak the “To Next” pill === */
 .pill--highlight {
+  display: inline-flex;          /* turn it into a flex box */
+  align-items: center;           /* vertically center text & icon */
+  gap: 0.5rem;                   /* space between text, number, icon */
+  padding: 0.4em 1rem;           /* a bit more horizontal padding */
+  border-radius: 4px;
   background: linear-gradient(90deg, #4e54c8, #8f94fb);
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  position: relative;            /* for your progress bar */
+}
+
+/* make the number itself stand out */
+.pill--highlight #to-level-bp {
+  font-weight: bold;
+  margin: 0;                     /* reset any browser default */
 }
 
 /* Tuck the info icon in and center it */
@@ -2000,7 +2012,7 @@ main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1
   visibility: visible;
 }
 
-/* Progress bar container under the pill */
+/* reposition your progress-bar under the pill */
 .pill--highlight .progress {
   position: absolute;
   bottom: -4px;
@@ -2018,6 +2030,28 @@ main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1
   background: #00ff99;
   width: 0;
   transition: width 0.3s ease;
+}
+
+/* clean up the info-icon wrapper */
+.pill--highlight .info-wrapper {
+  margin: 0;                     /* remove old spacing hacks */
+  padding: 0;                    /* ditto */
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+
+/* style the ℹ️ itself */
+.pill--highlight .info-icon {
+  width: 1.2em;
+  height: 1.2em;
+  font-size: 0.9em;              /* scale down if needed */
+  background: rgba(0,0,0,0.2);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 /* tooltip is already styled by your existing .info-wrapper/.tooltip rules */
