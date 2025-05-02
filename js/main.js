@@ -4,6 +4,25 @@ console.log("main.js loaded");
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded. Checking race selection...");
 
+  const header      = document.getElementById('main-header');
+  const hdrToggle   = document.getElementById('toggle-header');
+
+  hdrToggle.addEventListener('click', () => {
+    const isCollapsed = header.classList.toggle('collapsed');
+    // Flip the chevron
+    hdrToggle.textContent = isCollapsed ? '▸' : '▾';
+    hdrToggle.setAttribute('aria-expanded', !isCollapsed);
+  });
+
+  const footer       = document.getElementById('main-footer');
+  const ftrToggle    = document.getElementById('toggle-footer');
+
+  ftrToggle.addEventListener('click', () => {
+    const isCollapsed = footer.classList.toggle('collapsed');
+    ftrToggle.textContent = isCollapsed ? '▸' : '▾';
+    ftrToggle.setAttribute('aria-expanded', !isCollapsed);
+  });
+
   // ✅ Setup level up button
   const levelUpButton = document.getElementById("level-up-btn");
   if (levelUpButton) {

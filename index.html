@@ -231,7 +231,7 @@
   <div id="planner-wrapper" class="hidden">
     <div class="app-container">
 
-      <header class="app-header grid-rows-2 grid-cols-3">
+      <header id="main-header" class="app-header grid-rows-2 grid-cols-3">
         <!-- Row 1 -->
         <div class="cell level-version">
           <strong>Level</strong> <span id="level-display">1</span> |
@@ -239,8 +239,12 @@
         </div>
 
         <div class="cell title">
-          Character Planner
+          Roles of the Valiant - Character Planner
         </div>
+        <div class="cell header-toggle-cell">
+          <button id="toggle-header" class="toggle-header" aria-expanded="true">▾</button>
+        </div>
+
 
         <div class="cell start-over">
           <button id="start-over-btn">Start Over</button>
@@ -393,12 +397,17 @@
       </main>
 
       <!-- 4) Optional Footer -->
-      <footer class="app-footer">
-        <!-- Current Level Purchases Section -->
-        <section id="current-layer" class="card">
-        <h2>Current Level Purchases</h2>
-          <div id="current-layer-display">(None)</div>
-        </section>
+      <footer id="main-footer" class="app-footer">
+        <div class="footer-header"> <!-- lol -->
+          <h3> Current Level Purchases </h3>
+          <button id="toggle-footer" class="toggle-footer" aria-expanded="true">▾</button>
+        </div>
+
+        <div class="footer-body">
+          <section id="current-layer">
+            <div id="current-layer-display">(None)</div>
+          </section>
+        </div>
       </footer>
     </div><!-- /.app-container -->
   </div><!-- /#planner-wrapper -->
