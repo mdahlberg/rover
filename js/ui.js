@@ -359,18 +359,15 @@ window.UI = {
     const container = document.querySelector('.add-bp-container');
 
     if (isNaN(amt) || amt <= 0) {
-      console.warn("Enter a valid number greater than zero");
       UI._showTip('Enter a number greater than zero.');
       return;
     }
     if (amt > max) {
-      console.warn("Too many BP added");
       UI._showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
       return;
     }
 
     BPLeveling.addEarnedBP(amt);
-    console.warn("BP add success");
     UI._showTip(`+${amt} BP added!`, 'success', 1500);
     input.value = '';
     UI._collapseBPForm(container);
