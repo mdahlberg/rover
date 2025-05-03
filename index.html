@@ -246,8 +246,8 @@
         </div>
 
         <!-- Row 2: progress / unspent / info -->
-        <div class="hdr-row2 tooltip-container">
-          <!-- 3) Level progress gauge -->
+        <div class="hdr-row2">
+          <!-- 1) Level progress gauge -->
           <div class="gauge-wrapper">
             <div
               class="level-gauge"
@@ -266,7 +266,7 @@
             <span id="remaining-bp">0</span> BP Available
           </div>
 
-          <!-- 1) Info icon -->
+          <!-- 3) Info icon -->
           <button class="bp-info" aria-label="Show BP details">ℹ</button>
 
         </div>
@@ -282,7 +282,7 @@
               data-action="expand-add-bp"
             >＋</button>
           
-            <!-- Expanded state: your existing form + tooltip -->
+            <!-- Expanded state: your existing form -->
             <div class="earn-bp-controls">
               <form id="add-earned-bp-form">
                 <input
@@ -301,7 +301,6 @@
                   aria-label="Cancel"
                 >✕</button>
               </form>
-              <div id="bp-tooltip" class="bp-tooltip"></div>
             </div>
           </div>
           <div class="cell export">
@@ -311,6 +310,7 @@
             <button id="start-over-btn">Start Over</button>
           </div>
         </div>
+        <div id="global-tooltip-container" class="tooltip-container"></div>
       </header>
 
       <!-- 2) Sidebar Nav -->

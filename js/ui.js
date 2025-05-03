@@ -306,7 +306,6 @@ window.UI = {
 
     // Submit via Enter key or button click
     form.addEventListener('submit', UI._handleFormSubmit);
-    addBtn.addEventListener('click', UI._handleAddClick);
 
     // Input validation listeners
     input.addEventListener('keydown', UI._preventSpinnerOverflow);
@@ -360,15 +359,18 @@ window.UI = {
     const container = document.querySelector('.add-bp-container');
 
     if (isNaN(amt) || amt <= 0) {
-      UI._showTip('Enter a valid, non-negative number!');
+      console.warn("Enter a valid number greater than zero");
+      UI._showTip('Enter a number greater than zero.');
       return;
     }
     if (amt > max) {
+      console.warn("Too many BP added");
       UI._showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
       return;
     }
 
     BPLeveling.addEarnedBP(amt);
+    console.warn("BP add success");
     UI._showTip(`+${amt} BP added!`, 'success', 1500);
     input.value = '';
     UI._collapseBPForm(container);
@@ -376,7 +378,8 @@ window.UI = {
 
   /** Show or update a tooltip message */
   _showTip(msg, type = 'error', duration = 2000) {
-    const wrapper = document.querySelector('.tooltip-container');
+    //const wrapper = document.getElementById('global-tooltip-container');
+    const wrapper = document.querySelector('.add-bp-container');
     let tip = document.getElementById('bp-tooltip');
     if (!tip) {
       tip = document.createElement('div');
@@ -941,10 +944,8 @@ window.UI = {
     const fillEl  = gaugeEl?.querySelector('.gauge-fill');
     if (fillEl) {
       fillEl.style.width = percent + '%';
-      console.warn("Setting fill width!: ", percent);
-    } else {
-      console,warn("NOT setting fill width!");
     }
+
     if (gaugeEl) {
       gaugeEl.setAttribute('aria-valuenow', percent);
       gaugeEl.setAttribute('data-percent', percent);

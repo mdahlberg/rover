@@ -239,6 +239,15 @@
   font-size: 1rem;
 }
 
+.add-bp-container .bp-tooltip {
+  position: absolute;
+  top: 100%;             /* just under the container */
+  left: 0;               /* align to its left edge */
+  margin-top: 0.25rem;   /* small gap */
+  width: max-content;    /* only as wide as its text */
+  z-index: 1000;
+}
+
 /* 1b) Add some space between the three Row‑3 columns */
 .hdr-row3 {
   /* if you didn’t already have a gap defined: */
