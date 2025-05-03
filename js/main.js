@@ -4,7 +4,7 @@ console.log("main.js loaded");
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded. Checking race selection...");
 
-  const header      = document.getElementById('main-header');
+  /*const header      = document.getElementById('main-header');
   const hdrToggle   = document.getElementById('toggle-header');
 
   hdrToggle.addEventListener('click', () => {
@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     hdrToggle.textContent = isCollapsed ? '▸' : '▾';
     hdrToggle.setAttribute('aria-expanded', !isCollapsed);
   });
+  */
 
   const footer       = document.getElementById('main-footer');
   const ftrToggle    = document.getElementById('toggle-footer');

@@ -1,0 +1,214 @@
+/* header.css */
+/* ───────── Header Styles (Mobile‑First) ───────── */
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: env(safe-area-inset-top);
+  background-color: rgba(46,46,62,0.95);
+}
+
+/* Row 1: two columns, level left, name centered */
+.hdr-row1 {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(46,46,62,0.95); /* keep your header bg */
+}
+
+/* Level sticks to the left */
+.hdr-row1 .level-version {
+  justify-self: start;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Name is in the center of its 1fr cell */
+.hdr-row1 .char-name {
+  justify-self: center;
+  min-width: 0; /* allow ellipsis when needed */
+  max-width: clamp(120px, 60vw, 400px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: help; /* for the title tooltip */
+}
+
+/* Col 3: Add Earned BP button */
+.btn-add-bp {
+  background: #2a9d8f;     /* consider swapping to a CSS var later */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* ─── Row 2 (mobile‑first) ─── */
+.hdr-row2 {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;    /* include padding in that 100% */
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(46,46,62,0.95);
+  color: #fff;
+}
+
+/* 1) Gauge track */
+.level-gauge {
+  width: 100%;
+  height: 14px;
+  background: #444;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.level-gauge::after {
+  content: attr(data-percent) "%";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  color: #fff;
+  text-shadow: 0 0 2px rgba(0,0,0,0.6);
+}
+/* Gauge fill = percent to next level */
+.level-gauge .gauge-fill {
+  height: 100%;
+  background: #2a9d8f;
+  width: 0%;                   /* initial; update via JS */
+  transition: width 0.3s ease;
+}
+/* ── Gauge wrapper & micro‑label ── */
+.gauge-wrapper {
+  order: 3;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Let the gauge define its own width (33%) */
+  flex: 0 1 33%;
+  max-width: 33%;
+
+}
+
+/* Micro‑label sits just below the bar */
+.gauge-label {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: #ccc;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 2) Unspent BP */
+.unspent-bp {
+  order: 2;
+  flex: 0 0 auto;
+  font-weight: bold;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+/* 3) Info icon */
+.bp-info {
+  order: 1;
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Row 3 */
+.hdr-row3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(46,46,62,0.95);
+  gap: 1rem;
+}
+
+
+/* ───────── Desktop Overrides (min‑width: 768px) ───────── */
+@media (min-width: 768px) {
+  .hdr-row1 {
+    padding: 1rem 2rem;
+  }
+  .hdr-row1 .char-name {
+    font-size: 1.1rem;
+    max-width: clamp(200px, 50vw, 600px);
+  }
+
+  .btn-add-bp {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hdr-row2 {
+    padding: 1rem 2rem;
+    gap: 1.25rem;
+  }
+  .unspent-bp {
+    font-size: 1rem;
+  }
+  .bp-info {
+    font-size: 1.3rem;
+  }
+}
+
+/* Misc styling */
+
+
+/* Add Earned BP */
+/* Container holds both the “＋” button and the hidden form */
+
+/* Style your confirm & cancel */
+.btn-confirm {
+  background: var(--color-primary, #2a9d8f);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn-cancel {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.add-bp-container .earn-bp-controls {
+  display: none;
+}
+.add-bp-container.is-expanded .earn-bp-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.add-bp-container.is-expanded .btn-add-bp {
+  display: none;
+}
+
+
+/* END Add Earned BP */
+

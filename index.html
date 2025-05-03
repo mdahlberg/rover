@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roles of the Valiant - Character Planner</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles/header.css">
+  <link rel="stylesheet" href="styles/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
   <!-- Splash Screen Section -->
@@ -231,57 +233,81 @@
   <div id="planner-wrapper" class="hidden">
     <div class="app-container">
 
-      <header id="main-header" class="app-header grid-rows-2 grid-cols-3">
-        <!-- Row 1 -->
-        <div class="cell level-version">
-          <strong>Level</strong> <span id="level-display">1</span> |
-          <small>v<span id="app-version">0.0.1</span></small>
+      <header id="main-header" class="app-header">
+        <!-- ─── Row 1 ─── -->
+        <div class="hdr-row1">
+          <!-- Col 1: Level -->
+          <div class="level-version">Lv <span id="level-display">1</span></div>
+      
+          <!-- Col 2: Character Name -->
+          <div class="char-name" title="Full Character Name Here">
+            The Incredibly Long and Winding Name of a Legendary Adventurer
+          </div>
         </div>
 
-        <div class="cell title">
-          Roles of the Valiant - Character Planner
-        </div>
-        <div class="cell header-toggle-cell">
-          <button id="toggle-header" class="toggle-header" aria-expanded="true">▾</button>
-        </div>
+        <!-- Row 2: progress / unspent / info -->
+        <div class="hdr-row2 tooltip-container">
+          <!-- 1) Info icon -->
+          <button class="bp-info" aria-label="Show BP details">ℹ</button>
 
-
-        <div class="cell start-over">
-          <button id="start-over-btn">Start Over</button>
-        </div>
-
-        <!-- Row 2 -->
-        <div class="cell bp-summary">
-          <!-- your pills here -->
-          <span class="pill">Total Earned BP: &nbsp<span id="total-bp">50</span></span>
-          <span class="pill">Total Spent BP: &nbsp <span id="spent-bp">5</span></span>
-          <span class="pill">Remaining: &nbsp <span id="remaining-bp">45</span></span>
-          <span class="pill pill--highlight">
-            To Next: &nbsp <span id="to-level-bp">10</span>
-            <span class="info-wrapper">
-              <i class="info-icon">ℹ️</i>
-              <div class="tooltip">
-                Points needed to level up.<br><br>
-                <strong>Tip:</strong> Finalize purchases before you hit exactly the threshold.
-              </div>
-            </span>
-            <div class="progress"><div class="progress-fill" style="width:45%;"></div></div>
-          </span>
+          <!-- 2) Unspent BP -->
+          <div class="unspent-bp">
+            <span id="remaining-bp">0</span> BP Available
+          </div>
+        
+          <!-- 3) Level progress gauge -->
+          <div class="gauge-wrapper">
+            <div
+              class="level-gauge"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <div class="gauge-fill" style="width:0%;"></div>
+            </div>
+            <div class="gauge-label">Progress to next level</div>
+          </div>
         </div>
 
-        <div class="cell export">
-          <button id="export-character" class="btn-export">Export</button>
-        </div>
-
-        <div class="cell earn-bp-form">
-          <div class="tooltip-container" style="position:relative;">
-          <!-- First row: input + button -->
-          <div class="earn-bp-controls">
-            <form onsubmit="event.preventDefault(); /* add‐BP logic */">
-              <input type="number" id="earned-bp-input" placeholder="Earned BP" />
-              <button id="add-earned-bp">Add</button>
-            </form>
-            <div id="bp-tooltip" class="bp-tooltip"></div>
+        <!-- Row 3: controls -->
+        <div class="hdr-row3">
+          <div class="cell export">
+            <button id="export-character" class="btn-export">Export</button>
+          </div>
+          <div class="cell start-over">
+            <button id="start-over-btn">Start Over</button>
+          </div>
+          <!-- Col 3: Add Earned BP -->
+          <div class="add-bp-container">
+            <!-- Collapsed state -->
+            <button
+              class="btn-add-bp icon-only"
+              aria-label="Add Earned BP"
+              data-action="expand-add-bp"
+            >＋</button>
+          
+            <!-- Expanded state: your existing form + tooltip -->
+            <div class="earn-bp-controls">
+              <form id="add-earned-bp-form">
+                <input
+                  type="number"
+                  id="earned-bp-input"
+                  placeholder="Earned BP"
+                  aria-label="BP earned"
+                />
+                <button id="add-earned-bp" class="btn-confirm" type="submit">
+                  Add
+                </button>
+                <button
+                  type="button"
+                  class="btn-cancel"
+                  data-action="cancel-add-bp"
+                  aria-label="Cancel"
+                >✕</button>
+              </form>
+              <div id="bp-tooltip" class="bp-tooltip"></div>
+            </div>
           </div>
         </div>
       </header>
