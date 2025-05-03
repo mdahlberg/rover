@@ -118,16 +118,41 @@
   justify-self: end;
 }
 
-/* Row 3 */
+/* Row 3: Add / Export / Start Over in three justified columns */
 .hdr-row3 {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 0.5rem 1rem;
-  background: rgba(46,46,62,0.95);
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(46,46,62,0.95);
   gap: 1rem;
 }
 
+.hdr-row3 .add-bp-container {
+  grid-column: 1;
+  justify-self: start;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.hdr-row3 .cell.export {
+  grid-column: 2;
+  justify-self: center;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.hdr-row3 .cell.start-over {
+  grid-column: 3;
+  justify-self: end;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
 
 /* ───────── Desktop Overrides (min‑width: 768px) ───────── */
 @media (min-width: 768px) {
@@ -163,38 +188,63 @@
 
 /* Add Earned BP */
 /* Container holds both the “＋” button and the hidden form */
+/* 1) Shrink the inline controls container */
+.earn-bp-controls {
+  gap: 0.25rem;         /* half the previous gap */
+  width: fit-content;   /* only as wide as its children */
+}
 
-/* Style your confirm & cancel */
+/* 3) Tighter confirm & cancel buttons */
 .btn-confirm {
-  background: var(--color-primary, #2a9d8f);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.btn-cancel {
-  background: transparent;
-  border: none;
-  font-size: 1.2rem;
-  color: #888;
-  line-height: 1;
-  cursor: pointer;
+  padding: 0.25rem 0.4rem;  /* reduced padding */
+  font-size: 0.85rem;      /* smaller font */
+  line-height: 1;          /* ensure no extra height */
 }
 
-.add-bp-container .earn-bp-controls {
-  display: none;
+/* Tighten the Cancel button */
+.btn-cancel {
+  padding: 0.25rem 0.4rem;   /* match your .btn-confirm */
+  font-size: 0.85rem;
+  line-height: 1;
+  background: transparent;   /* if you want no background */
+  border: none;              /* if you want no border */
 }
-.add-bp-container.is-expanded .earn-bp-controls {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
+
 .add-bp-container.is-expanded .btn-add-bp {
   display: none;
 }
 
+/* Hide the expanded controls by default */
+.add-bp-container .earn-bp-controls {
+  display: none;
+}
+
+/* When expanded, show them as a flex row */
+.add-bp-container.is-expanded .earn-bp-controls {
+  display: flex;
+  gap: 0.25rem;       /* keep your tighter gap */
+  align-items: center;
+}
+
+/* Hide the “＋” when expanded (you already have this) */
+.add-bp-container.is-expanded .btn-add-bp {
+  display: none;
+}
+
+/* 1a) Give the Earned‑BP input enough room for multiple digits */
+#earned-bp-input {
+  width: 9ch;            /* instead of 2.5ch */
+  height: 1ch;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+}
+
+/* 1b) Add some space between the three Row‑3 columns */
+.hdr-row3 {
+  /* if you didn’t already have a gap defined: */
+  column-gap: 1rem;
+  /* or: gap: 1rem; */
+}
+
 
 /* END Add Earned BP */
-
