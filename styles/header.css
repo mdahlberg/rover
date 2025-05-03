@@ -54,12 +54,13 @@
 
 /* ─── Row 2 (mobile‑first) ─── */
 .hdr-row2 {
-  display: flex;
-  width: 100%;
-  box-sizing: border-box;    /* include padding in that 100% */
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 0.75rem;
+  column-gap: 0.75rem;
   padding: 0.5rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
   background-color: rgba(46,46,62,0.95);
   color: #fff;
 }
@@ -92,15 +93,8 @@
 }
 /* ── Gauge wrapper & micro‑label ── */
 .gauge-wrapper {
-  order: 3;
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Let the gauge define its own width (33%) */
-  flex: 0 1 33%;
-  max-width: 33%;
-
+  /* left‑justify in its auto‑sized column */
+  justify-self: start;
 }
 
 /* Micro‑label sits just below the bar */
@@ -114,22 +108,14 @@
 
 /* 2) Unspent BP */
 .unspent-bp {
-  order: 2;
-  flex: 0 0 auto;
-  font-weight: bold;
-  font-size: 0.95rem;
-  white-space: nowrap;
+  /* center‑justify in the middle 1fr column */
+  justify-self: center;
 }
 
 /* 3) Info icon */
 .bp-info {
-  order: 1;
-  flex: 0 0 auto;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.25rem;
+  /* right‑justify in its auto‑sized column */
+  justify-self: end;
 }
 
 /* Row 3 */

@@ -247,14 +247,6 @@
 
         <!-- Row 2: progress / unspent / info -->
         <div class="hdr-row2 tooltip-container">
-          <!-- 1) Info icon -->
-          <button class="bp-info" aria-label="Show BP details">ℹ</button>
-
-          <!-- 2) Unspent BP -->
-          <div class="unspent-bp">
-            <span id="remaining-bp">0</span> BP Available
-          </div>
-        
           <!-- 3) Level progress gauge -->
           <div class="gauge-wrapper">
             <div
@@ -268,8 +260,17 @@
             </div>
             <div class="gauge-label">Progress to next level</div>
           </div>
-        </div>
 
+          <!-- 2) Unspent BP -->
+          <div class="unspent-bp">
+            <span id="remaining-bp">0</span> BP Available
+          </div>
+
+          <!-- 1) Info icon -->
+          <button class="bp-info" aria-label="Show BP details">ℹ</button>
+
+        </div>
+        
         <!-- Row 3: controls -->
         <div class="hdr-row3">
           <div class="cell export">
