@@ -56,6 +56,7 @@ body {
   visibility: hidden;
   transition: opacity 0.2s ease;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  width: max-content;
 }
 
 .info-wrapper:hover .tooltip {
@@ -1791,3 +1792,605 @@ ul ul {
   opacity: 0.6 !important;     /* semi-transparent but not gone */
   cursor: not-allowed;         /* maintain the no-click pointer */
 }
+/* ===== Layout Grid ===== */
+.app-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;      /* header / main / footer */
+  grid-template-columns: auto 1fr;        /* sidebar / content */
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header { grid-area: header; display: flex; align-items: center; padding: 0 1rem; background: #202028; color: #fff; }
+.sidebar    { grid-area: sidebar; background: #181822; color: #ccc; transition: width 0.3s; overflow: hidden; }
+main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1e2e; }
+.app-footer { grid-area: footer; padding: 0.5rem 1rem; background: #202028; }
+
+/* ===== Sidebar Styles ===== */
+.sidebar { width: 200px; }
+.sidebar.collapsed { width: 50px; }
+
+/* Hide labels when collapsed */
+.sidebar .label { margin-left: 0.5rem; }
+.sidebar.collapsed .label { display: none; }
+
+/* Sidebar list */
+.sidebar ul { list-style: none; padding: 1rem 0; margin: 0; }
+.sidebar li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sidebar li:hover,
+.sidebar li.active {
+  background: #2e2e3e;
+}
+.sidebar .icon { font-size: 1.2rem; }
+
+/* ===== Helper Classes ===== */
+.hidden { display: none; }
+.content-section { display: none; }
+.content-section:not(.hidden) { display: block; }
+
+/* Toggle button in header */
+.toggle-sidebar {
+  margin-left: auto;
+  font-size: 1.4rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+/* make each card a positioned context */
+#lore-modal .lore-card {
+  position: relative;
+  z-index: 0;
+}
+/* on hover, lift this card (and its tooltip) above siblings */
+#lore-modal .lore-card:hover {
+  z-index: 10;
+}
+/* ensure the tooltip itself is on top */
+#lore-modal .lore-card .lore-tooltip {
+  z-index: 20 !important;
+}
+/* ─── Proficiency Modal: keep tooltips on top ─── */
+#proficiency-modal .trait-card {
+  /* ensure every card can create its own stacking context */
+  position: relative;
+  z-index: 0;
+  overflow: visible;    /* let the tooltip spill outside */
+}
+
+#proficiency-modal .trait-card:hover {
+  /* bring the hovered card (and its tooltip) above all siblings */
+  z-index: 1000;
+}
+
+#proficiency-modal .trait-card .lore-tooltip {
+  /* make sure the tooltip is above even the hovered card’s background */
+  z-index: 1001 !important;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(90deg, #202028, #2a2a36);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+  flex-wrap: nowrap;         /* don’t let things shift lines */
+  gap: 1rem;                 /* consistent spacing */
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .app-header {
+    flex-wrap: wrap;            /* allow wrap on small devices */
+    justify-content: center;
+    text-align: center;
+  }
+  .header-center, .header-right {
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 0.5rem;
+  }
+}
+/* ── Two-row header ── */
+.app-header.two-row .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+}
+.app-header.two-row .row-top {
+  border-bottom: 1px solid #444;
+}
+.app-header.two-row .row-bottom {
+  gap: 1rem;
+}
+
+/* Header zones */
+.header-left h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+.header-center.level-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ── BP summary pills ── */
+.bp-summary {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Make every pill a neat little inline-flex container */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  position: relative;             /* for absolutely-positioned bar */
+  padding: 0.3em 0.8em;
+  margin-right: 0.5em;
+  border-radius: 4px;
+  background: #333;
+  color: #eee;
+  font-size: 0.9rem;
+  overflow: visible;
+}
+
+/* === Tweak the “To Next” pill === */
+.pill--highlight {
+  display: inline-flex;          /* turn it into a flex box */
+  align-items: center;           /* vertically center text & icon */
+  gap: 0.5rem;                   /* space between text, number, icon */
+  padding: 0.4em 1rem;           /* a bit more horizontal padding */
+  border-radius: 4px;
+  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  position: relative;            /* for your progress bar */
+}
+
+/* make the number itself stand out */
+.pill--highlight #to-level-bp {
+  font-weight: bold;
+  margin: 0;                     /* reset any browser default */
+}
+
+/* Tuck the info icon in and center it */
+.pill .info-wrapper {
+  margin-left: 0.5em;
+  position: relative;
+}
+.pill .info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  font-style: normal;  /* prevents odd fallback styling */
+  cursor: help;
+  line-height: 1;
+}
+
+/* Tooltip positioning */
+.pill .tooltip {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: normal;
+  background: #2c2c2c;
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+}
+.pill .info-wrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* reposition your progress-bar under the pill */
+.pill--highlight .progress {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* The fill — width set dynamically via JS */
+.pill--highlight .progress-fill {
+  height: 100%;
+  background: #00ff99;
+  width: 0;
+  transition: width 0.3s ease;
+}
+
+/* clean up the info-icon wrapper */
+.pill--highlight .info-wrapper {
+  margin: 0;                     /* remove old spacing hacks */
+  padding: 0;                    /* ditto */
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+
+/* style the ℹ️ itself */
+.pill--highlight .info-icon {
+  width: 1.2em;
+  height: 1.2em;
+  font-size: 0.9em;              /* scale down if needed */
+  background: rgba(0,0,0,0.2);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* tooltip is already styled by your existing .info-wrapper/.tooltip rules */
+
+/* ── Earn-BP form ── */
+.bp-earn {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+.bp-earn input {
+  width: 4ch;
+  padding: 0.25em;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background: #1e1e2e;
+  color: #f0f0f0;
+}
+
+/* ── Export button ── */
+.btn-export {
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  background: #444;
+  color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+}
+.btn-export:hover {
+  background: #555;
+}
+/* Make your header a constrained container */
+.app-header.two-row {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Top row stays spaced between */
+.app-header.two-row .row-top {
+  justify-content: space-between;
+}
+
+/* Bottom row: stop stretching apart, start at left */
+.app-header.two-row .row-bottom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-start;    /* ← key change */
+  padding: 0.75rem 2rem;          /* same horizontal padding as row-top */
+}
+
+/* Optional: if you want the pills to wrap neatly when they overflow */
+.bp-summary {
+  flex-wrap: wrap;
+}
+
+/* And if you want them indented slightly under the top row’s left edge: */
+.app-header.two-row .row-bottom {
+  padding-left: 2rem;             /* match the header padding */
+  padding-right: 2rem;
+}
+.app-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, #202028, #2a2a36);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Assign each “cell” to its spot */
+.app-header .level-version  { grid-column: 1; grid-row: 1; }
+.app-header .title          { grid-column: 2; grid-row: 1; text-align: center; font-size: 1.6rem; }
+.app-header .start-over     { grid-column: 3; grid-row: 1; justify-self: end; }
+
+.app-header .bp-summary     { grid-column: 1; grid-row: 2; }
+.app-header .export         { grid-column: 2; grid-row: 2; justify-self: center; }
+.app-header .earn-bp-form   { grid-column: 3; grid-row: 2; justify-self: end; }
+
+/* (You already have .pill, .pill--highlight, .info-wrapper, .tooltip, .progress, etc.) */
+
+/* Make sure form elements line up */
+.earn-bp-form form {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+/* =========================================
+   Snazzy “Earned BP” input + button
+========================================= */
+
+/* Make sure box-sizing includes the border in the width/height */
+.earn-bp-form input,
+.earn-bp-form button {
+  box-sizing: border-box;
+}
+
+/* Uniform height & pill shape */
+.earn-bp-form input,
+.earn-bp-form button {
+  height: 2.5rem;                 /* lock the height */
+  line-height: 2.5rem;            /* vertically center the text */
+  border-radius: 1.25rem;         /* pill shape */
+  border: 1px solid #555;         /* consistent 1px border */
+  background: rgba(255,255,255,0.1);
+  color: #f0f0f0;
+  font-size: 0.9rem;
+  transition: 
+    background 0.2s ease, 
+    border-color 0.2s ease, 
+    transform 0.1s ease;
+}
+
+/* Fix the input width so it never jumps */
+.earn-bp-form input {
+  width: 14ch;                     /* enough for a small number */
+  height: 3ch;                     /* enough for a small number */
+  padding: 0 0.5rem;
+}
+
+/* Button padding & gradient */
+.earn-bp-form button {
+  padding: 0 1rem;
+  border: none; 
+  background: linear-gradient(90deg, #66ccff, #0066ff);
+  cursor: pointer;
+}
+
+/* Hover & active states */
+.earn-bp-form button:hover {
+  background: linear-gradient(90deg, #58b8e6, #005ecc);
+  transform: translateY(-1px);
+}
+.earn-bp-form button:active {
+  transform: translateY(1px);
+}
+
+/* Focus style on the input */
+.earn-bp-form input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background: rgba(255,255,255,0.15);
+}
+/* Ensure bp-warning always takes up the same space */
+#bp-warning {
+  display: block !important;      /* override hidden’s display:none */
+  min-height: 1.2em;               /* reserve vertical space */
+}
+
+/* Hide it by making it invisible, not removing it */
+#bp-warning.hidden {
+  visibility: hidden !important;
+}
+
+.feedback-message {
+  display: block;          /* reserve a line in the layout */
+  min-height: 1.2em;       /* enough room for one line of text */
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  transition: visibility 0s linear 0.2s; /* delay hiding until after fade */
+}
+.feedback-message.hidden {
+  visibility: hidden;      /* text is invisible, but the box stays */
+}
+
+/* color will be set in JS per message type */
+
+/* Override the global .hidden for bp-add-feedback */
+#bp-add-feedback.hidden {
+  display: block !important;   /* force it to keep its box */
+  visibility: hidden;          /* make the text invisible */
+}
+
+/* Stack the two “rows” inside the same cell */
+.earn-bp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;       /* space between control & feedback */
+}
+
+.error-tooltip {
+  position: absolute;
+  top: -2.5em;
+  right: 0;
+  background: rgba(255,69,58,0.9);
+  color: #fff;
+  padding: 0.4em 0.6em;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+.error-tooltip.show {
+  opacity: 1;
+}
+
+/* Base styling */
+.bp-tooltip {
+  position: absolute;
+  /* … your positioning… */
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* When JS adds “show” */
+.bp-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Error state (red) */
+.bp-tooltip.error {
+  background-color: #f56260;
+  color: white;
+}
+
+/* Success state (green) */
+.bp-tooltip.success {
+  background-color: #2ecc71;
+  color: white;
+}
+
+/* When #main-header gets .collapsed, hide the 2nd row entirely */
+#main-header.collapsed {
+  /* collapse to a single row */
+  grid-template-rows: auto 0 !important;
+}
+/* Hide all cells in the 2nd row when collapsed */
+#main-header.collapsed .bp-summary,
+#main-header.collapsed .earned-bp,
+#main-header.collapsed .earned-bp-input,
+#main-header.collapsed .earn-bp-controls,
+#main-header.collapsed .export {
+  display: none;
+}
+
+/* Optional: smooth transition */
+#main-header {
+  transition: grid-template-rows 0.3s ease;
+}
+@media (max-width: 600px) {
+  #main-header {
+    padding: 0.5rem 1rem;
+  }
+}
+/* collapse the body when #main-footer has .collapsed */
+#main-footer.collapsed .footer-body {
+  display: none;
+}
+
+/* optional smooth height collapse instead of display none:
+#main-footer .footer-body {
+  transition: max-height 0.3s ease;
+  overflow: hidden;
+  max-height: 1000px;  // large enough for content
+}
+
+#main-footer.collapsed .footer-body {
+  max-height: 0;
+}
+*/
+
+/* Style the header row to stay visible and align chevron */
+.app-footer .footer-header {
+  padding: 0.1rem 0.5rem;
+  margin: 0;
+  min-height: 0;
+  line-height: 1.2;
+  font-size: 0.875rem;
+  border-top: 1px solid #ddd;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+/* 2. Zero out the <h2> margins and inherit the line-height */
+#main-footer .footer-header h3 {
+  margin: 0;                /* remove top/bottom margins */
+  font-size: 1rem;          /* adjust as needed */
+  line-height: inherit;     /* match the parent’s tight line-height */
+}
+/* 3. Make the toggle button compact */
+#toggle-footer {
+  padding: 0;               /* no extra hit-area padding */
+  margin: 0;                /* no external margins */
+  line-height: inherit;     /* so the chevron aligns vertically */
+  border: none;
+  font-size: 1rem;          /* keep it same size as the text */
+  cursor: pointer;
+}
+
+
+.app-footer .footer-body {
+  padding: 1rem;
+  background: #fafafa;
+}
+
+@media (max-width: 600px) {
+  #main-footer {
+    /* start collapsed on mobile */
+    /* you could add this class via JS too on load */
+  }
+  /* or in JS: if (window.innerWidth < 600) footer.classList.add('collapsed'); */
+}
+
+
+/* Make the footer itself full-width and transparent */
+#main-footer {
+  background: transparent !important;
+  box-shadow: none        !important;
+  border-radius: 0        !important;
+  margin: 0               !important;
+  padding: 0
+  background: none
+  border: none
+  width: 100%             !important;
+}
+
+/* Only hide the body, leave the header row styling intact */
+#main-footer.collapsed .footer-body {
+  display: none;
+}
+
+/* (Optional) If you want the footer-body to blend in even when expanded: */
+#main-footer .footer-body {
+  background: transparent;
+  box-shadow: none;
+}
+

@@ -4,6 +4,36 @@ console.log("main.js loaded");
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded. Checking race selection...");
 
+  const header      = document.getElementById('main-header');
+  const hdrToggle   = document.getElementById('toggle-header');
+
+  hdrToggle.addEventListener('click', () => {
+    const isCollapsed = header.classList.toggle('collapsed');
+    // Flip the chevron
+    hdrToggle.textContent = isCollapsed ? '▸' : '▾';
+    hdrToggle.setAttribute('aria-expanded', !isCollapsed);
+  });
+
+  const footer       = document.getElementById('main-footer');
+  const ftrToggle    = document.getElementById('toggle-footer');
+
+  ftrToggle.addEventListener('click', () => {
+    const isCollapsed = footer.classList.toggle('collapsed');
+    ftrToggle.textContent = isCollapsed ? '▸' : '▾';
+    ftrToggle.setAttribute('aria-expanded', !isCollapsed);
+  });
+
+  // Setup start over button
+  const startOverButton = document.getElementById("start-over-btn");
+  if (startOverButton) {
+    startOverButton.addEventListener("click", () => {
+      const ok = window.confirm("Are you sure you want to start over? This will clear all your progress.");
+      if (ok) {
+        startOver();
+      }
+    });
+  }
+
   // ✅ Setup level up button
   const levelUpButton = document.getElementById("level-up-btn");
   if (levelUpButton) {
@@ -52,6 +82,12 @@ document.addEventListener("DOMContentLoaded", function () {
       UI.refreshAll();
     });
   }
+
+  // ── Sidebar Collapse Toggle ──
+  document.querySelector('.toggle-sidebar').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+  });
+
 });
 
 function applyRacialProficienciesAndAbilities() {
@@ -160,5 +196,46 @@ document.querySelectorAll('.info-wrapper').forEach(wrapper => {
       });
     });
   }
+});
+
+// ── Section‐Swap Logic ──
+const navItems = document.querySelectorAll('#sidebar li');
+const sections = document.querySelectorAll('.content-section');
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    // 1) Highlight active nav button
+    navItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+
+    // 2) Show matching section, hide the rest
+    const target = item.dataset.target;
+    sections.forEach(sec => {
+      if (sec.id === target) sec.classList.remove('hidden');
+      else sec.classList.add('hidden');
+    });
+  });
+});
+
+// ── Hook into your splash→planner transition ──
+// If you already have UI.showCharacterPlanner, override it here:
+if (window.UI && typeof UI.showCharacterPlanner === 'function') {
+  const originalShow = UI.showCharacterPlanner.bind(UI);
+  UI.showCharacterPlanner = () => {
+    // hide splash
+    document.getElementById('splash-container').classList.add('hidden');
+    // show planner
+    document.getElementById('planner-wrapper').classList.remove('hidden');
+    // then do any existing logic
+    originalShow();
+  };
+}
+
+// ── On load, default to “Stats” tab ──
+window.addEventListener('DOMContentLoaded', () => {
+  // Ensure planner-wrapper is hidden until you click “Begin”
+  // Then, when you call UI.showCharacterPlanner(), this will fire:
+  const statsBtn = document.querySelector('#sidebar li[data-target="stats"]');
+  if (statsBtn) statsBtn.click();
 });
 

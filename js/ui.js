@@ -4,7 +4,7 @@
 window.UI = {
   refreshAll: function () {
     // Not on the character planner page yet
-    if (!document.getElementById("planner-container") || document.getElementById("planner-container").classList.contains("hidden")) {
+    if (!document.getElementById("planner-wrapper") || document.getElementById("planner-wrapper").classList.contains("hidden")) {
       console.warn("UI.refreshAll() skipped — planner not visible yet.");
       return;
     }
@@ -267,7 +267,7 @@ window.UI = {
 
   showCharacterPlanner: function () {
     document.getElementById("splash-container").classList.add("hidden");
-    document.getElementById("planner-container").classList.remove("hidden");
+    document.getElementById("planner-wrapper").classList.remove("hidden");
 
     this.setupEarnedBPButton();
 
@@ -276,64 +276,79 @@ window.UI = {
     UI.setupStatButtons();
   },
 
+  showTooltip: function(msg, duration = 2000) {
+    const tip = document.getElementById('bp-tooltip');
+    tip.textContent = msg;
+    tip.classList.add('show');
+    clearTimeout(tip._hideTimer);
+    tip._hideTimer = setTimeout(() => {
+      tip.classList.remove('show');
+    }, duration);
+  },
+  
+
   /**
    * Set up listener for earned BP button
    */
   setupEarnedBPButton: function () {
-    const input = document.getElementById('earned-bp-input');
-    const feedback = document.getElementById('bp-add-feedback');
-    const warning = document.getElementById('bp-warning');
+    const input    = document.getElementById('earned-bp-input');
+    const addBtn   = document.getElementById('add-earned-bp');
+    const wrapper  = document.querySelector('.tooltip-container');
+    
+    // Helper: ensure we have a tooltip element and show it
+    function showTip(msg, type = 'error', duration = 2000) {
+      let tip = document.getElementById('bp-tooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'bp-tooltip';
+        tip.className = 'bp-tooltip';
+        wrapper.appendChild(tip);
+      }
+      tip.textContent = msg;
+      tip.classList.remove('error', 'success');
+      tip.classList.add(type, 'show');
+      clearTimeout(tip._hideTimer);
+      tip._hideTimer = setTimeout(() => tip.classList.remove('show'), duration);
+    }
   
-    // On input, set max allowed based on level threshold logic
-    input.addEventListener('input', () => {
-      const value = parseInt(input.value, 10) || 0;
-      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
-  
-      input.max = maxSafe;
-  
-      if (value > maxSafe) {
-        warning.classList.remove('hidden');
-        warning.textContent = `⚠️ Max allowed is ${maxSafe} to avoid leveling up more than once. Add more BP after leveling.`;
-      } else {
-        warning.classList.add('hidden');
-        warning.textContent = '';
+    // 1) Prevent spinner from climbing past max
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp') {
+        const max = BPLeveling.getMaxSafeEarnedBP();
+        const val = parseInt(input.value, 10) || 0;
+        if (val >= max) e.preventDefault();
       }
     });
   
-    // On Add BP button click
-    document.getElementById('add-earned-bp').addEventListener('click', () => {
-      let amount = parseInt(input.value, 10);
+    // 2) Clamp and warn as-you-type
+    input.addEventListener('input', () => {
+      const max = BPLeveling.getMaxSafeEarnedBP();
+      input.max = max;
+      let val = parseInt(input.value, 10) || 0;
+      if (val > max) {
+        input.value = max;
+        showTip(`⚠️ Max is ${max} BP to avoid skipping a level`, 'error', 2500);
+      }
+    });
   
-      if (isNaN(amount) || amount <= 0) {
-        feedback.textContent = 'Enter a valid number!';
-        feedback.style.color = 'red';
-        feedback.classList.add('show');
-        setTimeout(() => feedback.classList.remove('show'), 2000);
+    // 3) On “Add” click: validate & apply
+    addBtn.addEventListener('click', () => {
+      const amt = parseInt(input.value, 10);
+      const max = BPLeveling.getMaxSafeEarnedBP();
+  
+      if (isNaN(amt) || amt <= 0) {
+        showTip('Enter a valid, non-negative number!');
+        return;
+      }
+      if (amt > max) {
+        showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
         return;
       }
   
-      const maxSafe = BPLeveling.getMaxSafeEarnedBP();
-  
-      if (amount > maxSafe) {
-        // We already have a warning displayed, just cancel the op
-        amount = maxSafe;
-        return ;
-      }
-
-      // Apply BP and update state
-      const applied = BPLeveling.addEarnedBP(amount);
-  
-      if (!applied) return;
-
-      feedback.textContent = `+${amount} BP added!`;
-      feedback.style.color = 'green';
-      feedback.classList.add('show');
-      setTimeout(() => feedback.classList.remove('show'), 2000);
-  
-      // Clear input + warning
+      // Apply and confirm
+      BPLeveling.addEarnedBP(amt);
+      showTip(`+${amt} BP added!`, 'success', 1500);
       input.value = '';
-      warning.classList.add('hidden');
-      warning.textContent = '';
     });
   },
 
@@ -860,6 +875,20 @@ window.UI = {
     const spent = Layers.getTotalPointsSpent();
     const remaining = total - spent;
     const toLevel = BPLeveling.getBPToLevel();
+
+    // Calculate the gap between this level and the next - i.e. 15BP
+    const nextLevel = BPLeveling.getNextLevelThreshold();
+    const prevLevel = BPLeveling.getNextLevelThreshold(-1);
+    const levelPoints = nextLevel - prevLevel;
+
+    // How many points you need - 15 - 1 = 14 points earned into this level
+    const levelCompleted = levelPoints - toLevel;
+
+    const percent = levelPoints > 0
+      ? Math.round((levelCompleted / levelPoints) * 100)
+      : 0;
+    const fill = document.querySelector('.pill--highlight .progress-fill');
+    if (fill) fill.style.width = `${percent}%`;
 
     document.getElementById("total-bp").textContent = total;
     document.getElementById("spent-bp").textContent = spent;
