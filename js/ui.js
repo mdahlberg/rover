@@ -270,6 +270,7 @@ window.UI = {
     document.getElementById("planner-wrapper").classList.remove("hidden");
 
     this.setupEarnedBPButton();
+    UI.setupHeader();
 
     // Initialize buttons and update UI
     UI.refreshAll();
@@ -290,66 +291,120 @@ window.UI = {
   /**
    * Set up listener for earned BP button
    */
-  setupEarnedBPButton: function () {
-    const input    = document.getElementById('earned-bp-input');
-    const addBtn   = document.getElementById('add-earned-bp');
-    const wrapper  = document.querySelector('.tooltip-container');
-    
-    // Helper: ensure we have a tooltip element and show it
-    function showTip(msg, type = 'error', duration = 2000) {
-      let tip = document.getElementById('bp-tooltip');
-      if (!tip) {
-        tip = document.createElement('div');
-        tip.id = 'bp-tooltip';
-        tip.className = 'bp-tooltip';
-        wrapper.appendChild(tip);
-      }
-      tip.textContent = msg;
-      tip.classList.remove('error', 'success');
-      tip.classList.add(type, 'show');
-      clearTimeout(tip._hideTimer);
-      tip._hideTimer = setTimeout(() => tip.classList.remove('show'), duration);
+    /**
+   * Initialize Earned BP form: expand/collapse, submission, and validation.
+   */
+  setupEarnedBPButton() {
+    const container = document.querySelector('.add-bp-container');
+    const form      = document.getElementById('add-earned-bp-form');
+    const input     = document.getElementById('earned-bp-input');
+    const addBtn    = document.getElementById('add-earned-bp');
+
+    if (!container || !form || !input || !addBtn) return;
+
+    // Expand/collapse handlers
+    container.addEventListener('click', UI._handleContainerClick);
+
+    // Submit via Enter key or button click
+    form.addEventListener('submit', UI._handleFormSubmit);
+
+    // Input validation listeners
+    input.addEventListener('keydown', UI._preventSpinnerOverflow);
+    input.addEventListener('input', UI._clampInputValue);
+  },
+
+  /** Expand or collapse the BP form */
+  _handleContainerClick(event) {
+    const container = event.currentTarget;
+    if (event.target.matches('[data-action="expand-add-bp"]')) {
+      UI._expandBPForm(container);
     }
+    if (event.target.matches('[data-action="cancel-add-bp"]')) {
+      UI._collapseBPForm(container);
+    }
+  },
+
+  /** Prevent spinner arrow from exceeding max BP */
+  _preventSpinnerOverflow(event) {
+    if (event.key !== 'ArrowUp') return;
+    const input = event.currentTarget;
+    const max = BPLeveling.getMaxSafeEarnedBP();
+    const val = parseInt(input.value, 10) || 0;
+    if (val >= max) event.preventDefault();
+  },
+
+  /** Clamp input value to max and show warning */
+  _clampInputValue(event) {
+    const input = event.currentTarget;
+    const max = BPLeveling.getMaxSafeEarnedBP();
+    input.max = max;
+    let val = parseInt(input.value, 10) || 0;
+    if (val > max) {
+      input.value = max;
+      UI._showTip(`⚠️ Max is ${max} BP to avoid skipping a level`, 'error', 2500);
+    }
+  },
+
+  /** Handle form submission (Enter key) */
+  _handleFormSubmit(event) {
+    event.preventDefault();
+    // Delegate to add click logic
+    UI._handleAddClick();
+  },
+
+  /** Validate and apply earned BP on Add button click */
+  _handleAddClick() {
+    const input  = document.getElementById('earned-bp-input');
+    const amt    = parseInt(input.value, 10);
+    const max    = BPLeveling.getMaxSafeEarnedBP();
+    const container = document.querySelector('.add-bp-container');
+
+    if (isNaN(amt) || amt <= 0) {
+      UI._showTip('Enter a number greater than zero.');
+      return;
+    }
+
+    if (amt > max) {
+      UI._showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
+      return;
+    }
+
+    BPLeveling.addEarnedBP(amt);
+    UI._showTip(`+${amt} BP added!`, 'success', 1500);
+    input.value = '';
+    UI._collapseBPForm(container);
+  },
+
+  /** Show or update a tooltip message */
+  _showTip(msg, type = 'error', duration = 2000) {
+    const wrapper = document.querySelector('.add-bp-container');
   
-    // 1) Prevent spinner from climbing past max
-    input.addEventListener('keydown', e => {
-      if (e.key === 'ArrowUp') {
-        const max = BPLeveling.getMaxSafeEarnedBP();
-        const val = parseInt(input.value, 10) || 0;
-        if (val >= max) e.preventDefault();
-      }
-    });
-  
-    // 2) Clamp and warn as-you-type
-    input.addEventListener('input', () => {
-      const max = BPLeveling.getMaxSafeEarnedBP();
-      input.max = max;
-      let val = parseInt(input.value, 10) || 0;
-      if (val > max) {
-        input.value = max;
-        showTip(`⚠️ Max is ${max} BP to avoid skipping a level`, 'error', 2500);
-      }
-    });
-  
-    // 3) On “Add” click: validate & apply
-    addBtn.addEventListener('click', () => {
-      const amt = parseInt(input.value, 10);
-      const max = BPLeveling.getMaxSafeEarnedBP();
-  
-      if (isNaN(amt) || amt <= 0) {
-        showTip('Enter a valid, non-negative number!');
-        return;
-      }
-      if (amt > max) {
-        showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
-        return;
-      }
-  
-      // Apply and confirm
-      BPLeveling.addEarnedBP(amt);
-      showTip(`+${amt} BP added!`, 'success', 1500);
-      input.value = '';
-    });
+    // 1) create a new tip element each time
+    const tip = document.createElement('div');
+    tip.className = `bp-tooltip ${type} stack`;
+    tip.textContent = msg;
+    wrapper.appendChild(tip);
+
+    // 2) schedule its removal
+    setTimeout(() => {
+      tip.classList.remove('show');
+      // after fade‑out (if you have a transition), remove from DOM
+      setTimeout(() => wrapper.removeChild(tip), 300);
+    }, duration);
+
+    // 3) trigger the “show” animation class
+    requestAnimationFrame(() => tip.classList.add('show'));
+  },
+
+  /** Expand the BP input form */
+  _expandBPForm(container) {
+    container.classList.add('is-expanded');
+    document.getElementById('earned-bp-input').focus();
+  },
+
+  /** Collapse the BP input form */
+  _collapseBPForm(container) {
+    container.classList.remove('is-expanded');
   },
 
   /**
@@ -865,35 +920,80 @@ window.UI = {
   },
 
   updateGlobalBuildPoints: function () {
-    // Set current Level display as well
+    // 1) Level
     const levelEl = document.getElementById("level-display");
     if (levelEl) {
       levelEl.innerText = Layers.getCurrentLevel();
     }
-
-    const total = BPLeveling.earnedBP;
-    const spent = Layers.getTotalPointsSpent();
+  
+    // 2) Compute totals
+    const total     = BPLeveling.earnedBP;
+    const spent     = Layers.getTotalPointsSpent();
     const remaining = total - spent;
-    const toLevel = BPLeveling.getBPToLevel();
-
-    // Calculate the gap between this level and the next - i.e. 15BP
-    const nextLevel = BPLeveling.getNextLevelThreshold();
-    const prevLevel = BPLeveling.getNextLevelThreshold(-1);
-    const levelPoints = nextLevel - prevLevel;
-
-    // How many points you need - 15 - 1 = 14 points earned into this level
+    const toLevel   = BPLeveling.getBPToLevel();
+  
+    // 3) Compute percent into this level
+    const nextLevel     = BPLeveling.getNextLevelThreshold();
+    const prevLevel     = BPLeveling.getNextLevelThreshold(-1);
+    const levelPoints   = nextLevel - prevLevel;
     const levelCompleted = levelPoints - toLevel;
-
     const percent = levelPoints > 0
       ? Math.round((levelCompleted / levelPoints) * 100)
       : 0;
-    const fill = document.querySelector('.pill--highlight .progress-fill');
-    if (fill) fill.style.width = `${percent}%`;
+  
+    // 4) Update the gauge
+    const gaugeEl = document.querySelector('.level-gauge');
+    const fillEl  = gaugeEl?.querySelector('.gauge-fill');
+    if (fillEl) {
+      fillEl.style.width = percent + '%';
+    }
 
-    document.getElementById("total-bp").textContent = total;
-    document.getElementById("spent-bp").textContent = spent;
-    document.getElementById("remaining-bp").textContent = remaining;
-    document.getElementById("to-level-bp").textContent = toLevel;
+    if (gaugeEl) {
+      gaugeEl.setAttribute('aria-valuenow', percent);
+      gaugeEl.setAttribute('data-percent', percent);
+    }
+  
+    // 5) Update remaining‑BP text
+    const remEl = document.getElementById("remaining-bp");
+    if (remEl) {
+      remEl.textContent = remaining;
+    }
   },
+  /** Show total‑earned / total‑spent when the info icon is clicked */
+  setupBPInfoButton: function() {
+    const btn = document.querySelector('.bp-info');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      // grab your values however you store them
+      const earned = BPLeveling.earnedBP;
+      const spent  = Layers.getTotalPointsSpent();
+      // use your existing tooltip method
+      UI._showTip(`Earned: ${earned} BP\nSpent: ${spent} BP`, 'success', 3000);
+    });
+  },
+
+  setupHeader: function() {
+    // 1) Level
+    const levelEl = document.getElementById('level-display');
+    if (levelEl && typeof Layers !== 'undefined') {
+      const lvl = Layers.getCurrentLevel();
+      levelEl.textContent = lvl;
+    }
+
+    // 2) Name
+    const nameEl = document.querySelector('.char-name');
+    console.warn("Name = ", nameEl);
+    if (nameEl) {
+      const fullName = localStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
+      nameEl.textContent = fullName;
+      nameEl.setAttribute('title', fullName);        // so ellipsis shows on hover
+    }
+  },
+
 };
 
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  UI.setupEarnedBPButton();
+  UI.setupBPInfoButton();
+});

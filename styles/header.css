@@ -1,0 +1,287 @@
+/* header.css */
+/* ───────── Header Styles (Mobile‑First) ───────── */
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: env(safe-area-inset-top);
+  background-color: rgba(46,46,62,0.95);
+}
+
+/* Row 1: two columns, level left, name centered */
+.hdr-row1 {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding: 0.1rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(46,46,62,0.95); /* keep your header bg */
+}
+
+/* Level sticks to the left */
+.hdr-row1 .level-version {
+  justify-self: start;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Name is in the center of its 1fr cell */
+.hdr-row1 .char-name {
+  justify-self: center;
+  min-width: 0; /* allow ellipsis when needed */
+  max-width: clamp(120px, 60vw, 400px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: help; /* for the title tooltip */
+}
+
+/* Col 3: Add Earned BP button */
+.btn-add-bp {
+  background: #2a9d8f;     /* consider swapping to a CSS var later */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* ─── Row 2 (mobile‑first) ─── */
+.hdr-row2 {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  padding: 0.1rem 1rem;
+  padding-right: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(46,46,62,0.95);
+  color: #fff;
+}
+
+/* 1) Gauge track */
+.level-gauge {
+  width: 100%;
+  height: 14px;
+  background: #444;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.level-gauge::after {
+  content: attr(data-percent) "%";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  color: #fff;
+  text-shadow: 0 0 2px rgba(0,0,0,0.6);
+}
+/* Gauge fill = percent to next level */
+.level-gauge .gauge-fill {
+  height: 100%;
+  background: #2a9d8f;
+  width: 0%;                   /* initial; update via JS */
+  transition: width 0.3s ease;
+}
+/* ── Gauge wrapper & micro‑label ── */
+.gauge-wrapper {
+  /* left‑justify in its auto‑sized column */
+  justify-self: start;
+}
+
+/* Micro‑label sits just below the bar */
+.gauge-label {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: #ccc;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 2) Unspent BP */
+.unspent-bp {
+  /* center‑justify in the middle 1fr column */
+  justify-self: center;
+}
+
+/* 3) Info icon */
+.bp-info {
+  /* right‑justify in its auto‑sized column */
+  justify-self: end;
+}
+
+/* Row 3: Add / Export / Start Over in three justified columns */
+.hdr-row3 {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 0.1rem 1rem;
+  padding-right: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgba(46,46,62,0.95);
+  gap: 1rem;
+  column-gap: 1rem;
+}
+
+.hdr-row3 .add-bp-container {
+  grid-column: 1;
+  justify-self: start;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.hdr-row3 .cell.export {
+  grid-column: 2;
+  justify-self: center;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.hdr-row3 .cell.start-over {
+  grid-column: 3;
+  justify-self: end;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+/* ───────── Desktop Overrides (min‑width: 768px) ───────── */
+@media (min-width: 768px) {
+  .hdr-row1 {
+    padding: 1rem 2rem;
+  }
+  .hdr-row1 .char-name {
+    font-size: 1.1rem;
+    max-width: clamp(200px, 50vw, 600px);
+  }
+
+  .btn-add-bp {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hdr-row2 {
+    padding: 1rem 1rem;
+    padding-right: 3rem;
+    gap: 1.25rem;
+  }
+  .unspent-bp {
+    font-size: 1rem;
+  }
+  .bp-info {
+    font-size: 1.3rem;
+  }
+}
+
+/* Misc styling */
+
+
+/* Add Earned BP */
+/* Container holds both the “＋” button and the hidden form */
+/* 1) Shrink the inline controls container */
+.earn-bp-controls {
+  gap: 0.25rem;         /* half the previous gap */
+  width: fit-content;   /* only as wide as its children */
+}
+
+/* 3) Tighter confirm & cancel buttons */
+.btn-confirm {
+  padding: 0.25rem 0.4rem;  /* reduced padding */
+  font-size: 0.85rem;      /* smaller font */
+  line-height: 1;          /* ensure no extra height */
+}
+
+/* Tighten the Cancel button */
+.btn-cancel {
+  padding: 0.25rem 0.4rem;   /* match your .btn-confirm */
+  font-size: 0.85rem;
+  line-height: 1;
+  background: transparent;   /* if you want no background */
+  border: none;              /* if you want no border */
+}
+
+.add-bp-container.is-expanded .btn-add-bp {
+  display: none;
+}
+
+/* Hide the expanded controls by default */
+.add-bp-container .earn-bp-controls {
+  display: none;
+}
+
+/* When expanded, show them as a flex row */
+.add-bp-container.is-expanded .earn-bp-controls {
+  display: flex;
+  gap: 0.25rem;       /* keep your tighter gap */
+  align-items: center;
+}
+
+/* Hide the “＋” when expanded (you already have this) */
+.add-bp-container.is-expanded .btn-add-bp {
+  display: none;
+}
+
+/* 1a) Give the Earned‑BP input enough room for multiple digits */
+#earned-bp-input {
+  width: 9ch;            /* instead of 2.5ch */
+  height: 1ch;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+}
+
+.add-bp-container .bp-tooltip {
+  position: absolute;
+  top: 100%;             /* just under the container */
+  left: 0;               /* align to its left edge */
+  margin-top: 0.25rem;   /* small gap */
+  width: max-content;    /* only as wide as its text */
+  z-index: 1000;
+}
+
+
+/* END Add Earned BP */
+
+/* ensure tips stack vertically from the top of the container */
+#global-tooltip-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;      /* or wherever you like */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;      /* space between tips */
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.bp-tooltip {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+.bp-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.bp-tooltip.error   { background: #b53333; }
+.bp-tooltip.success { background: #2a9d8f; }
+.bp-tooltip.info    { background: #555; }
+
