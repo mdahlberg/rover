@@ -369,10 +369,11 @@ window.UI = {
       return;
     }
 
-    BPLeveling.addEarnedBP(amt);
-    UI._showTip(`+${amt} BP added!`, 'success', 1500);
-    input.value = '';
-    UI._collapseBPForm(container);
+    if (BPLeveling.addEarnedBP(amt)) {
+      UI._showTip(`+${amt} BP added!`, 'success', 1500);
+      input.value = '';
+      UI._collapseBPForm(container);
+    }
   },
 
   /** Show or update a tooltip message */
