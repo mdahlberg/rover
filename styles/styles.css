@@ -8,7 +8,7 @@ body {
   /* Use a dark gradient as the global background */
   background: linear-gradient(270deg, #1e1e2e, #2e2e3e, #3a3a4f);
   background-size: 600% 600%;
-  animation: GradientShift 15s ease infinite;
+  /* animation: GradientShift 15s ease infinite; */
   color: #f0f0f0;
 }
 
