@@ -1805,12 +1805,16 @@ ul ul {
   overflow: hidden;
 }
 
+.app-header {
+  grid-area: header;
+}
+
 .sidebar    { grid-area: sidebar; background: #181822; color: #ccc; transition: width 0.3s; overflow: hidden; }
 main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1e2e; }
 .app-footer { grid-area: footer; padding: 0.5rem 1rem; background: #202028; }
 
 /* ===== Sidebar Styles ===== */
-.sidebar { width: 200px; }
+.sidebar { width: 150px; }
 .sidebar.collapsed { width: 50px; }
 
 /* Hide labels when collapsed */

@@ -59,6 +59,7 @@
   align-items: center;
   column-gap: 0.75rem;
   padding: 0.5rem 1rem;
+  padding-right: 3rem;
   width: 100%;
   box-sizing: border-box;
   background-color: rgba(46,46,62,0.95);
@@ -124,10 +125,12 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 0.5rem 1rem;
+  padding-right: 3rem;
   width: 100%;
   box-sizing: border-box;
   background-color: rgba(46,46,62,0.95);
   gap: 1rem;
+  column-gap: 1rem;
 }
 
 .hdr-row3 .add-bp-container {
@@ -172,7 +175,8 @@
 
 @media (min-width: 768px) {
   .hdr-row2 {
-    padding: 1rem 2rem;
+    padding: 1rem 1rem;
+    padding-right: 3rem;
     gap: 1.25rem;
   }
   .unspent-bp {
@@ -246,13 +250,6 @@
   margin-top: 0.25rem;   /* small gap */
   width: max-content;    /* only as wide as its text */
   z-index: 1000;
-}
-
-/* 1b) Add some space between the three Row‑3 columns */
-.hdr-row3 {
-  /* if you didn’t already have a gap defined: */
-  column-gap: 1rem;
-  /* or: gap: 1rem; */
 }
 
 
