@@ -145,7 +145,7 @@ function levelUp() {
   }
 
   UI.refreshAll();
-  alert("Level Up! New Layer Started.");
+  UI._showTip(`Level Up!`, 'success', 3000);
 }
 
 function startOver() {

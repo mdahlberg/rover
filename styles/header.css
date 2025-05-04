@@ -254,3 +254,34 @@
 
 
 /* END Add Earned BP */
+
+/* ensure tips stack vertically from the top of the container */
+#global-tooltip-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;      /* or wherever you like */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;      /* space between tips */
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.bp-tooltip {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+.bp-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.bp-tooltip.error   { background: #b53333; }
+.bp-tooltip.success { background: #2a9d8f; }
+.bp-tooltip.info    { background: #555; }
+

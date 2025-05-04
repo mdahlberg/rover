@@ -270,6 +270,7 @@ window.UI = {
     document.getElementById("planner-wrapper").classList.remove("hidden");
 
     this.setupEarnedBPButton();
+    UI.setupHeader();
 
     // Initialize buttons and update UI
     UI.refreshAll();
@@ -362,6 +363,7 @@ window.UI = {
       UI._showTip('Enter a number greater than zero.');
       return;
     }
+
     if (amt > max) {
       UI._showTip(`⚠️ Only up to ${max} BP here—otherwise you’ll skip a level.`, 'error', 2500);
       return;
@@ -375,20 +377,23 @@ window.UI = {
 
   /** Show or update a tooltip message */
   _showTip(msg, type = 'error', duration = 2000) {
-    //const wrapper = document.getElementById('global-tooltip-container');
     const wrapper = document.querySelector('.add-bp-container');
-    let tip = document.getElementById('bp-tooltip');
-    if (!tip) {
-      tip = document.createElement('div');
-      tip.id = 'bp-tooltip';
-      tip.className = 'bp-tooltip';
-      wrapper.appendChild(tip);
-    }
+  
+    // 1) create a new tip element each time
+    const tip = document.createElement('div');
+    tip.className = `bp-tooltip ${type} stack`;
     tip.textContent = msg;
-    tip.classList.remove('error', 'success');
-    tip.classList.add(type, 'show');
-    clearTimeout(tip._hideTimer);
-    tip._hideTimer = setTimeout(() => tip.classList.remove('show'), duration);
+    wrapper.appendChild(tip);
+
+    // 2) schedule its removal
+    setTimeout(() => {
+      tip.classList.remove('show');
+      // after fade‑out (if you have a transition), remove from DOM
+      setTimeout(() => wrapper.removeChild(tip), 300);
+    }, duration);
+
+    // 3) trigger the “show” animation class
+    requestAnimationFrame(() => tip.classList.add('show'));
   },
 
   /** Expand the BP input form */
@@ -954,9 +959,41 @@ window.UI = {
       remEl.textContent = remaining;
     }
   },
+  /** Show total‑earned / total‑spent when the info icon is clicked */
+  setupBPInfoButton: function() {
+    const btn = document.querySelector('.bp-info');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      // grab your values however you store them
+      const earned = BPLeveling.earnedBP;
+      const spent  = Layers.getTotalPointsSpent();
+      // use your existing tooltip method
+      UI._showTip(`Earned: ${earned} BP\nSpent: ${spent} BP`, 'success', 3000);
+    });
+  },
+
+  setupHeader: function() {
+    // 1) Level
+    const levelEl = document.getElementById('level-display');
+    if (levelEl && typeof Layers !== 'undefined') {
+      const lvl = Layers.getCurrentLevel();
+      levelEl.textContent = lvl;
+    }
+
+    // 2) Name
+    const nameEl = document.querySelector('.char-name');
+    console.warn("Name = ", nameEl);
+    if (nameEl) {
+      const fullName = localStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
+      nameEl.textContent = fullName;
+      nameEl.setAttribute('title', fullName);        // so ellipsis shows on hover
+    }
+  },
+
 };
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   UI.setupEarnedBPButton();
+  UI.setupBPInfoButton();
 });
