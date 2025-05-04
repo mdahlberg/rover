@@ -1800,21 +1800,35 @@ ul ul {
   grid-template-areas:
     "header header"
     "sidebar main"
-    "footer footer";
-  height: 100vh;
-  overflow: hidden;
+    "sidebar footer";
+  /* allow the page to grow taller than the viewport */
+  min-height: 100vh;
+  overflow: visible;    /* let the footer expand downward */
 }
 
 .app-header {
   grid-area: header;
 }
 
-.sidebar    { grid-area: sidebar; background: #181822; color: #ccc; transition: width 0.3s; overflow: hidden; }
+.sidebar {
+  position: sticky;
+  top: 0;                      /* sticks to the top of its container */
+  align-self: start;           /* prevents stretching in the grid */
+  height: 71vh;               /* fill the viewport vertically */
+  overflow-y: auto;            /* scroll internally if its content grows */
+  width: 150px;
+}
+
 main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1e2e; }
 .app-footer { grid-area: footer; padding: 0.5rem 1rem; background: #202028; }
 
+main#main-content {
+  /* Replace 120px with the combined height of your header rows */
+  max-height: calc(69vh - 32px);
+  overflow-y: auto;
+}
+
 /* ===== Sidebar Styles ===== */
-.sidebar { width: 150px; }
 .sidebar.collapsed { width: 50px; }
 
 /* Hide labels when collapsed */
@@ -2269,7 +2283,6 @@ main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1
 
 /* Make the footer itself full-width and transparent */
 #main-footer {
-  background: transparent !important;
   box-shadow: none        !important;
   border-radius: 0        !important;
   margin: 0               !important;
@@ -2287,7 +2300,7 @@ main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1
 /* (Optional) If you want the footer-body to blend in even when expanded: */
 #main-footer .footer-body {
   background: transparent;
-  box-shadow: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);;
 }
 
 /* Reset any default margins/padding */
