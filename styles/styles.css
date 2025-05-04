@@ -1812,11 +1812,15 @@ ul ul {
 
 .sidebar {
   position: sticky;
-  top: 0;                      /* sticks to the top of its container */
+  /* top: 0; */                     /* sticks to the top of its container */ 
   align-self: start;           /* prevents stretching in the grid */
-  height: 71vh;               /* fill the viewport vertically */
+  /* height: 71vh; */              /* fill the viewport vertically */
   overflow-y: auto;            /* scroll internally if its content grows */
   width: 150px;
+  /* pin it just under your header: */
+  top: 165px;                   /* ← replace 136px with the actual total height of your three header rows */
+  /* then fill the rest of the viewport underneath that header: */
+  height: calc(89vh - 136px);  /* ← same 136px here */
 }
 
 main        { grid-area: main; overflow-y: auto; padding: 1rem; background: #1e1e2e; }
