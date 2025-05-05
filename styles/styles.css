@@ -285,6 +285,12 @@ body {
   margin-top: 1rem;
 }
 
+/* whenever .no-anim is on the list, kill any card animations */
+#ability-select-list.no-anim .ability-item {
+  animation: none !important;
+  transition: none !important;
+}
+
 #ability-select-modal .trait-card:hover {
   border-color: #888;
 }
@@ -396,6 +402,11 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1rem;
+}
+
+#proficiency-select-list.no-anim .proficiency-item {
+  animation: none !important;
+  transition: none !important;
 }
 
 .trait-grid {
@@ -895,6 +906,19 @@ header {
   transform 0.2s ease;
   /* run the animation on creation */
   animation: fadeInPop 0.25s ease forwards;
+}
+
+.ability-item-no-anim {
+  background-color: #1e293b;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition:
+  opacity 0.2s ease,
+  transform 0.2s ease;
 }
 
 /* stagger by --i (1,2,3,…) at 50ms intervals */
