@@ -536,13 +536,13 @@ window.UI = {
     summaryContainer.innerHTML = content || "<p>No purchases this level.</p>";
   },
 
-  updateAbilityUI: function () {
-    const container = document.getElementById("ability-shop");
+  updateAbilityUI: function (animateCreation = false) {
+    const container = document.getElementById("ability-select-list");
     container.innerHTML = "";
   
     const allAbilities = Abilities.availableAbilities;
     const derivedAbilities = Abilities.derivedAbilities || {};
-  
+
     // Helper to create ability DOM
     function createAbilityCard(abilityId, ability, count, isDerived = false) {
       const isMorph = ability?.isMorph || false;
@@ -664,19 +664,52 @@ window.UI = {
   
       return item;
     }
-  
+
+    // Ability shop filters
+    const affBox = document.getElementById("filter-affordable");
+    const preBox = document.getElementById("filter-prereqs");
+    const refundableBox = document.getElementById("filter-refundable");
+
+    const filterAfford = affBox.checked;
+    const filterPrereq = preBox.checked;
+    const filterRefundable = refundableBox.checked;
+
+    let total = 0
+    let displaying = 0;
+
     // Render Derived First
     Object.entries(derivedAbilities).forEach(([id, count]) => {
+      displaying++;
       const ability = allAbilities[id];
       if (ability) container.appendChild(createAbilityCard(id, ability, count, true));
     });
   
     // Then Normal Abilities
     Object.entries(allAbilities).forEach(([id, ability]) => {
+      total++;
+
       if (ability.derived) return; // skip
-      const count = Abilities.getPurchaseCount(id);
-      container.appendChild(createAbilityCard(id, ability, count));
+
+      if (Abilities.meetFilters(filterAfford, filterPrereq, filterRefundable, id, ability)) {
+        displaying++;
+        const count = Abilities.getPurchaseCount(id);
+        const ab = createAbilityCard(id, ability, count);
+        if (animateCreation) {
+          ab.style.setProperty('--i', displaying)
+        }
+
+        container.appendChild(ab);
+      }
     });
+
+    const howManyEl = document.querySelector(`.ability-how-many`);
+    howManyEl.textContent = "Displaying " + displaying + "/" + total;
+    // re‑trigger the flash animation:
+    howManyEl.classList.remove('flash');
+    // voiding offsetWidth forces the browser to “reset” the animation
+    void howManyEl.offsetWidth;
+    howManyEl.classList.add('flash');
+
   
     this.updateGlobalBuildPoints();
   },
@@ -983,7 +1016,6 @@ window.UI = {
 
     // 2) Name
     const nameEl = document.querySelector('.char-name');
-    console.warn("Name = ", nameEl);
     if (nameEl) {
       const fullName = localStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
       nameEl.textContent = fullName;
