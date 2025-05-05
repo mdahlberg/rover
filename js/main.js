@@ -89,6 +89,23 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('sidebar').classList.toggle('collapsed');
   });
 
+  const affBox = document.getElementById("filter-affordable");
+  const preBox = document.getElementById("filter-prereqs");
+  const refBox = document.getElementById("filter-refundable");
+
+  // apply when toggles change
+  affBox.addEventListener("change", () => {
+    UI.updateAbilityUI(true);
+  });
+  preBox.addEventListener("change", () => {
+    UI.updateAbilityUI(true);
+  });
+  refBox.addEventListener("change", () => {
+    UI.updateAbilityUI(true);
+  });
+
+
+
 });
 
 function applyRacialProficienciesAndAbilities() {
@@ -215,6 +232,9 @@ navItems.forEach(item => {
       if (sec.id === target) sec.classList.remove('hidden');
       else sec.classList.add('hidden');
     });
+
+    // Refresh abilities?
+    if (target === 'abilities') UI.updateAbilityUI();
   });
 });
 

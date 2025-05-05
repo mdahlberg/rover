@@ -390,7 +390,22 @@
           <!-- Ability Shop -->
           <div id="ability-shop" class="shop-grid">
             <h2>Ability Shop</h2>
-            <div id="ability-shop" class="shop-grid"></div>
+              <div id="ability-filter-bar" class="filter-bar">
+                <label>
+                  <input type="checkbox" id="filter-affordable" checked>
+                  <span>Can Afford</span>
+                </label>
+                <label>
+                  <input type="checkbox" id="filter-prereqs" checked>
+                  <span>Prereqs Met</span>
+                </label>
+                <label>
+                  <input type="checkbox" id="filter-refundable">
+                  <span>Refundable</span>
+                </label>
+                <div class="ability-how-many" title="How many Abilities are displayed with filter criteria selected"></div>
+              </div>
+            <div id="ability-select-list" class="shop-grid"></div>
           </div>
         </section>
 

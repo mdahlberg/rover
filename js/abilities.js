@@ -430,4 +430,42 @@ window.Abilities = {
       this.purchasedAbilities[id] = (this.purchasedAbilities[id] || 0) + current[id];
     }
   },
+
+  meetFilters: function (filterAfford, filterPrereq, filterRefundable, id, ability) {
+    // 1) Compute our three booleans
+    const cost      = Abilities.getCost(ability);
+    const hasPoints = Layers.getRemainingPoints() >= cost;
+    const prereqMet = Abilities.canPurchase(id);
+    const canRefund = Abilities.canRefund(id);
+
+    // 2) If none are checked, show everything
+    if (!filterAfford && !filterPrereq && !filterRefundable) {
+      return true;
+    }
+
+    // 3) If all three are checked, require all three
+    if (filterAfford && filterPrereq && filterRefundable) {
+      return hasPoints && prereqMet && canRefund;
+    }
+
+    // 4) If any two are checked, require those two
+    if (filterAfford && filterPrereq) {
+      return hasPoints && prereqMet;
+    }
+    if (filterAfford && filterRefundable) {
+      return hasPoints && canRefund;
+    }
+    if (filterPrereq && filterRefundable) {
+      return prereqMet && canRefund;
+    }
+
+    // 5) Otherwise exactly one is checked—require it
+    if (filterAfford)       return hasPoints;
+    if (filterPrereq)       return prereqMet;
+    if (filterRefundable)   return canRefund;
+
+    // (fallback)
+    return true;
+  },
+
 };
