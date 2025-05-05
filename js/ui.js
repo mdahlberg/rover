@@ -2,7 +2,7 @@
 // ui.js - Updates the DOM based on Layer and Point Changes
 
 window.UI = {
-  refreshAll: function () {
+  refreshAll: function (animate = false) {
     // Not on the character planner page yet
     if (!document.getElementById("planner-wrapper") || document.getElementById("planner-wrapper").classList.contains("hidden")) {
       console.warn("UI.refreshAll() skipped — planner not visible yet.");
@@ -11,7 +11,7 @@ window.UI = {
 
     UI.updateStatsUI();
     UI.updateDerivedStats();
-    UI.updateAbilityUI();
+    UI.updateAbilityUI(false);
     UI.updateProficiencyUI();
     UI.updateLoreUI();
     UI.updateLayerPreview();
@@ -538,6 +538,10 @@ window.UI = {
 
   updateAbilityUI: function (animateCreation = false) {
     const container = document.getElementById("ability-select-list");
+
+    // if we don’t want animations, ensure the class is set
+    container.classList.toggle("no-anim", !animateCreation);
+
     container.innerHTML = "";
   
     const allAbilities = Abilities.availableAbilities;
@@ -646,7 +650,7 @@ window.UI = {
         plus.disabled = Layers.getRemainingPoints() < cost || !canPurchase;
         plus.onclick = () => {
           Abilities.purchaseAbility(abilityId, cost);
-          UI.refreshAll();
+          UI.refreshAll(false);
         };
   
         const minus = document.createElement("button");
@@ -719,6 +723,7 @@ window.UI = {
    */
   updateProficiencyUI: function () {
     const container = document.getElementById("proficiency-shop");
+
     container.innerHTML = "";
 
     Object.entries(Proficiencies.availableProficiencies).forEach(([id, prof]) => {
@@ -737,7 +742,7 @@ window.UI = {
 
       label.title = prof.description;
 
-      item.className = "ability-item";
+      item.className = "ability-item-no-anim";
 
       if (isRacial) {
         item.classList.add("racial-proficiency");
