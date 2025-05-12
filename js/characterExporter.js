@@ -145,18 +145,34 @@ window.CharacterExporter = {
     const doc = new jsPDF({ unit: 'pt', format: 'letter' });
     const W = doc.internal.pageSize.getWidth();
     const H = doc.internal.pageSize.getHeight();
-    const m = 40;            // page margin
+    const m = 40;            // margin
     let y = m;
 
-    // — Header —
+    // — Header Title —
     doc.setFontSize(20).setTextColor('#4A90E2')
        .text('Character Chronicle', W/2, y, { align: 'center' });
     y += 30;
-    doc.setFontSize(12).setTextColor('#000')
-       .text(`Name: ${snapshot.characterInfo.name||'—'}`, m, y)
-       .text(`Race: ${snapshot.race||'—'}`, m + 250, y)
-       .text(`Date: ${new Date(snapshot.timestamp).toLocaleString()}`, W-m, y, { align: 'right' });
-    y += 25;
+
+    // — Line 1: Name, Race, Date —
+    doc.setFontSize(12).setTextColor('#000');
+    const nameY = y;
+    doc.text(`Name: ${snapshot.characterInfo.name || '—'}`, m, nameY);
+    doc.text(`Race: ${snapshot.race || '—'}`, m+250, nameY);
+    doc.text(
+      `Date: ${new Date(snapshot.timestamp).toLocaleString()}`,
+      W - m, nameY,
+      { align: 'right' }
+    );
+
+    // — Line 2+: Description (wrapped to page width) —
+    y += 20;
+    const rawDesc = snapshot.characterInfo.description || '—';
+    const descLines = doc.splitTextToSize(
+      `Description: ${rawDesc}`,
+      W - 2*m           // wrap to within left & right margins
+    );
+    doc.text(descLines, m, y);
+    y += descLines.length * 12 + 10;  // advance y by number of lines × line‑height
 
     // — Stats —
     doc.autoTable({
