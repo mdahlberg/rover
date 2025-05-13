@@ -857,6 +857,20 @@ window.UI = {
     // Update Unspent badge
     const unspent = Lores.getUnspentLores();
     document.getElementById("unspent-lores").textContent = `${unspent} Unspent`;
+
+    // —— New: decorate the sidebar icon when unspent > 0 ——
+    const navItem = document.querySelector('#sidebar li[data-target="lores"]');
+    // remove any old indicator
+    const old = navItem.querySelector('.unspent-indicator');
+    if (old) old.remove();
+
+    if (unspent > 0) {
+      const badge = document.createElement('span');
+      badge.className = 'unspent-indicator';
+      badge.textContent = unspent;              // or '' for dot
+      // badge.classList.add('dot');            // if you prefer a dot
+      navItem.appendChild(badge);
+    }
   
     function renderBranch(parentId, depth = 0) {
       const branch = Lores.availableLores

@@ -2430,3 +2430,33 @@ html, body {
   animation: flashCount 0.3s ease forwards;
 }
 
+/* ─── Unspent‑Lore “Dot” Indicator ─────────────────────────────────── */
+
+/* 1) Make the lores nav item a positioning context */
+.sidebar li[data-target="lores"] {
+  position: relative;
+}
+
+/* 2) Base styling for the unspent badge */
+.unspent-indicator {
+  position: absolute;
+  top: 0.4rem;              /* tweak vertical offset to line up */
+  right: 0.8rem;            /* tweak horizontal offset to line up */
+  background-color: #e53e3e;/* red dot */
+  color: white;             
+  font-size: 0.75rem;       
+  line-height: 1;
+  border-radius: 999px;     /* pill shape by default */
+  padding: 0 0.4em;         /* space for a number */
+  display: inline-flex;     
+  align-items: center;
+  justify-content: center;
+}
+
+/* 3) “Dot” variant (no number inside) */
+.unspent-indicator.dot {
+  width: 0.6em;              /* make it a perfect circle */
+  height: 0.6em;             
+  padding: 0;                /* remove the pill padding */
+  border-radius: 50%;        
+}
