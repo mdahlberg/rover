@@ -161,7 +161,38 @@ window.UI = {
 
   updateEssenceSlotUI: function () {
     const container = document.getElementById("essence-slot-list");
-    if (!container) return;
+    const pathDiv     = document.getElementById("essence-path-display");
+
+    if (!container || !pathDiv) return;
+
+    // ——— Display current Path + icon ———
+    const school = localStorage.getItem(Constants.ESSENCE_PATH) || "";
+    const element = localStorage.getItem(Constants.ESSENCE_ELEMENT) || "";
+
+    const names = {
+      spirit: "Path of the Spirit",
+      stars:  "Path of the Stars",
+      calamity: "Path of Calamity"
+    };
+    const emojis = {
+      spirit:        "🛡️",
+      stars:         "✨",
+      "fire":  "🔥",
+      "water": "💧",
+      "earth": "⛰️",
+      "air":   "💨"
+    };
+
+    let displayName = names[school] || "Unknown Path";
+    if (school === "calamity" && element) {
+      displayName += ` — ${element.charAt(0).toUpperCase()+element.slice(1)}`;
+    }
+    const icon = emojis[school] || emojis[element] || "";
+
+    pathDiv.innerHTML = icon
+      ? `<span class="icon">${icon}</span>${displayName}`
+      : displayName;
+
     container.innerHTML = "";
 
     // For each slot, 1-9, master
