@@ -108,12 +108,22 @@ window.EssenceSlots = {
     return true;
   },
 
-  purchaseSlot: function (level) {
+  purchaseSlot: function (level, skipModal = false) {
     const levelKey = String(level);
     const cost = this.getCost(levelKey);
     if (!this.canPurchase(levelKey)) return false;
 
+    // If this is your first essence slot purchase, then choose your Path!
+    if (!skipModal && !localStorage.getItem(Constants.ESSENCE_PATH) && this.purchasedEssences[1] === 0) {
+      EssenceSchoolModal.open(() => {
+        // onConfirm → re‑call ourselves, but skip the modal branch
+        this.purchaseSlot(level, true);
+      });
+      return false; // Stop purchase until chosen
+    }
+
     if (!Layers.spendPoints("essenceSlots", levelKey, cost)) return false;
+
 
     this.currentLayerPurchasedEssences[levelKey] = (this.currentLayerPurchasedEssences[levelKey] || 0) + 1;
     this.purchasedEssences[levelKey] = (this.purchasedEssences[levelKey] || 0) + 1;
@@ -161,6 +171,12 @@ window.EssenceSlots = {
     }
     if (!hasPurchases) {
       Stats.lockedStats.mind = false;
+    }
+
+    // If you just refunded your last slot then reset the modal to choose your Path again
+    if (this.purchasedEssences[1] === 0) {
+      localStorage.removeItem(Constants.ESSENCE_PATH)
+      localStorage.removeItem(Constants.ESSENCE_ELEMENT)
     }
 
     UI.updateEssenceSlotUI();

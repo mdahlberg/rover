@@ -229,6 +229,32 @@
     </div>
   </div>
 
+  <!-- 1st modal: pick your Path -->
+  <div id="essence-school-modal" class="modal hidden">
+    <div class="modal-content character-info-modal">
+      <h2>Choose Your Path</h2>
+      <p>You must bind your essence to one of the three schools. This choice is permanent unless you refund all slots.</p>
+      <div id="essence-school-options" class="trait-grid"></div>
+      <div class="modal-footer">
+        <button id="essence-school-cancel" class="btn-cancel">Cancel</button>
+        <button id="essence-school-next"   class="btn-continue" disabled>Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2nd modal: only shown if Path of Calamity was picked -->
+  <div id="calamity-element-modal" class="modal hidden">
+    <div class="modal-content character-info-modal">
+      <h2>Choose Your Element</h2>
+      <p>Path of Calamity masters an element. Pick one:</p>
+      <div id="calamity-element-options" class="trait-grid"></div>
+      <div class="modal-footer">
+        <button id="calamity-element-back"    class="btn-cancel">Back</button>
+        <button id="calamity-element-confirm" class="btn-continue" disabled>Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Planner Dashboard Wrapper -->
   <div id="planner-wrapper" class="hidden">
     <div class="app-container">
@@ -475,6 +501,7 @@
   <script src="js/abilities.js"></script>          <!-- Uses Stats /  Weapon Properties / Layers -->
   <script src="js/proficiencies.js"></script>      <!-- Uses Layers -->
   <script src="js/lores.js"></script>              <!-- Uses Layers -->
+  <script src="js/essenceSchoolModal.js"></script> <!-- Uses Layers -->
   <script src="js/addLoreModal.js"></script>       <!-- Uses Layers -->
   <script src="js/essenceSlots.js"></script>       <!-- Uses Stats, Layers -->
   <script src="js/races.js"></script>              <!-- Data only, safe to go here -->
