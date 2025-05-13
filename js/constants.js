@@ -9,4 +9,6 @@ window.Constants = {
   RACIAL_LORES: "racialLores",
   RACIAL_PROFS: "racialProficiencies",
   SELECTED_RACE: "selectedRace",
+  ESSENCE_PATH: "essencePath",
+  ESSENCE_ELEMENT: "essenceElement",
 };

@@ -41,6 +41,9 @@ window.CharacterExporter = {
         lores: Array.from(window.RacialLocks?.lores || []),
       },
 
+      essencePath: localStorage.getItem(Constants.ESSENCE_PATH),
+      essenceElement: localStorage.getItem(Constants.ESSENCE_ELEMENT),
+
       discountedAbilities: Object.entries(Abilities.availableAbilities)
         .filter(([_, a]) => a?.discount != null)
         .map(([id, a]) => ({ id, discount: a.discount })),
@@ -82,6 +85,9 @@ window.CharacterExporter = {
     localStorage.setItem(Constants.SELECTED_RACE, snapshot.race || "");
     localStorage.setItem(Constants.CHAR_NAME, snapshot.characterInfo?.name || "");
     localStorage.setItem(Constants.CHAR_DESC, snapshot.characterInfo?.description || "");
+
+    localStorage.setItem(Constants.ESSENCE_PATH, snapshot.essencePath || "");
+    localStorage.setItem(Constants.ESSENCE_ELEMENT, snapshot.essenceElement || "");
 
     // ✅ Restore racial locks
     const racial = snapshot.racialLocks || {};
