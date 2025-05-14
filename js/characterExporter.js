@@ -30,6 +30,7 @@ window.CharacterExporter = {
         remaining: Layers.getRemainingPoints(),
       },
 
+      currentLevel: Layers.getCurrentLevel(),
       layers: structuredClone(Layers.layers),
       currentLayer: structuredClone(Layers.currentLayer),
 

@@ -9,212 +9,160 @@
   'use strict';
 
   /**
-   * exportCharacterPDF
-   * @param {Object} snapshot - full character snapshot from CharacterExporter.exportSnapshot
+   * Converts snake_case to Title Case with spaces
+   * @param {string} str
+   * @returns {string}
+   */
+  function snakeToTitleCase(str) {
+    return str
+      .split('_')
+      .map(function(seg) {
+        if (!seg) return '';
+        return seg.charAt(0).toUpperCase() + seg.slice(1).toLowerCase();
+      })
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  /**
+   * Main export function
+   * @param {Object} snapshot
    */
   function exportCharacterPDF(snapshot) {
     var timestamp      = new Date().toLocaleString();
     var name           = (snapshot.characterInfo && snapshot.characterInfo.name) || 'Unnamed';
-    var desc           = snapshot.characterInfo && snapshot.characterInfo.description;
+    var desc           = (snapshot.characterInfo && snapshot.characterInfo.description) || '';
     var race           = snapshot.race || '';
-    var essenceSchool  = snapshot.essencePath || '';
-    var essenceElement = snapshot.essenceElement || '';
-    var statsEntries   = Object.entries(snapshot.stats || {});
-    var clsEntries     = Object.entries(snapshot.currentLayerStats || {});
-    var abilityRows    = Object.entries(snapshot.abilities || {}).map(function(e) { return [e[0], String(e[1])]; });
-    var loreRows       = Object.entries(snapshot.lores || {}).map(function(e) { return [e[0], String(e[1])]; });
-    var profRows       = Object.entries(snapshot.proficiencies || {}).map(function(e) { return [e[0], String(e[1])]; });
-    var essRows        = Object.entries(snapshot.essenceSlots || {}).map(function(e) { return ['Level ' + e[0], String(e[1])]; });
+    var level          = snapshot.currentLevel || '';
+    var essenceSchool  = snakeToTitleCase(snapshot.essencePath || '');
+    var essenceElem    = snakeToTitleCase(snapshot.essenceElement || '');
+
+    // Prepare data arrays
+    var statsEntries   = Object.entries(snapshot.stats || {}).map(function(e) { return [snakeToTitleCase(e[0]), e[1]]; });
     var bp             = snapshot.bp || {};
+    var profNames      = Object.keys(snapshot.proficiencies || {}).map(snakeToTitleCase);
+    var abilityItems   = Object.entries(snapshot.abilities || {}).map(function(e) { return snakeToTitleCase(e[0]) + ' ' + e[1] + '×'; });
+    var loreRows       = Object.entries(snapshot.lores || {}).map(function(e) { return [snakeToTitleCase(e[0]), String(e[1])]; });
+    var essRows        = Object.entries(snapshot.essenceSlots || {}).map(function(e) { return [snakeToTitleCase('Level_' + e[0]), String(e[1])]; });
     var layers         = snapshot.layers || [];
 
-    // Zebra striping and thin lines for all tables
-    var zebraLayout = {
-      fillColor: function(rowIndex) {
-        return (rowIndex % 2 === 0) ? '#F5F5F5' : null;
-      },
+    // Zebra striping layout
+    var zebra = {
+      fillColor: function(i) { return i % 2 === 0 ? '#F5F5F5' : null; },
       hLineWidth: function() { return 0.5; },
       vLineWidth: function() { return 0.5; }
     };
 
-    // Build the PDF document definition
-    var docDefinition = {
+    // Build document definition
+    var docDef = {
       pageSize: 'LETTER',
       pageMargins: [40, 60, 40, 60],
       footer: function(currentPage, pageCount) {
-        return {
-          text: 'Page ' + currentPage + ' of ' + pageCount,
-          alignment: 'right',
-          style: 'footer',
-          margin: [0, 0, 20, 0]
-        };
+        return { text: 'Page ' + currentPage + ' of ' + pageCount, alignment: 'right', style: 'footer' };
       },
       content: []
     };
 
-    // Header: name, race, timestamp in columns
-    docDefinition.content.push({
-      columns: [
-        [
-          { text: name, style: 'title' },
-          { text: 'Race: ' + race, style: 'subtitle' }
-        ],
-        { text: 'Generated: ' + timestamp, style: 'timestamp', alignment: 'right' }
+    // Header and title
+    docDef.content.push({
+      stack: [
+        { text: 'Roles of the Valiant', style: 'header', alignment: 'center', margin: [0,0,0,6] },
+        { text: name, style: 'title', alignment: 'center', margin: [0,0,0,12] }
       ]
     });
 
-    // Description block
-    if (desc) {
-      docDefinition.content.push({ text: 'Description', style: 'sectionHeader' });
-      docDefinition.content.push({ text: desc, margin: [0, 0, 0, 15] });
-    }
+    // Race, Description, Level
+    docDef.content.push({
+      columns: [
+        { width: 'auto', text: 'Race: ' + race, style: 'label' },
+        { width: '*', text: desc, style: 'desc' },
+        { width: 'auto', text: 'Level: ' + level, style: 'label', alignment: 'right' }
+      ],
+      columnGap: 10,
+      margin: [0,0,0,15]
+    });
 
-    // Essence School & Element
-    docDefinition.content.push({ text: 'Essence School: ' + essenceSchool, style: 'sectionHeader', margin: [0, 0, 0, 5] });
-    docDefinition.content.push({ text: 'Element: ' + essenceElement, margin: [0, 0, 0, 15] });
+    // Build Points
+    docDef.content.push({ text: 'Build Points', style: 'sectionHeader' });
+    docDef.content.push({
+      columns: [
+        { text: 'Earned: ' + (bp.earned||0) },
+        { text: 'Spent: ' + (bp.spent||0) },
+        { text: 'Remaining: ' + (bp.remaining||0) }
+      ],
+      columnGap: 20,
+      margin: [0,0,0,15]
+    });
 
     // Core Stats
-    docDefinition.content.push({ text: 'Core Stats', style: 'sectionHeader' });
-    docDefinition.content.push(buildKeyValueTable(statsEntries, 3, zebraLayout));
-    docDefinition.content.push({ text: '', margin: [0, 0, 0, 10] });
-
-    // Current Layer Stats
-    docDefinition.content.push({ text: 'Current Layer Stats', style: 'sectionHeader' });
-    docDefinition.content.push(buildKeyValueTable(clsEntries, 3, zebraLayout));
-    docDefinition.content.push({ text: '', margin: [0, 0, 0, 10] });
-
-    // Abilities
-    docDefinition.content.push({ text: 'Abilities', style: 'sectionHeader' });
-    docDefinition.content.push(buildTwoColumnTable(abilityRows, zebraLayout));
-    docDefinition.content.push({ text: '', margin: [0, 0, 0, 10] });
-
-    // Lores
-    docDefinition.content.push({ text: 'Lores', style: 'sectionHeader' });
-    docDefinition.content.push(buildTwoColumnTable(loreRows, zebraLayout));
-    docDefinition.content.push({ text: '', margin: [0, 0, 0, 10] });
+    docDef.content.push({ text: 'Core Stats', style: 'sectionHeader' });
+    docDef.content.push(buildKeyValueTable(statsEntries, zebra));
+    docDef.content.push({ text: '', margin: [0,0,0,15] });
 
     // Proficiencies
-    docDefinition.content.push({ text: 'Proficiencies', style: 'sectionHeader' });
-    docDefinition.content.push(buildTwoColumnTable(profRows, zebraLayout));
-    docDefinition.content.push({ text: '', margin: [0, 0, 0, 10] });
+    docDef.content.push({ text: 'Proficiencies', style: 'sectionHeader' });
+    docDef.content.push(buildMultiColList(profNames, 2));
+    docDef.content.push({ text: '', margin: [0,0,0,15] });
+
+    // Abilities
+    docDef.content.push({ text: 'Abilities', style: 'sectionHeader' });
+    docDef.content.push(buildMultiColList(abilityItems, 2));
+    docDef.content.push({ text: '', margin: [0,0,0,15] });
+
+    // Lores
+    docDef.content.push({ text: 'Lores', style: 'sectionHeader' });
+    docDef.content.push(buildTwoColTable(loreRows, zebra));
+    docDef.content.push({ text: '', margin: [0,0,0,15] });
+
+    // Essence Path & Element (if Calamity)
+    docDef.content.push({ text: 'Essence School: The Path of ' + essenceSchool, style: 'label', margin: [0,0,0,4] });
+    if (snapshot.essencePath && snapshot.essencePath.toLowerCase() === 'calamity') {
+      docDef.content.push({ text: 'Element: ' + essenceElem, style: 'label', margin: [0,0,0,10] });
+    }
 
     // Essence Slots
-    docDefinition.content.push({ text: 'Essence Slots', style: 'sectionHeader' });
-    docDefinition.content.push(buildTwoColumnTable(essRows, zebraLayout));
-    docDefinition.content.push({ text: '', margin: [0, 0, 0, 10] });
-
-    // Build Points Summary
-    docDefinition.content.push({ text: 'Build Points', style: 'sectionHeader' });
-    docDefinition.content.push({
-      table: {
-        widths: ['*', '*', '*'],
-        body: [
-          ['Earned', 'Spent', 'Remaining'],
-          [bp.earned || 0, bp.spent || 0, bp.remaining || 0]
-        ]
-      },
-      layout: zebraLayout,
-      margin: [0, 0, 0, 15]
-    });
+    docDef.content.push({ text: 'Essence Slots', style: 'sectionHeader' });
+    docDef.content.push(buildTwoColTable(essRows, zebra));
+    docDef.content.push({ text: '', margin: [0,0,0,15] });
 
     // Level History
-    docDefinition.content.push({ text: 'Level History', style: 'sectionHeader' });
-
+    docDef.content.push({ text: 'Level History', style: 'sectionHeader' });
     var historyRows = layers.map(function(layer, idx) {
-      // 1) Stats summary
-      var statsLine = 'Stats: ' +
-        Object.entries(layer.stats || {}).map(function(p) {
-          // Capitalize stat name
-          return p[0].charAt(0).toUpperCase() + p[0].slice(1) + ':' + p[1];
-        }).join(', ');
-    
-      // 2) Abilities summary
-      var abilitiesLine = 'Abilities: ' +
-        (Object.keys(layer.abilities || {}).length
-          ? Object.entries(layer.abilities).map(function(p) {
-              return p[0].replace(/_/g, ' ') + ' (' + p[1] + ')';
-            }).join(', ')
-          : 'None');
-    
-      // 3) Lores summary
-      var loresLine = 'Lores: ' +
-        (Object.keys(layer.lores || {}).length
-          ? Object.entries(layer.lores).map(function(p) {
-              return p[0].replace(/_/g, ' ') + ' (' + p[1] + ')';
-            }).join(', ')
-          : 'None');
-    
-      // 4) Essence Slots summary
-      var essLine = 'Essence Slots: ' +
-        (Object.entries(layer.essenceSlots || {})
-          .filter(function(p) { return p[1] > 0; })
-          .map(function(p) {
-            var lvl = p[0] === 'master' ? 'Master' : p[0];
-            return lvl + ':' + p[1];
-          }).join(', ') || 'None');
-    
-      // Combine into one multi‐line cell
-      var changesText = [statsLine, abilitiesLine, loresLine, essLine].join('\n');
-    
-      return [
-        'Level ' + (idx + 1),
-        { text: changesText }
-      ];
+      var statsLine = Object.entries(layer.stats||{}).map(function(p){ return snakeToTitleCase(p[0]) + ':' + p[1]; }).join(', ');
+      var abilLine  = Object.keys(layer.abilities||{}).length ? Object.entries(layer.abilities).map(function(p){ return snakeToTitleCase(p[0]) + ' ('+p[1]+')'; }).join(', ') : 'None';
+      var loreLine  = Object.keys(layer.lores||{}).length ? Object.entries(layer.lores).map(function(p){ return snakeToTitleCase(p[0]) + ' ('+p[1]+')'; }).join(', ') : 'None';
+      var slotLine  = Object.entries(layer.essenceSlots||{}).filter(function(p){return p[1]>0;}).map(function(p){ return snakeToTitleCase('Level_'+p[0])+':'+p[1]; }).join(', ') || 'None';
+      var changes   = ['Stats: '+statsLine, 'Abilities: '+abilLine, 'Lores: '+loreLine, 'Essence Slots: '+slotLine].join('\n');
+      return [ 'Level ' + (idx+1), { text: changes } ];
     });
-    
-    docDefinition.content.push(buildTwoColumnTable(historyRows, zebraLayout));
+    docDef.content.push(buildTwoColTable(historyRows, zebra));
 
-    // Styles
-    docDefinition.styles = {
-      title:         { fontSize: 18, bold: true, margin: [0, 0, 0, 5] },
-      subtitle:      { fontSize: 14, italics: true, margin: [0, 0, 0, 5] },
-      timestamp:     { fontSize: 8, italics: true, color: '#555' },
-      sectionHeader: { fontSize: 12, bold: true, margin: [0, 10, 0, 5] },
-      footer:        { fontSize: 8, italics: true, color: '#555' },
-      defaultStyle:  { fontSize: 10 }
-    };
-
-    // Generate and download
-    var filename = (name.replace(/[^a-z0-9]/gi, '_') || 'character') + '-CHAR.pdf';
-    pdfMake.createPdf(docDefinition).download(filename);
+    // Generate
+    pdfMake.createPdf(docDef).download((name.replace(/[^a-z0-9]/gi,'_')||'char') + '-CHAR.pdf');
   }
 
-  /**
-   * buildKeyValueTable
-   * Creates a table with `columns` key/value pairs per row, padding incomplete rows.
-   */
-  function buildKeyValueTable(entries, columns, layout) {
-    var body = [], row = [];
-    entries.forEach(function(pair, idx) {
-      row.push({ text: pair[0], bold: true }, String(pair[1]));
-      if ((idx + 1) % columns === 0) {
-        body.push(row);
-        row = [];
-      }
-    });
-    if (row.length) {
-      while (row.length < columns * 2) {
-        row.push('');
-      }
-      body.push(row);
-    }
-    var header = [];
-    for (var i = 0; i < columns; i++) {
-      header.push('Key', 'Value');
-    }
-    body.unshift(header);
-    return { table: { widths: Array(columns * 2).fill('*'), body: body }, layout: layout };
+  // Helper: key/value table
+  function buildKeyValueTable(entries, layout) {
+    var body = entries.map(function(pair) { return [ { text: pair[0]+':', bold:true }, String(pair[1]) ]; });
+    return { table: { widths: ['auto','*'], body: body }, layout: layout };
   }
 
-  /**
-   * buildTwoColumnTable
-   * Creates a simple two-column table with a header row.
-   */
-  function buildTwoColumnTable(rows, layout) {
-    var body = [['Name', 'Value']].concat(rows);
-    return { table: { widths: ['auto', '*'], body: body }, layout: layout };
+  // Helper: two-column table
+  function buildTwoColTable(rows, layout) {
+    if (!rows || !rows.length) return { text: 'None', italics:true };
+    var body = rows.map(function(r){ return [ { text: r[0]+':', bold:true }, r[1] ]; });
+    return { table: { widths: ['auto','*'], body: body }, layout: layout };
   }
 
-  // Expose the API
+  // Helper: multi-col list
+  function buildMultiColList(items, colCount) {
+    if (!items || !items.length) return { text: 'None', italics:true };
+    var rows = [], row=[];
+    items.forEach(function(it,i){ row.push({ text:'- '+it }); if((i+1)%colCount===0){ rows.push(row); row=[]; } });
+    if(row.length){ while(row.length<colCount) row.push(''); rows.push(row); }
+    return { table:{ widths: Array(colCount).fill('*'), body: rows }, layout:{ hLineWidth:()=>0, vLineWidth:()=>0 } };
+  }
+
+  // Expose function
   global.exportCharacterPDF = exportCharacterPDF;
 })(window);
