@@ -56,7 +56,7 @@
     // Build document definition
     var docDef = {
       pageSize: 'LETTER',
-      pageMargins: [40, 60, 40, 60],
+      pageMargins: [40, 40, 40, 60],
       footer: function(currentPage, pageCount) {
         return { text: 'Page ' + currentPage + ' of ' + pageCount, alignment: 'right', style: 'footer' };
       },
@@ -66,19 +66,43 @@
     // Header and title
     docDef.content.push({
       stack: [
-        { text: 'Roles of the Valiant', style: 'header', alignment: 'center', margin: [0,0,0,6] },
-        { text: name, style: 'title', alignment: 'center', margin: [0,0,0,12] }
+        { text: 'Roles of the Valiant', style: 'header',  bold: true, alignment: 'center', margin: [0,0,0,6] },
+        { text: name, style: 'title', bold: true, alignment: 'center', margin: [0,0,0,12] }
       ]
     });
 
-    // Race, Description, Level
+    // Race & Level on one line
     docDef.content.push({
       columns: [
-        { width: 'auto', text: 'Race: ' + race, style: 'label' },
-        { width: '*', text: desc, style: 'desc' },
-        { width: 'auto', text: 'Level: ' + level, style: 'label', alignment: 'right' }
+        {
+          width: '*',
+          text: [
+            { text: 'Race: ', bold: true },
+            snakeToTitleCase(race)
+          ],
+          style: 'label'
+        },
+        {
+          width: 'auto',
+          text: [
+            { text: 'Level: ', bold: true },
+            level
+          ],
+          style: 'label',
+          alignment: 'right'
+        }
       ],
       columnGap: 10,
+      margin: [0, 0, 0, 4]
+    });
+
+    // Labeled description below
+    docDef.content.push({
+      text: [
+        { text: 'Description: ', bold: true },
+        desc || '—'
+      ],
+      style: 'label',
       margin: [0,0,0,15]
     });
 
@@ -115,9 +139,24 @@
     docDef.content.push({ text: '', margin: [0,0,0,15] });
 
     // Essence Path & Element (if Calamity)
-    docDef.content.push({ text: 'Essence School: The Path of ' + essenceSchool, style: 'label', margin: [0,0,0,4] });
-    if (snapshot.essencePath && snapshot.essencePath.toLowerCase() === 'calamity') {
-      docDef.content.push({ text: 'Element: ' + essenceElem, style: 'label', margin: [0,0,0,10] });
+    // pick the right prefix: include “the” only if it’s not Calamity
+    const isCalamity = snapshot.essencePath?.toLowerCase() === 'calamity';
+    const schoolPrefix = isCalamity
+      ? 'The Path of '
+      : 'The Path of the ';
+
+    docDef.content.push({
+      text: 'Essence School: ' + schoolPrefix + essenceSchool,
+      style: 'label',
+      margin: [0, 0, 0, 4]
+    });
+
+    if (isCalamity) {
+      docDef.content.push({
+        text: 'Element: ' + essenceElem,
+        style: 'label',
+        margin: [0, 0, 0, 10]
+      });
     }
 
     // Essence Slots
