@@ -137,26 +137,30 @@ window.Proficiencies = {
     this.currentLayerPurchasedProficiencies = {};
   },
 
-  recalcFromLayers() {
+  recalcFromLayers: function() {
     console.log("Restoring Proficiencies from all locked layers");
 
-    this.purchased = {};
+    // 1) clear out everything
+    this.purchasedProficiencies = {};
     this.currentLayerPurchasedProficiencies = {};
 
-    // Aggregate all finalized layers
+    // 2) re‑apply every finalized (locked) layer
     for (const layer of Layers.layers) {
       if (!layer?.proficiencies) continue;
       for (const id of Object.keys(layer.proficiencies)) {
-        this.purchased[id] = true;
+        this.purchasedProficiencies[id] = true;
       }
     }
 
-    // Restore current layer
+    // 3) restore the current layer’s own purchases
     const restored = Layers.currentLayer.proficiencies || {};
     for (const id of Object.keys(restored)) {
-      this.purchased[id] = true;
+      this.purchasedProficiencies[id]             = true;
       this.currentLayerPurchasedProficiencies[id] = true;
     }
-  }
+
+    // 4) tell the UI to catch up
+    UI.updateProficiencyUI();
+  },
 
 };
