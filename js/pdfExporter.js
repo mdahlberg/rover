@@ -171,6 +171,25 @@
     docDef.content.push(buildTwoColTable(essRows, zebra));
     docDef.content.push({ text: '', margin: [0, 0, 0, 15] });
 
+    // Current Level Info
+    docDef.content.push({ text: 'Current Level', style: 'sectionHeader' });
+    var clStatsLine = Object.entries(snapshot.currentLayerStats||{}).map(function(p){ return snakeToTitleCase(p[0]) + ':' + p[1]; }).join(', ') || 'None';
+    var clAbilLine  = Object.keys(snapshot.currentLayerAbilities||{}).length
+      ? Object.entries(snapshot.currentLayerAbilities).map(function(p){ return snakeToTitleCase(p[0]) + ' (' + p[1] + ')'; }).join(', ')
+      : 'None';
+    var clLoreLine  = Object.keys(snapshot.currentLayerLores||{}).length
+      ? Object.entries(snapshot.currentLayerLores).map(function(p){ return snakeToTitleCase(p[0]) + ' (' + p[1] + ')'; }).join(', ')
+      : 'None';
+    var clSlotLine  = Object.entries(snapshot.currentLayerEssences||{}).filter(function(p){return p[1]>0;}).map(function(p){ return snakeToTitleCase('Level_' + p[0]) + ':' + p[1]; }).join(', ') || 'None';
+    var clChanges   = [
+      'Stats: ' + clStatsLine,
+      'Abilities: ' + clAbilLine,
+      'Lores: ' + clLoreLine,
+      'Essence Slots: ' + clSlotLine
+    ].join('\n');
+    docDef.content.push(buildTwoColTable([ ['Current Layer', { text: clChanges }] ], zebra));
+    docDef.content.push({ text: '', margin: [0, 0, 0, 15] });
+
     // Level History
     docDef.content.push({ text: 'Level History', style: 'sectionHeader' });
     var historyRows = layers.map(function(layer, idx) {
