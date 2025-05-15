@@ -896,11 +896,11 @@ window.UI = {
         const nameDiv = document.createElement("div");
         nameDiv.className = "lore-name";
         nameDiv.innerHTML = `
-          <span>${lore.name}</span>
           <div class="info-wrapper">
             <span class="info-icon">i</span>
             <div class="lore-tooltip">${lore.description}</div>
           </div>
+          <span>${lore.name}</span>
         `;
 
         // If this is a custom lore, inject the delete‐“×” right after the info icon
