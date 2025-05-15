@@ -25,6 +25,32 @@
   }
 
   /**
+   * Returns an array of pdfmake content nodes for the Essence Slots section.
+   *
+   * @param {Object} slotCounts  Mapping of levels 1–10 → counts
+   * @returns {Array}            A list of pdfmake content objects
+   */
+  function buildEssenceSlotsContent(slotCounts) {
+    var essRows = [];
+
+    // Master Binding (key = 10)
+    essRows.push([
+      'Master Binding',
+      'O'.repeat(slotCounts[10] || 0)
+    ]);
+
+    // Levels 9 → 1
+    for (var lvl = 9; lvl >= 1; lvl--) {
+      essRows.push([
+        'Level ' + lvl,
+        'O'.repeat(slotCounts[lvl] || 0)
+      ]);
+    }
+
+    return essRows;
+  }
+
+  /**
    * Main export function
    * @param {Object} snapshot
    */
@@ -43,7 +69,9 @@
     var profNames      = Object.keys(snapshot.proficiencies || {}).map(snakeToTitleCase);
     var abilityItems   = Object.entries(snapshot.abilities || {}).map(function(e) { return snakeToTitleCase(e[0]) + ' ' + e[1] + '×'; });
     var loreRows       = Object.entries(snapshot.lores || {}).map(function(e) { return [snakeToTitleCase(e[0]), String(e[1])]; });
-    var essRows        = Object.entries(snapshot.essenceSlots || {}).map(function(e) { return [snakeToTitleCase('Level_' + e[0]), String(e[1])]; });
+    // var essRows        = Object.entries(snapshot.essenceSlots || {}).map(function(e) { return [snakeToTitleCase('Level_' + e[0]), String(e[1])]; });
+    // Updated to prettify output
+    var essRows        = buildEssenceSlotsContent(snapshot.essenceSlots || {});
     var layers         = snapshot.layers || [];
 
     // Zebra striping layout
@@ -171,6 +199,7 @@
       var abilLine  = Object.keys(layer.abilities||{}).length ? Object.entries(layer.abilities).map(function(p){ return snakeToTitleCase(p[0]) + ' ('+p[1]+')'; }).join(', ') : 'None';
       var loreLine  = Object.keys(layer.lores||{}).length ? Object.entries(layer.lores).map(function(p){ return snakeToTitleCase(p[0]) + ' ('+p[1]+')'; }).join(', ') : 'None';
       var slotLine  = Object.entries(layer.essenceSlots||{}).filter(function(p){return p[1]>0;}).map(function(p){ return snakeToTitleCase('Level_'+p[0])+':'+p[1]; }).join(', ') || 'None';
+
       var changes   = ['Stats: '+statsLine, 'Abilities: '+abilLine, 'Lores: '+loreLine, 'Essence Slots: '+slotLine].join('\n');
       return [ 'Level ' + (idx+1), { text: changes } ];
     });
