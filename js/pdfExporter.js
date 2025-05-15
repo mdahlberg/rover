@@ -150,11 +150,14 @@
     docDef.content.push(buildTwoColTable(loreRows, zebra));
     docDef.content.push({ text: '', margin: [0, 0, 0, 15] });
 
+    // Essences
+    docDef.content.push({ text: 'Essence Bindings', style: 'sectionHeader', margin: [0, 0, 0, 4] });
+
     // Essence Path & Element
     var isCalamity   = snapshot.essencePath?.toLowerCase() === 'calamity';
     var schoolPrefix = isCalamity ? 'The Path of ' : 'The Path of the ';
     docDef.content.push({
-      text: [ { text: 'Essence School: ', bold: true }, schoolPrefix + essenceSchool ],
+      text: [ { text: 'School: ', bold: true }, schoolPrefix + essenceSchool ],
       style: 'label', margin: [0, 0, 0, 4]
     });
     if (isCalamity) {
@@ -164,8 +167,7 @@
       });
     }
 
-    // Essence Slots (reverted to table format)
-    docDef.content.push({ text: 'Essence Slots', style: 'sectionHeader' });
+    // Essence Slots
     docDef.content.push(buildTwoColTable(essRows, zebra));
     docDef.content.push({ text: '', margin: [0, 0, 0, 15] });
 
