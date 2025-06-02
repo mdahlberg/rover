@@ -84,7 +84,7 @@ window.AbilitySelectModal = {
 
     const selectedId = [...this.selected][0];
     const discounts = [{ name: selectedId, uses: 1, factor: 0.5 }];
-    localStorage.setItem(Constants.RACIAL_DISCOUNTS, JSON.stringify({ abilities: discounts }));
+    sessionStorage.setItem(Constants.RACIAL_DISCOUNTS, JSON.stringify({ abilities: discounts }));
 
     modal.classList.remove("show");
     setTimeout(() => modal.classList.add("hidden"), 300);

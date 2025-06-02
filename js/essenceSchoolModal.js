@@ -110,10 +110,10 @@ window.EssenceSchoolModal = {
     };
   },
 
-  /** Save to localStorage and invoke your callback */
+  /** Save to sessionStorage and invoke your callback */
   _finalize() {
-    localStorage.setItem(Constants.ESSENCE_PATH, this.selectedSchool);
-    localStorage.setItem(Constants.ESSENCE_ELEMENT, this.selectedElement || "");
+    sessionStorage.setItem(Constants.ESSENCE_PATH, this.selectedSchool);
+    sessionStorage.setItem(Constants.ESSENCE_ELEMENT, this.selectedElement || "");
 
     if (typeof this.onConfirm === "function") {
       this.onConfirm({

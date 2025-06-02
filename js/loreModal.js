@@ -49,7 +49,7 @@ window.LoreSelector = {
     confirmBtn.disabled = true;
     confirmBtn.onclick = () => {
       if (!this.selected) return;
-      localStorage.setItem("racialLores", JSON.stringify([this.selected]));
+      sessionStorage.setItem("racialLores", JSON.stringify([this.selected]));
       if (typeof this.onConfirm === "function") this.onConfirm(this.selected);
       modal.classList.remove("show");
       setTimeout(() => modal.classList.add("hidden"), 300);

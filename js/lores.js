@@ -38,7 +38,7 @@ window.Lores = {
   purchasedLores: {},
 
   isRacial: function (loreId) {
-    const stored = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
+    const stored = JSON.parse(sessionStorage.getItem(Constants.RACIAL_LORES) || "[]");
     return stored.includes(loreId);
   },
 
@@ -148,7 +148,7 @@ window.Lores = {
     }
 
     // ✅ Re-apply racial lores
-    const racial = JSON.parse(localStorage.getItem("racialLores") || "[]");
+    const racial = JSON.parse(sessionStorage.getItem("racialLores") || "[]");
     for (const id of racial) {
       this.purchasedLores[id] = (this.purchasedLores[id] || 0) + 1;
     }
@@ -159,7 +159,7 @@ window.Lores = {
   },
 
   initializeRacialLores: function () {
-    const racial = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
+    const racial = JSON.parse(sessionStorage.getItem(Constants.RACIAL_LORES) || "[]");
   
     racial.forEach(id => {
       if (!this.purchasedLores[id]) this.purchasedLores[id] = 0;

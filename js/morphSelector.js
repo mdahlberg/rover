@@ -79,7 +79,7 @@ window.MorphSelector = {
       return;
     }
   
-    // 1) Persist morph choices to localStorage
+    // 1) Persist morph choices to sessionStorage
     const chosen = Array.from(this.selected);
     window.MorphLocks = new Set();
     chosen.forEach(id => {
@@ -100,8 +100,8 @@ window.MorphSelector = {
       Abilities.purchaseAbility(abilityId, 0);
     });
   
-    // Save to localStorage so it persists across reloads
-    localStorage.setItem(
+    // Save to sessionStorage so it persists across reloads
+    sessionStorage.setItem(
       Constants.MORPH_TRAITS,
       JSON.stringify(chosen)
     );

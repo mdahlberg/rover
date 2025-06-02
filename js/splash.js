@@ -1,6 +1,6 @@
 // splash.js - Handles race selection and transition to the planner.
 console.log("splash.js loaded");
-localStorage.clear();
+sessionStorage.clear();
 
 let selectedRace = {};
 
@@ -23,7 +23,7 @@ function selectRace(race) {
   }
 
   // Pop-up modal(s) to choose special abilities
-  localStorage.setItem(Constants.SELECTED_RACE, race);
+  sessionStorage.setItem(Constants.SELECTED_RACE, race);
   runModalFlow(race);
   
   // Show the confirm button.
