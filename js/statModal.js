@@ -19,19 +19,40 @@ window.StatSelector = {
     confirmBtn.disabled = true;
     maxLabel.textContent  = max;
 
+    const descriptions = {
+      body: `
+        Increases health, armor capacity, and melee damage.
+        Essential for close‑range fighters.
+      `.trim(),
+
+      mind: `
+        Makes using Essence easier and unlocks more Lores (used to solve problems).
+        Ideal for characters who rely on magic tools and problem‑solving.
+      `.trim(),
+
+      spirit: `
+        Boosts willpower—more ability uses and faster recovery.
+        Grants access to Soul Links. Perfect for protectors and ability‑focused builds.
+      `.trim()
+    };
+
     // build the cards
     grid.innerHTML = "";
     Object.keys(this.counts).forEach(stat => {
+      const displayName = stat[0].toUpperCase() + stat.slice(1);
       const card = document.createElement("div");
       card.className = "trait-card";
       card.dataset.stat = stat;
 
       card.innerHTML = `
         <div class="trait-header">
-          <strong class="trait-name">
-            ${stat[0].toUpperCase() + stat.slice(1)}
-          </strong>
+          <span class="info-wrapper left-hint">
+            <span class="info-icon">i</span>
+            <span class="lore-tooltip">${descriptions[stat]}</span>
+            <strong class="trait-name">${displayName}</strong>
+          </span>
         </div>
+
         <div class="stat-choice">
           <button class="stat-minus" data-stat="${stat}" disabled>−</button>
           <span id="count-${stat}">0</span>
