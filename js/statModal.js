@@ -20,9 +20,20 @@ window.StatSelector = {
     maxLabel.textContent  = max;
 
     const descriptions = {
-      body:   "Body increases physical strength and health. It affects HP, carrying capacity, and melee damage.",
-      mind:   "Mind represents intelligence and perception. It influences spell potency, cooldowns, and knowledge checks.",
-      spirit: "Spirit measures willpower and charisma. It boosts magic affinity, healing potency, and social interactions."
+      body: `
+        Increases health, armor capacity, and melee damage.
+        Essential for close‑range fighters.
+      `.trim(),
+
+      mind: `
+        Makes using Essence easier and unlocks more Lores (used to solve problems).
+        Ideal for characters who rely on magic tools and problem‑solving.
+      `.trim(),
+
+      spirit: `
+        Boosts willpower—more ability uses and faster recovery.
+        Grants access to Soul Links. Perfect for protectors and ability‑focused builds.
+      `.trim()
     };
 
     // build the cards
