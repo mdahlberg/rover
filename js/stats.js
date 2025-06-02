@@ -188,8 +188,8 @@ window.Stats = {
       return;
     }
 
-    localStorage.setItem(Constants.SELECTED_RACE, raceKey);
-    localStorage.setItem(Constants.RACIAL_BP_SPENT, race.bpCost); // e.g., 5 for Espers
+    sessionStorage.setItem(Constants.SELECTED_RACE, raceKey);
+    sessionStorage.setItem(Constants.RACIAL_BP_SPENT, race.bpCost); // e.g., 5 for Espers
 
     // Merge startingStats
     Object.entries(race.startingStats || {}).forEach(([stat, value]) => {
@@ -201,11 +201,11 @@ window.Stats = {
       this.startingBonuses[stat] = (this.startingBonuses[stat] || 0) + value;
     });
 
-    // Utility to merge arrays in localStorage
+    // Utility to merge arrays in sessionStorage
     function mergeStoredArray(key, incomingArray = []) {
-      const existing = JSON.parse(localStorage.getItem(key) || "[]");
+      const existing = JSON.parse(sessionStorage.getItem(key) || "[]");
       const merged = Array.from(new Set([...existing, ...incomingArray]));
-      localStorage.setItem(key, JSON.stringify(merged));
+      sessionStorage.setItem(key, JSON.stringify(merged));
     }
 
     // Safely append race features
@@ -216,11 +216,11 @@ window.Stats = {
 
     // Replace discounts and bonuses — assume these are objects
     if (race.discounts) {
-      localStorage.setItem(Constants.RACIAL_DISCOUNTS, JSON.stringify(race.discounts));
+      sessionStorage.setItem(Constants.RACIAL_DISCOUNTS, JSON.stringify(race.discounts));
     }
 
     if (race.bonuses) {
-      localStorage.setItem(Constants.RACIAL_BONUSES, JSON.stringify(race.bonuses));
+      sessionStorage.setItem(Constants.RACIAL_BONUSES, JSON.stringify(race.bonuses));
     }
   },
 

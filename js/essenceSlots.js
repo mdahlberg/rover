@@ -114,7 +114,7 @@ window.EssenceSlots = {
     if (!this.canPurchase(levelKey)) return false;
 
     // If this is your first essence slot purchase, then choose your Path!
-    if (!skipModal && !localStorage.getItem(Constants.ESSENCE_PATH) && this.purchasedEssences[1] === 0) {
+    if (!skipModal && !sessionStorage.getItem(Constants.ESSENCE_PATH) && this.purchasedEssences[1] === 0) {
       EssenceSchoolModal.open(() => {
         // onConfirm → re‑call ourselves, but skip the modal branch
         this.purchaseSlot(level, true);
@@ -175,8 +175,8 @@ window.EssenceSlots = {
 
     // If you just refunded your last slot then reset the modal to choose your Path again
     if (this.purchasedEssences[1] === 0) {
-      localStorage.removeItem(Constants.ESSENCE_PATH)
-      localStorage.removeItem(Constants.ESSENCE_ELEMENT)
+      sessionStorage.removeItem(Constants.ESSENCE_PATH)
+      sessionStorage.removeItem(Constants.ESSENCE_ELEMENT)
     }
 
     UI.updateEssenceSlotUI();

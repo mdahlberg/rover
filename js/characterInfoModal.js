@@ -16,8 +16,8 @@ window.CharacterInfoModal = {
       return;
     }
 
-    localStorage.setItem(Constants.CHAR_NAME, name);
-    localStorage.setItem(Constants.CHAR_DESC, description);
+    sessionStorage.setItem(Constants.CHAR_NAME, name);
+    sessionStorage.setItem(Constants.CHAR_DESC, description);
 
     const modal = document.getElementById("name-modal");
     modal.classList.remove("show");

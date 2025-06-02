@@ -139,10 +139,10 @@ function applyRacialProficienciesAndAbilities() {
 }
 
 function initializeRacialLocksFromStorage() {
-  const racialProfs = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]");
-  const racialAbilities = JSON.parse(localStorage.getItem(Constants.RACIAL_ABILITITES) || "[]");
-  const racialLores = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]");
-  const racialDiscounts = JSON.parse(localStorage.getItem(Constants.RACIAL_DISCOUNTS) || "[]");
+  const racialProfs = JSON.parse(sessionStorage.getItem(Constants.RACIAL_PROFS) || "[]");
+  const racialAbilities = JSON.parse(sessionStorage.getItem(Constants.RACIAL_ABILITITES) || "[]");
+  const racialLores = JSON.parse(sessionStorage.getItem(Constants.RACIAL_LORES) || "[]");
+  const racialDiscounts = JSON.parse(sessionStorage.getItem(Constants.RACIAL_DISCOUNTS) || "[]");
 
   window.RacialLocks = {
     proficiencies: new Set(racialProfs),
@@ -166,7 +166,7 @@ function levelUp() {
 }
 
 function startOver() {
-  localStorage.clear();
+  sessionStorage.clear();
   delete window.RacialLocks;
   window.location.href = "index.html";
 }

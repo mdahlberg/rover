@@ -129,7 +129,7 @@ window.Proficiencies = {
   },
 
   initializeRacialProficiencies: function () {
-    const racial = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]");
+    const racial = JSON.parse(sessionStorage.getItem(Constants.RACIAL_PROFS) || "[]");
     racial.forEach(id => this.purchasedProficiencies[id] = "racial");
   },
 

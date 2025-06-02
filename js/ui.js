@@ -166,8 +166,8 @@ window.UI = {
     if (!container || !pathDiv) return;
 
     // ——— Display current Path + icon ———
-    const school = localStorage.getItem(Constants.ESSENCE_PATH) || "";
-    const element = localStorage.getItem(Constants.ESSENCE_ELEMENT) || "";
+    const school = sessionStorage.getItem(Constants.ESSENCE_PATH) || "";
+    const element = sessionStorage.getItem(Constants.ESSENCE_ELEMENT) || "";
 
     const names = {
       spirit: "Path of the Spirit",
@@ -1067,7 +1067,7 @@ window.UI = {
     // 2) Name
     const nameEl = document.querySelector('.char-name');
     if (nameEl) {
-      const fullName = localStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
+      const fullName = sessionStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
       nameEl.textContent = fullName;
       nameEl.setAttribute('title', fullName);        // so ellipsis shows on hover
     }

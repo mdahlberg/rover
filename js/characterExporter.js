@@ -34,24 +34,24 @@ window.CharacterExporter = {
       layers: structuredClone(Layers.layers),
       currentLayer: structuredClone(Layers.currentLayer),
 
-      race: localStorage.getItem(Constants.SELECTED_RACE),
-      raceDetails: window.Races?.[localStorage.getItem(Constants.SELECTED_RACE)] || null,
+      race: sessionStorage.getItem(Constants.SELECTED_RACE),
+      raceDetails: window.Races?.[sessionStorage.getItem(Constants.SELECTED_RACE)] || null,
       racialLocks: {
         proficiencies: Array.from(window.RacialLocks?.proficiencies || []),
         abilities: Array.from(window.RacialLocks?.abilities || []),
         lores: Array.from(window.RacialLocks?.lores || []),
       },
 
-      essencePath: localStorage.getItem(Constants.ESSENCE_PATH),
-      essenceElement: localStorage.getItem(Constants.ESSENCE_ELEMENT),
+      essencePath: sessionStorage.getItem(Constants.ESSENCE_PATH),
+      essenceElement: sessionStorage.getItem(Constants.ESSENCE_ELEMENT),
 
       discountedAbilities: Object.entries(Abilities.availableAbilities)
         .filter(([_, a]) => a?.discount != null)
         .map(([id, a]) => ({ id, discount: a.discount })),
 
       characterInfo: {
-        name: localStorage.getItem(Constants.CHAR_NAME),
-        description: localStorage.getItem(Constants.CHAR_DESC),
+        name: sessionStorage.getItem(Constants.CHAR_NAME),
+        description: sessionStorage.getItem(Constants.CHAR_DESC),
       },
     };
 
@@ -79,22 +79,22 @@ window.CharacterExporter = {
 
     // Clear existing data
     console.log("Clearing local storage and in-memory locks...");
-    localStorage.clear();
+    sessionStorage.clear();
     window.RacialLocks = {};
 
     // ✅ Restore character identity
-    localStorage.setItem(Constants.SELECTED_RACE, snapshot.race || "");
-    localStorage.setItem(Constants.CHAR_NAME, snapshot.characterInfo?.name || "");
-    localStorage.setItem(Constants.CHAR_DESC, snapshot.characterInfo?.description || "");
+    sessionStorage.setItem(Constants.SELECTED_RACE, snapshot.race || "");
+    sessionStorage.setItem(Constants.CHAR_NAME, snapshot.characterInfo?.name || "");
+    sessionStorage.setItem(Constants.CHAR_DESC, snapshot.characterInfo?.description || "");
 
-    localStorage.setItem(Constants.ESSENCE_PATH, snapshot.essencePath || "");
-    localStorage.setItem(Constants.ESSENCE_ELEMENT, snapshot.essenceElement || "");
+    sessionStorage.setItem(Constants.ESSENCE_PATH, snapshot.essencePath || "");
+    sessionStorage.setItem(Constants.ESSENCE_ELEMENT, snapshot.essenceElement || "");
 
     // ✅ Restore racial locks
     const racial = snapshot.racialLocks || {};
-    localStorage.setItem(Constants.RACIAL_ABILITIES, JSON.stringify(racial.abilities || []));
-    localStorage.setItem(Constants.RACIAL_PROFS, JSON.stringify(racial.proficiencies || []));
-    localStorage.setItem(Constants.RACIAL_LORES, JSON.stringify(racial.lores || []));
+    sessionStorage.setItem(Constants.RACIAL_ABILITIES, JSON.stringify(racial.abilities || []));
+    sessionStorage.setItem(Constants.RACIAL_PROFS, JSON.stringify(racial.proficiencies || []));
+    sessionStorage.setItem(Constants.RACIAL_LORES, JSON.stringify(racial.lores || []));
     // Discount handling is optional — if present
     (snapshot.discountedAbilities || []).forEach(({ id, discount }) => {
       if (Abilities.availableAbilities[id]) {

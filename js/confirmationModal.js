@@ -2,14 +2,14 @@ window.ConfirmationModal = {
   open: function () {
     const modal = document.getElementById("confirmation-modal");
     const summary = document.getElementById("confirmation-summary");
-    const name = localStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
-    const raceKey = localStorage.getItem(Constants.SELECTED_RACE) || "Unknown";
+    const name = sessionStorage.getItem(Constants.CHAR_NAME) || "Unnamed";
+    const raceKey = sessionStorage.getItem(Constants.SELECTED_RACE) || "Unknown";
     const race = window.Races?.[raceKey];
-    const selectedLore = JSON.parse(localStorage.getItem(Constants.RACIAL_LORES) || "[]")[0];
-    const selectedProf = JSON.parse(localStorage.getItem(Constants.RACIAL_PROFS) || "[]")[0];
-    const discounts = JSON.parse(localStorage.getItem(Constants.RACIAL_DISCOUNTS) || "{}");
+    const selectedLore = JSON.parse(sessionStorage.getItem(Constants.RACIAL_LORES) || "[]")[0];
+    const selectedProf = JSON.parse(sessionStorage.getItem(Constants.RACIAL_PROFS) || "[]")[0];
+    const discounts = JSON.parse(sessionStorage.getItem(Constants.RACIAL_DISCOUNTS) || "{}");
     const discountedAbility = discounts.abilities?.[0]?.name;
-    const traitIds = JSON.parse(localStorage.getItem(Constants.MORPH_TRAITS) || "[]");
+    const traitIds = JSON.parse(sessionStorage.getItem(Constants.MORPH_TRAITS) || "[]");
 
     summary.innerHTML = `
       <h3>${name}</h3>
@@ -94,12 +94,12 @@ window.ConfirmationModal = {
   },
 
   resetCharacterCreation: function() {
-    localStorage.removeItem(Constants.CHAR_NAME);
-    localStorage.removeItem(Constants.CHAR_DESC);
-    localStorage.removeItem(Constants.SELECTED_RACE);
-    localStorage.removeItem("racialStatChoice");
-    localStorage.removeItem(Constants.MORPH_TRAITS);
-    localStorage.removeItem(Constants.RACIAL_PROFS);
+    sessionStorage.removeItem(Constants.CHAR_NAME);
+    sessionStorage.removeItem(Constants.CHAR_DESC);
+    sessionStorage.removeItem(Constants.SELECTED_RACE);
+    sessionStorage.removeItem("racialStatChoice");
+    sessionStorage.removeItem(Constants.MORPH_TRAITS);
+    sessionStorage.removeItem(Constants.RACIAL_PROFS);
     // Clear anything else relevant
     startOver();
   }
@@ -127,7 +127,7 @@ document.getElementById("confirmation-cancel").onclick = () => {
  * Confirms the race selection, applies race effects, and redirects to the planner.
  */
 function confirmRace() {
-  selectedRace = localStorage.getItem(Constants.SELECTED_RACE);
+  selectedRace = sessionStorage.getItem(Constants.SELECTED_RACE);
   if (!selectedRace) {
     alert('Please select a race before proceeding!');
     return;
@@ -140,7 +140,7 @@ function confirmRace() {
   applyRacialProficienciesAndAbilities();
 
   // 🎯 Setup Build Point totals
-  const racialCost = parseInt(localStorage.getItem(Constants.RACIAL_BP_SPENT) || "0", 10);
+  const racialCost = parseInt(sessionStorage.getItem(Constants.RACIAL_BP_SPENT) || "0", 10);
 
   BPLeveling.addEarnedBP(50);
 
