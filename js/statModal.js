@@ -19,19 +19,29 @@ window.StatSelector = {
     confirmBtn.disabled = true;
     maxLabel.textContent  = max;
 
+    const descriptions = {
+      body:   "Body increases physical strength and health. It affects HP, carrying capacity, and melee damage.",
+      mind:   "Mind represents intelligence and perception. It influences spell potency, cooldowns, and knowledge checks.",
+      spirit: "Spirit measures willpower and charisma. It boosts magic affinity, healing potency, and social interactions."
+    };
+
     // build the cards
     grid.innerHTML = "";
     Object.keys(this.counts).forEach(stat => {
+      const displayName = stat[0].toUpperCase() + stat.slice(1);
       const card = document.createElement("div");
       card.className = "trait-card";
       card.dataset.stat = stat;
 
       card.innerHTML = `
         <div class="trait-header">
-          <strong class="trait-name">
-            ${stat[0].toUpperCase() + stat.slice(1)}
-          </strong>
+          <span class="info-wrapper left-hint">
+            <span class="info-icon">i</span>
+            <span class="lore-tooltip">${descriptions[stat]}</span>
+            <strong class="trait-name">${displayName}</strong>
+          </span>
         </div>
+
         <div class="stat-choice">
           <button class="stat-minus" data-stat="${stat}" disabled>−</button>
           <span id="count-${stat}">0</span>
