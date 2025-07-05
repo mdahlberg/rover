@@ -192,6 +192,30 @@ window.Abilities = {
       cost: 10,
       description: "Activate 'One to Remember'. Must hit from behind. Double damage + Long Bleed.",
       weaponProperties: ["cutting_edge"],
+    },
+    binding_blade: {
+      name: "Binding Blade",
+      cost: 10,
+      description: "A Valiant who purchases this skill gains the ability to cast their Bindings through their weapon, rather than deliver it through a thrown packet. Any Binding with a range of touch or thrown can instead be delivered through a melee weapon that the Binder is holding. The caster must loudly state “Binding Blade!” then state the binding’s incant as normal. A Binding Blade will deliver the effect even if blocked. If the attack is not blocked, it will also deal the weapons normal damage. The binding fades and is lost if another binding is cast, or if 1 minute passes.",
+      weaponProperties: ["essence_slot"],
+    },
+    combat_focus: {
+      name: "Combat Focus",
+      cost: 5,
+      description: "This ability may be used at will. If a Binder is stating an incant and is interrupted or flubs the binding, normally the binding would be lost. Binders with this skill may instead loudly state “Focus!” and repeat their binding incant from the beginning. If they are interrupted or flub it again, the binding slot is lost as normal. This ability may be used at will.",
+      weaponProperties: ["essence_slot"],
+    },
+    lesser_calamity: {
+      name: "Lesser Calamity",
+      cost: 5,
+      description: "A War Caster of the Path of Calamity who wishes to use a secondary element must purchase this skill in order to use another element. After this skill is purchased, the Binder gains access to a secondary element of their choice and can cast any binding up to their binding slot level, as long as that binding is listed as a secondary or tertiary.",
+      weaponProperties: ["essence_slot"],
+    },
+    minor_calamity: {
+      name: "Minor Calamity",
+      cost: 10,
+      description: "A War Caster who wishes to use a third element must purchase this skill in order to do so. After this skill is purchased, the Binder gains access to a third element and can cast any binding up to their binding slot level, as long as that binding is listed as tertiary.",
+      weaponProperties: ["essence_slot"],
     }
   },
 
