@@ -9,6 +9,7 @@ window.CharacterExporter = {
       // Current Stats
       currentLayerStats: structuredClone(Stats.currentLayerStats),
       startingStats: structuredClone(Stats.startingStats),
+      startingBonuses: structuredClone(Stats.startingBonuses),
       lockedStats: structuredClone(Stats.lockedStats),
 
       abilities: structuredClone(Abilities.purchasedAbilities),
@@ -109,6 +110,7 @@ window.CharacterExporter = {
 
     // ✅ Stats
     Stats.startingStats = structuredClone(snapshot.startingStats || {});
+    Stats.startingBonuses = structuredClone(snapshot.startingBonuses || {});
     Stats.currentStats = structuredClone(snapshot.stats || {});
     Stats.currentLayerStats = structuredClone(snapshot.currentLayerStats || {});
     Stats.lockedStats = structuredClone(snapshot.lockedStats || {});
