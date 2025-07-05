@@ -121,6 +121,23 @@ function applyRacialProficienciesAndAbilities() {
   });
 
   // ✅ Apply racial abilities
+  //
+  // Inject into your abilities pool as “free” abilities
+  // race = _selected_race;
+  // for each race ability in race.abilities
+  // add race ability to list of available
+  isEsper = sessionStorage.getItem(Constants.SELECTED_RACE) === "espers";
+  if (isEsper && !Abilities.availableAbilities.peace) {
+    console.log("Adding 'Peace' ability unique to Espers");
+    Abilities.availableAbilities["peace"] = {
+      name: "Peace",
+      cost: 5,
+      description: "An Esper can cleanse a mental effect on themselves or others once per rest by a Holding a hand over a character’s head and announcing 'Be at peace!' If used on another character or 'I am at peace' if used on oneself and beginning a silent 10 count while maintaining focus on the act. The mental effect being removed is suppressed as soon as the count begins, however, the effect resumes again immediately if the player is interrupted and the use of the ability is lost once it begins, even if interrupted. As long as at least one use of this ability is available you are always aware when you are under some sort of mental influence, but you will not automatically know the type of effect or how it was placed on you.",
+      isEsper: true,
+      weaponProperties: []
+    };
+  }
+
   window.RacialLocks.abilities.forEach((abilityId) => {
     if (!Abilities.purchasedAbilities[abilityId]) {
       Abilities.purchaseAbility(abilityId, 0);
