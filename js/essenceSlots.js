@@ -95,6 +95,7 @@ window.EssenceSlots = {
     if (levelIndex === -1) return false;
 
     // ——— NEW: Prevent refunding your final Level 1 slot if binding abilities are purchased ———
+    // TODO - don't hard code. Make this separate from weaponProperties
     if (level === "1" && this.getTotalSlotsForLevel("1") === 1) {
       const bindingAbilities = [
         "binding_blade",
