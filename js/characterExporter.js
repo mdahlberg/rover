@@ -50,6 +50,14 @@ window.CharacterExporter = {
         .filter(([_, a]) => a?.discount != null)
         .map(([id, a]) => ({ id, discount: a.discount })),
 
+      morphAbilities: Object.entries(Abilities.availableAbilities)
+        .filter(([_, a]) => a?.isMorph === true)
+        .map(([id, a]) => id),
+
+      esperAbilities: Object.entries(Abilities.availableAbilities)
+        .filter(([_, a]) => a?.isEsper === true)
+        .map(([id, a]) => id),
+
       characterInfo: {
         name: sessionStorage.getItem(Constants.CHAR_NAME),
         description: sessionStorage.getItem(Constants.CHAR_DESC),
@@ -114,6 +122,47 @@ window.CharacterExporter = {
     Stats.currentStats = structuredClone(snapshot.stats || {});
     Stats.currentLayerStats = structuredClone(snapshot.currentLayerStats || {});
     Stats.lockedStats = structuredClone(snapshot.lockedStats || {});
+
+    if (!window.MorphLocks) {
+      window.MorphLocks = new Set();
+    }
+
+    // Morph abilities
+    if (snapshot.morphAbilities && Array.isArray(snapshot.morphAbilities)) {
+      for (let id of snapshot.morphAbilities) {
+        // Strip "morph_" prefix if present
+        if (id.startsWith("morph_")) {
+          id = id.slice(6); // remove first 6 characters
+        }
+
+        const morphAbility = window.MorphAbilities[id];
+        if (morphAbility) {
+          abilityKey = `morph_${id}`;
+          // Re-add to available abilities with isMorph tag
+          window.Abilities.availableAbilities[abilityKey] = { ...morphAbility, isMorph: true };
+          // ✅ Add to MorphLocks to prevent refunding
+          window.MorphLocks.add(abilityKey);
+        } else {
+          console.warn(`Skipped morph ability ${id} during import: not found in MorphAbilities.`);
+        }
+      }
+    }
+
+    // Esper abilities
+    // TODO make extendable
+    if (snapshot.esperAbilities && Array.isArray(snapshot.esperAbilities)) {
+      for (let id of snapshot.esperAbilities) {
+        // Strip "eper_" prefix if present
+        const esperAbility = window.esperAbilities[id];
+        if (esperAbility) {
+          abilityKey = `${id}`;
+          // Re-add to available abilities
+          window.Abilities.availableAbilities[abilityKey] = { ...esperAbility, isEsper: true };
+        } else {
+          console.warn(`Skipped esper ability ${id} during import: not found in Esper Abilities.`);
+        }
+      }
+    }
 
     // ✅ Abilities
     Abilities.purchasedAbilities = structuredClone(snapshot.abilities || {});
