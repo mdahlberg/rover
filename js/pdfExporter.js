@@ -52,10 +52,23 @@
     var essenceSchool = snakeToTitleCase(snapshot.essencePath || '');
     var essenceElem   = snakeToTitleCase(snapshot.essenceElement || '');
 
+    // Prepare data arrays: sum startingStats + level-up stats
+    var baseStats     = snapshot.startingStats  || {};
+    var levelStats    = snapshot.stats          || {};
+    var combinedStats = {};
+
+    // merge keys from both objects
+    Object.keys(Object.assign({}, baseStats, levelStats))
+      .forEach(function(key) {
+        combinedStats[key] = (baseStats[key]  || 0)
+                           + (levelStats[key] || 0);
+      });
+
     // Prepare data arrays
-    var statsEntries = Object.entries(snapshot.stats || {}).map(function(e) {
+    var statsEntries = Object.entries(combinedStats).map(function(e) {
       return [ snakeToTitleCase(e[0]), e[1] ];
     });
+
     var bp           = snapshot.bp || {};
     var profNames    = Object.keys(snapshot.proficiencies || {}).map(snakeToTitleCase);
     var abilityItems = Object.entries(snapshot.abilities || {}).map(function(e) {
