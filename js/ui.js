@@ -581,6 +581,7 @@ window.UI = {
     // Helper to create ability DOM
     function createAbilityCard(abilityId, ability, count, isDerived = false) {
       const isMorph = ability?.isMorph || false;
+      const isEsper = ability?.isEsper || false;
 
       const item = document.createElement("div");
 
@@ -600,6 +601,12 @@ window.UI = {
         morphTag.className = "racial-tag";
         morphTag.textContent = "(Morph)";
         name.appendChild(morphTag);
+      } else if (isEsper) {
+        item.classList.add("esper-ability");
+        const esperTag = document.createElement("span");
+        esperTag.className = "racial-tag";
+        esperTag.textContent = "(Esper)";
+        name.appendChild(esperTag);
       }
   
       const badge = document.createElement("span");
