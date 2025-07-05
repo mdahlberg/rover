@@ -148,6 +148,21 @@
     docDef.content.push(buildKeyValueTable(statsEntries, zebra));
     docDef.content.push({ text: '', margin: [0, 0, 0, 15] });
 
+    // ——— Derived Stats (calculated fields) ———
+    const strength = Stats.getStrength();        // uses floor(body/4)+bonus
+    const health   = Stats.getTotal("body") + 5; // need getters for this
+    const maxArmor = Stats.getTotal("body") + 10;
+
+    const derivedEntries = [
+      ["Strength",  strength],
+      ["Health",    health],
+      ["Max Armor", maxArmor]
+    ];
+
+    docDef.content.push({ text: "Derived Stats", style: "sectionHeader" });
+    docDef.content.push(buildKeyValueTable(derivedEntries, zebra));
+    docDef.content.push({ text: "", margin: [0, 0, 0, 15] });
+
     // Proficiencies
     docDef.content.push({ text: 'Proficiencies', style: 'sectionHeader' });
     docDef.content.push(buildMultiColList(profNames, 2));
