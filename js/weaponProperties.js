@@ -74,6 +74,18 @@ window.WeaponProperties = {
       grantedBy: ["short_weapons", "long_crushing_weapons", "two_handed_crushing_weapons"],
       unlocksAbilities: ["body_blow", "strike_the_throat", "smite", "helm_crusher"]
     },
+    essence_slot: {
+      name: "Essence Slot",
+      description: "You’ve unlocked at least one Essence Slot.",
+      grantedBy: ["essence_slot"],
+      // not grantedBy proficiencies
+      unlocksAbilities: [
+        "binding_blade",
+        "combat_focus",
+        "lesser_calamity",
+        "minor_calamity"
+      ]
+    }
   },
 
   getPlayerProperties: function () {
@@ -87,6 +99,11 @@ window.WeaponProperties = {
           properties.add(propId);
           break; // No need to keep checking once we know this property is granted
         }
+        // special handling of “essence_slot” grant
+        if (propId === "essence_slot" && EssenceSlots.getTotalSlotsForLevel("1") > 0) {
+          properties.add("essence_slot");
+        }
+
       }
     }
   

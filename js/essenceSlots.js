@@ -94,6 +94,27 @@ window.EssenceSlots = {
 
     if (levelIndex === -1) return false;
 
+    // ——— NEW: Prevent refunding your final Level 1 slot if binding abilities are purchased ———
+    // TODO - don't hard code. Make this separate from weaponProperties
+    if (level === "1" && this.getTotalSlotsForLevel("1") === 1) {
+      const bindingAbilities = [
+        "binding_blade",
+        "combat_focus",
+        "lesser_calamity",
+        "minor_calamity"
+      ];
+      const hasAnyBinding = bindingAbilities
+        .some(id => Abilities.getPurchaseCount(id) > 0);
+
+      if (hasAnyBinding) {
+        // give the user a heads-up
+        UI.flashWarning(
+          "You must remove your binding abilities before refunding your last Essence Slot."
+        );
+        return false;
+      }
+    }
+
     // You must have at least one slot to refund
     if (this.getSlotCount(level) <= 0) return false;
 
@@ -131,6 +152,7 @@ window.EssenceSlots = {
     Stats.lockedStats.mind = true;
 
     UI.updateEssenceSlotUI();
+    UI.updateAbilityUI();
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
     UI.updateStatsUI();
@@ -180,6 +202,7 @@ window.EssenceSlots = {
     }
 
     UI.updateEssenceSlotUI();
+    UI.updateAbilityUI();
     UI.updateGlobalBuildPoints();
     UI.updateLayerPreview();
     UI.updateStatsUI();
